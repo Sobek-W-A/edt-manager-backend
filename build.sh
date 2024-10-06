@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Initializing project's files.
-./init.sh
+chmod +x ./scripts/init.sh
+./scripts/init.sh
 
 # Removing pre-existing containers
 docker compose -f ./docker-compose_backdev.yml down -v --remove-orphans
@@ -9,4 +10,5 @@ docker compose -f ./docker-compose_backdev.yml down -v --remove-orphans
 docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans
 
 # Running the application.
-./run.sh
+chmod +x ./scripts/run.sh
+./scripts/run.sh
