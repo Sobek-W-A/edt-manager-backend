@@ -8,19 +8,19 @@ write_key() {
     sed -i "s/$2/$1/g" "$3"
 }
 
-echo "[CONFIG] - Starting project's configuration... "
+echo "[STATUS] - Starting project's configuration... "
 
 POSTGRES_KEY=$(openssl rand -hex 32)
 REDIS_KEY=$(openssl rand -hex 32)
 JWT_AUTH_KEY=$(openssl rand -hex 32)
 JWT_REFRESH_KEY=$(openssl rand -hex 32)
 
-echo "[CONFIG] - Copying files... "
+echo "[STATUS] - Copying files... "
 
 cp -f ./examples/init_db.sql.example ./init_db.sql
 cp -f ./examples/.env.example ./.env
 
-echo "[CONFIG] - Installing keys ..."
+echo "[STATUS] - Installing keys ..."
 
 # PostgreSQL key
 write_key "$POSTGRES_KEY" "postgres_key_to_replace" './.env'
@@ -33,4 +33,4 @@ write_key "$REDIS_KEY" "redis_key_to_replace" './.env'
 write_key "$JWT_AUTH_KEY" "jwt_auth_key_to_replace" './.env'
 write_key "$JWT_REFRESH_KEY" "jwt_refresh_key_to_replace" './.env'
 
-echo "[CONFIG] - Configuration done !"
+echo "[STATUS] - Configuration done !"
