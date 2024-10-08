@@ -11,6 +11,12 @@ In order to install the project, a few requirements are needed :
 
 If these requirements are satisfied, simply execute the build script.
 
+For Windows :
+
+`.\build.ps1`
+
+For Linux-Based systems:
+
 `chmod +x ./build.sh && ./build.sh`
 
 This script will :
