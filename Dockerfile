@@ -31,6 +31,6 @@ EXPOSE 8000
 WORKDIR /build/app
 
 # This command runs our uvicorn server
-# See Troubleshoots to understand why we need to type in --host 0.0.0.0 and --port 8000
+# See Troubleshoots to understand why we need to type in --host 0.0.0.0 and --port 8080
 CMD python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 

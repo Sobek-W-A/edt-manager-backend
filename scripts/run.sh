@@ -60,5 +60,5 @@ fi
 
 # Run the FastAPI application
 echo "[STATUS] - Starting FastAPI server..."
-cd $APP_DIR
+cd "$APP_DIR"
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
