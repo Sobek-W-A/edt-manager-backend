@@ -7,7 +7,6 @@ function run_dev {
     docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans
 
     # Running the application.
-    chmod +x ./scripts/run.ps1
     ./scripts/run.ps1
 }
 
@@ -35,7 +34,6 @@ $DEV = "development"
 $BUNDLE = "bundle"
 
 # Initializing project's files.
-chmod +x ./scripts/init.ps1
 ./scripts/init.ps1
 
 if ($ENVIRONMENT) {
