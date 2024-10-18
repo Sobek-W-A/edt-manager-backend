@@ -30,8 +30,8 @@ $JWT_REFRESH_KEY = Get-RandomHex
 
 Write-Output "[CONFIG] - Copying files... "
 
-Copy-Item .\examples\init_db.sql.example .\init_db.sql 
-Copy-Item .\examples\.env.example .\.env
+Copy-Item .\\examples\\init_db.sql.example .\\init_db.sql
+Copy-Item .\\examples\\.env.example .\\.env
 
 Write-Output "[CONFIG] - Installing keys ..."
 
