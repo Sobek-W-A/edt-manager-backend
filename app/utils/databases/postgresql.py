@@ -1,3 +1,6 @@
+"""
+This module loads the instance of the postgres database inside the Tortoise ORM.
+"""
 import os
 
 from dotenv import load_dotenv
@@ -5,7 +8,13 @@ from fastapi import FastAPI
 from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
+from app.utils.CustomExceptions import MissingEnvironnmentException
+
 class Postgresql:
+    """
+    This class provides data to initialize the connection with the postgres database 
+    that the Tortoise ORM uses.
+    """
 
     @staticmethod
     def get_db_url() -> str:
@@ -17,20 +26,20 @@ class Postgresql:
 
         port = os.getenv(key="POSTGRES_PORT", default="5432")
         host = os.getenv(key="POSTGRES_HOST", default="localhost")
-        password = os.getenv(key="POSTGRES_PASSWORD", default=None)
-        user = os.getenv(key="POSTGRES_USER", default=None)
-        db = os.getenv(key="POSTGRES_DB", default=None)
-        dms = "postgres"
 
-        if db is None or password is None or user is None:
-            elements_missing = []
-            if db is None :
-                elements_missing.append("db ")
-            if user is None :
-                elements_missing.append("user ")
-            if password is None :
-                elements_missing.append("password ")
-            raise Exception("Some parameters are missing : " + str(elements_missing))
+        user = os.getenv(key="POSTGRES_USER", default=None)
+        if user is None :
+            raise MissingEnvironnmentException("POSTGRES_USER")
+
+        password = os.getenv(key="POSTGRES_PASSWORD", default=None)
+        if password is None :
+            raise MissingEnvironnmentException("POSTGRES_PASSWORD")
+
+        db = os.getenv(key="POSTGRES_DB", default=None)
+        if db is None :
+            raise MissingEnvironnmentException("POSTGRES_DB")
+
+        dms = "postgres"
 
         return f"{dms}://{user}:{password}@{host}:{port}/{db}"
 
@@ -42,7 +51,8 @@ class Postgresql:
         These are located inside the tortoise module.
         """
         model_files = list(
-            filter(lambda x : x.endswith(".py") and x != "__init__.py", os.listdir("./app/models/tortoise")))
+            filter(lambda x : x.endswith(".py")
+                    and x != "__init__.py", os.listdir("./app/models/tortoise")))
         return map(lambda x : "app.models.tortoise." + x[:-3], model_files)
 
     @staticmethod

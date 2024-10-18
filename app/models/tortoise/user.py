@@ -5,7 +5,7 @@ It contains pydantic and Tortoise models.
 from typing import Annotated, Optional
 
 import bcrypt
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from tortoise import fields
@@ -48,20 +48,22 @@ class UserInDB(Model):
     @staticmethod
     async def authenticate_user(login: str, password: str) -> Optional["UserInDB"] :
         """
-        This method allows us to authenticate the user referenced by the login, using the password provided.
+        This method allows us to authenticate the user referenced by the login, 
+        using the password provided.
         :param login:    Login for the user.
         :param password: Password used to check the authenticity of the connection.
         :return: None value if the user could not be authenticated, a UserInDB otherwise.
         """
         # Checking if the user exists or not and checking its password.
         user = await UserInDB.get_or_none(login=login)
-        if user is None or not user.__verify_password(password):
+        if user is None or not user.verify_password(password):
             return None
         return user
 
 
     @staticmethod
-    async def get_current_user(token: Annotated[PydanticToken, Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
+    async def get_current_user(token: Annotated[PydanticToken,
+                                                Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
         """
         This method returns the user corresponding to the user ID stored inside the token provided.
         :param token: Token used to ectract data from.
@@ -86,7 +88,7 @@ class UserInDB(Model):
         # Otherwise, we successfully identified as the user in the database!
         return user
 
-    def __verify_password(self, password) -> bool:
+    def verify_password(self, password) -> bool:
         """
         This method will compare a hash provided with the hash of the object concerned.
         """

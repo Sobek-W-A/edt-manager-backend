@@ -16,19 +16,28 @@ class PydanticTokenExporter(ABC, BaseModel):
     the current pydantic model to a Tortoise one.
     """
     @abstractmethod
-    def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> AvailableTokenModels:
+    def export_pydantic_to_model(self,
+                                 attributes: TokenAttributes | None = None) -> AvailableTokenModels:
         """
         This method exports the current pydantic model
         """
-        pass
+
 
 class PydanticToken(PydanticTokenExporter):
+    """
+    This class is a pydantic model for a signle Token.
+    """
     value: str
+
     def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> Token:
         return Token(attributes=attributes, value=self.value)
 
 class PydanticTokenPair(PydanticTokenExporter):
+    """
+    This class is a pydantic model for a pair of Tokens.
+    """
     access_token: str
     refresh_token: str
+
     def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> TokenPair:
         return TokenPair(access_token=self.access_token, refresh_token=self.refresh_token)
