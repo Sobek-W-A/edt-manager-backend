@@ -36,7 +36,7 @@ class Postgresql:
 
 
     @staticmethod
-    def get_available_models():
+    def get_available_models() -> map:
         """
         This method returns a list of available models.
         These are located inside the tortoise module.

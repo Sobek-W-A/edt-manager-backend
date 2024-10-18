@@ -14,8 +14,8 @@ from tortoise.models import Model
 from app.models.pydantic.TokenModel import PydanticToken
 from app.utils.http_errors import ClassicExceptions
 
-pwd_context   = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+pwd_context:    CryptContext         = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme:  OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 class UserInDB(Model):
@@ -30,11 +30,11 @@ class UserInDB(Model):
     mail = fields.CharField(unique=True, required=True, max_length=128)
     hash = fields.TextField(required=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         This method will output a str describing the UserInDB class.
         """
-        return "[INFO] - USER " + self.login + " ID : " + str(self.id)
+        return f"[INFO] - USER {self.login} ID : {self.id}"
 
     @staticmethod
     def get_password_hash(password) -> str :

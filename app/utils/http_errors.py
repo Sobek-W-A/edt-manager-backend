@@ -34,3 +34,5 @@ class ClassicExceptions(enum.Enum):
         detail=CommonErrorMessages.INVALID_CREDENTIALS,
         headers={"WWW-Authenticate": "bearer"}
     )
+
+

@@ -8,9 +8,9 @@ from app.utils.databases.postgresql import Postgresql
 from app.utils.databases.redis import Redis
 
 
-async def startup_databases(app: FastAPI):
+async def startup_databases(app: FastAPI) -> None:
     await Postgresql.init_postgres_db(app)
-    await Redis.load_redis()
+    Redis.load_redis()
 
     # Load dummy dataset if in development environment
     if os.getenv("ENVIRONMENT") == "development":

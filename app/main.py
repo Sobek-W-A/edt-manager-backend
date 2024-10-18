@@ -1,8 +1,9 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.models.Tags import Tag
 from app.routes import auth, user
 
 from app.utils.databases.db import startup_databases
@@ -19,10 +20,19 @@ tags_metadata: list[dict[str, str]] = [
     }
 ]
 
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    # Démarrage des bases de données
+    await startup_databases(app=application)
+    yield
+    # Code pour fermer les bases de données (si nécessaire)
+
+
 # Creation of the main router
 app: FastAPI = FastAPI(title="SOBEK W.A. API",
-              description="API For the SOBEK W.A web application",
-              openapi_tags=tags_metadata)
+                       description="API For the SOBEK W.A web application",
+                       openapi_tags=tags_metadata,
+                       lifespan=lifespan)
 
 # List of requests origins that are allowed for the API
 # IMPORTANT NOTICE: Using the wildcard * is dangerous:
@@ -46,12 +56,6 @@ app.add_middleware(
 # Importing API routes :
 app.include_router(user.userRouter, prefix="/user", tags=["user"])
 app.include_router(auth.authRouter, prefix="/auth", tags=["auth"])
-
-# TODO : Fix the deprecated event.
-@app.on_event("startup")
-async def startup() -> None:
-    await startup_databases(app=app)
-
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

@@ -1,5 +1,4 @@
 import os
-from abc import ABC
 from datetime import datetime, timedelta
 
 import bcrypt
@@ -10,12 +9,13 @@ from fastapi import HTTPException
 from passlib.context import CryptContext
 
 import enum
-from typing import Final, TypeAlias, Awaitable, Coroutine
+from typing import Final, TypeAlias
 
 from app.utils.databases.redis import Redis
 from app.utils.http_errors import CommonErrorMessages, ClassicExceptions
+from utils.CustomExceptions import MissingEnvironnmentException
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class TokenTypes(enum.Enum):
     """
@@ -34,15 +34,18 @@ class TokenAttributes:
     def __init__(self, token_type: TokenTypes):
         self.token_type = token_type                                # <- Type of the token. Used to get specific env vars.
 
-        load_dotenv()
+        load_dotenv(".env")
         self.algorithm  = os.environ.get("JWT_ALGORITHM", "HS256")  # <- Algorithm used for encoding the tokens
-        self.expire_time = os.environ.get(token_type.value + "_EXPIRE", None)
-        if self.expire_time is None:
-            raise Exception("No expire time was provided inside the .env file !")
 
-        self.secret = os.environ.get("JWT_SECRET_" + token_type.value, None)
+        env_variable_name: str = f"{token_type.value}_EXPIRE"
+        self.expire_time = os.environ.get(env_variable_name, None)
         if self.expire_time is None:
-            raise Exception("No secrets were provided inside the .env file !")
+            raise MissingEnvironnmentException(env_variable_name)
+
+        env_variable_name: str = f"JWT_{token_type.value}_SECRET_KEY"
+        self.secret = os.environ.get(env_variable_name, None)
+        if self.secret is None:
+            raise MissingEnvironnmentException(env_variable_name)
 
 class AvailableTokenAttributes(enum.Enum):
     """
@@ -62,7 +65,7 @@ class Token:
         self.attributes = attributes
         self.value      = value
 
-    def generate(self, user_id: int):
+    def generate(self, user_id: int) -> None:
         """
         This method generates a single token.
         It uses the attributes specified to generate the correct token using the correct private key.
@@ -79,7 +82,7 @@ class Token:
         }
         self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm)
 
-    async def revoke(self, redis_db: redis.Redis = Redis.get_redis()):
+    def revoke(self, redis_db: redis.Redis = Redis.get_redis()) -> None:
         """
         This method handles the necessary operations to revoke the token.
         """
@@ -87,13 +90,12 @@ class Token:
             return
 
         # Extracting payload
-        data = await self.extract_payload()
+        data = self.extract_payload()
         # Adding the token to redis blocklist with an expiration date according to the expiration date of the token.
         redis_db.setex(self.value, data["exp"], self.attributes.token_type)
         self.value = None
 
-
-    async def extract_payload(self):
+    def extract_payload(self) -> dict | None:
         """
         This method extracts the payload from the current token.
         """
@@ -102,7 +104,7 @@ class Token:
             return None
 
         # We check if the token has been revoked
-        if await self.is_revoked():
+        if self.is_revoked():
             raise HTTPException(status_code=401, detail=CommonErrorMessages.TOKEN_REVOKED)
 
         # We try to extract the payload from the token
@@ -122,8 +124,7 @@ class Token:
         # We return the payload
         return data
 
-
-    async def is_revoked(self, redis_db: redis.Redis = Redis.get_redis()):
+    def is_revoked(self, redis_db: redis.Redis = Redis.get_redis()) -> bool:
         """
         This method checks if the token has been blacklisted inside Redis DB.
         """
@@ -140,8 +141,7 @@ class TokenPair:
         self.access_token  = Token(AvailableTokenAttributes.AUTH_TOKEN.value, access_token)
         self.refresh_token = Token(AvailableTokenAttributes.REFRESH_TOKEN.value, refresh_token)
 
-
-    def get_tokens_in_response(self):
+    def get_tokens_in_response(self) -> dict[str, str]:
         """
         This method provides the object that needs to be returned when we want to send a new token pair.
         """
@@ -168,7 +168,7 @@ class TokenPair:
         self.access_token.revoke()
         self.refresh_token.revoke()
 
-    async def refresh_tokens(self) -> None:
+    def refresh_tokens(self) -> None:
         """
         This method uses the refresh token to create a new access token and refresh token.
         It stores the tokens inside the current object instance.
@@ -177,7 +177,7 @@ class TokenPair:
             raise Exception("No refresh token was provided ! Aborting refresh...")
 
         # Trying to decode the token given
-        token_payload = await self.refresh_token.extract_payload()
+        token_payload = self.refresh_token.extract_payload()
         user_id: int = token_payload.get("user_id")
 
         # If we manage to decode the token, but user_id is None, we raise a credentials' exception.
