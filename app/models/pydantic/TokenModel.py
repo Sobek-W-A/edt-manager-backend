@@ -17,7 +17,7 @@ class PydanticTokenExporter(ABC, BaseModel):
     """
     @abstractmethod
     def export_pydantic_to_model(self,
-                                 attributes: TokenAttributes | None = None) -> AvailableTokenModels:
+                                 attributes: TokenAttributes) -> AvailableTokenModels:
         """
         This method exports the current pydantic model
         """
@@ -29,7 +29,7 @@ class PydanticToken(PydanticTokenExporter):
     """
     value: str
 
-    def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> Token:
+    def export_pydantic_to_model(self, attributes: TokenAttributes) -> Token:
         return Token(attributes=attributes, value=self.value)
 
 class PydanticTokenPair(PydanticTokenExporter):
@@ -39,5 +39,5 @@ class PydanticTokenPair(PydanticTokenExporter):
     access_token: str
     refresh_token: str
 
-    def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> TokenPair:
+    def export_pydantic_to_model(self, attributes: TokenAttributes) -> TokenPair:
         return TokenPair(access_token=self.access_token, refresh_token=self.refresh_token)

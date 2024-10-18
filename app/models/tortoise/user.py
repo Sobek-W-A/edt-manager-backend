@@ -11,6 +11,7 @@ from passlib.context import CryptContext
 from tortoise import fields
 from tortoise.models import Model
 
+from app.models.Tokens import AvailableTokenAttributes, Token
 from app.models.pydantic.TokenModel import PydanticToken
 from app.utils.http_errors import ClassicExceptions
 
@@ -70,12 +71,15 @@ class UserInDB(Model):
         """
 
         # Trying to decode the token given
-        token_payload = await token.extract_payload()
+        token_model:  Token = token.export_pydantic_to_model(AvailableTokenAttributes
+                                                             .AUTH_TOKEN.value)
+        token_payload: dict = token_model.extract_payload()
+
         user_id: str = token_payload.get("user_id", None)
 
         # If we manage to decode the token, but user_id is None, we raise a credentials' exception.
         if user_id is None:
-            raise ClassicExceptions.credential_exception
+            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
 
         # If we get here, that means we managed to decode the token, and we got an user_id.
         # Then, we try to get a user that corresponds to the user_id
@@ -83,7 +87,7 @@ class UserInDB(Model):
 
         # If the user was not found, we raise another exception.
         if user is None:
-            raise ClassicExceptions.credential_exception
+            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
 
         # Otherwise, we successfully identified as the user in the database!
         return user

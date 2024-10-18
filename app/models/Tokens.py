@@ -6,7 +6,7 @@ It provides models and methods to do so.
 import enum
 import os
 from datetime import datetime, timedelta
-from typing import Final, TypeAlias
+from typing import TypeAlias
 
 import bcrypt
 import jwt
@@ -26,8 +26,8 @@ class TokenTypes(enum.Enum):
     This enumeration provides the different token types available.
     These types have different secrets and expiration time.
     """
-    AUTH_TOKEN:     Final[str] = 'AUTH_TOKEN'
-    REFRESH_TOKEN:  Final[str] = 'REFRESH_TOKEN'
+    AUTH_TOKEN    = 'AUTH_TOKEN'
+    REFRESH_TOKEN = 'REFRESH_TOKEN'
 
 class TokenAttributes:
     """
@@ -64,8 +64,8 @@ class AvailableTokenAttributes(enum.Enum):
     This enumeration lists the available token attributes.
     It initializes the values of these attributes with data provided inside the .env file.
     """
-    AUTH_TOKEN:    Final[TokenTypes] = TokenAttributes(TokenTypes.AUTH_TOKEN)
-    REFRESH_TOKEN: Final[TokenTypes] = TokenAttributes(TokenTypes.REFRESH_TOKEN)
+    AUTH_TOKEN    = TokenAttributes(TokenTypes.AUTH_TOKEN)
+    REFRESH_TOKEN = TokenAttributes(TokenTypes.REFRESH_TOKEN)
 
 
 # -------- Classic models -------- #
@@ -167,7 +167,7 @@ class TokenPair:
         self.access_token  = Token(AvailableTokenAttributes.AUTH_TOKEN.value, access_token)
         self.refresh_token = Token(AvailableTokenAttributes.REFRESH_TOKEN.value, refresh_token)
 
-    def get_tokens_in_response(self) -> dict[str, str]:
+    def get_tokens_in_response(self) -> dict[str, str | None]:
         """
         This method provides the object that needs to be returned when we want to send 
         a new token pair.
@@ -178,7 +178,6 @@ class TokenPair:
             "token_type":    "bearer"
         }
 
-
     def generate_tokens(self, user_id: int) -> None:
         """
         This method generates a pair of tokens.
@@ -186,7 +185,6 @@ class TokenPair:
         """
         self.access_token.generate(user_id)
         self.refresh_token.generate(user_id)
-
 
     def revoke_tokens(self) -> None:
         """
@@ -205,11 +203,11 @@ class TokenPair:
 
         # Trying to decode the token given
         token_payload = self.refresh_token.extract_payload()
-        user_id: int = token_payload.get("user_id")
+        user_id: int | None = token_payload.get("user_id")
 
         # If we manage to decode the token, but user_id is None, we raise a credentials' exception.
         if user_id is None:
-            raise ClassicExceptions.credential_exception
+            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
         # We need to add the refresh_token and the acces_token to the blocklist since it does not
         # (and may not) have expired yet.
         self.revoke_tokens()
@@ -218,4 +216,5 @@ class TokenPair:
         # Generating new tokens
         self.generate_tokens(user_id=user_id)
 
+# This allows us to regroup the Token models into one type.
 AvailableTokenModels: TypeAlias = Token | TokenPair
