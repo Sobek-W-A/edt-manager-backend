@@ -1,4 +1,5 @@
 import os
+from abc import ABC
 from datetime import datetime, timedelta
 
 import bcrypt
@@ -9,7 +10,7 @@ from fastapi import HTTPException
 from passlib.context import CryptContext
 
 import enum
-from typing import Final
+from typing import Final, TypeAlias, Awaitable, Coroutine
 
 from app.utils.databases.redis import Redis
 from app.utils.http_errors import CommonErrorMessages, ClassicExceptions
@@ -167,7 +168,6 @@ class TokenPair:
         self.access_token.revoke()
         self.refresh_token.revoke()
 
-
     async def refresh_tokens(self) -> None:
         """
         This method uses the refresh token to create a new access token and refresh token.
@@ -189,3 +189,5 @@ class TokenPair:
         # If we managed to get here, user and token are valid inputs. we can generate both tokens.
         # Generating new tokens
         self.generate_tokens(user_id=user_id)
+
+AvailableTokenModels: TypeAlias = Token | TokenPair

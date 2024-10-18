@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
+from app.models.Tags import Tag
 from app.routes import auth, user
 
 from app.utils.databases.db import startup_databases
 
 # Array for the routes descriptions and names.
-tags_metadata = [
+tags_metadata: list[dict[str, str]] = [
     {
         "name": "user",
         "description": "User operations."
@@ -19,7 +20,7 @@ tags_metadata = [
 ]
 
 # Creation of the main router
-app = FastAPI(title="SOBEK W.A. API",
+app: FastAPI = FastAPI(title="SOBEK W.A. API",
               description="API For the SOBEK W.A web application",
               openapi_tags=tags_metadata)
 
@@ -28,7 +29,7 @@ app = FastAPI(title="SOBEK W.A. API",
 # It will allow all request sources.
 # Furthermore, with authentication enabled, it will not work.
 # Listing authorized sources is MANDATORY.
-origins = [
+origins: list[str] = [
     "http://localhost:5173",
     "https://localhost:5173",
 ]
@@ -48,11 +49,11 @@ app.include_router(auth.authRouter, prefix="/auth", tags=["auth"])
 
 # TODO : Fix the deprecated event.
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     await startup_databases(app=app)
 
 
 # Root path: Redirecting to the documentation.
 @app.get("/")
-async def root():
+async def root() -> RedirectResponse:
     return RedirectResponse(url="/docs")
