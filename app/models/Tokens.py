@@ -14,7 +14,7 @@ import redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
 from passlib.context import CryptContext
-from utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
+from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
 
 from app.utils.databases.redis_helper import Redis
 from app.utils.http_errors import ClassicExceptions, CommonErrorMessages

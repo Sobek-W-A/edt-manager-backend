@@ -23,9 +23,9 @@ class Redis:
         """
         load_dotenv(".env")
         pool = redis.ConnectionPool(host=os.environ.get("REDIS_HOST"),
-                                             port=os.environ.get("REDIS_PORT"),
-                                             db=os.environ.get("REDIS_DB"),
-                                             password=os.environ.get("REDIS_PASSWORD"))
+                                    port=os.environ.get("REDIS_PORT"),
+                                    db=os.environ.get("REDIS_DB"),
+                                    password=os.environ.get("REDIS_PASSWORD"))
 
         cls.redis_instance = redis.Redis(connection_pool=pool)
 
