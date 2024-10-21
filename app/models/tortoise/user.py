@@ -13,7 +13,7 @@ from tortoise.models import Model
 
 from app.models.Tokens import AvailableTokenAttributes, Token
 from app.models.pydantic.TokenModel import PydanticToken
-from app.utils.http_errors import ClassicExceptions
+from app.utils.type_hint import JWTData
 
 pwd_context:    CryptContext         = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme:  OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -73,21 +73,13 @@ class UserInDB(Model):
         # Trying to decode the token given
         token_model:  Token = token.export_pydantic_to_model(AvailableTokenAttributes
                                                              .AUTH_TOKEN.value)
-        token_payload: dict = token_model.extract_payload()
+        token_payload: JWTData = token_model.extract_payload()
 
-        user_id: str = token_payload.get("user_id", None)
-
-        # If we manage to decode the token, but user_id is None, we raise a credentials' exception.
-        if user_id is None:
-            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
+        user_id: int = token_payload.get("user_id", None)
 
         # If we get here, that means we managed to decode the token, and we got an user_id.
         # Then, we try to get a user that corresponds to the user_id
         user = await UserInDB.get_or_none(id=user_id)
-
-        # If the user was not found, we raise another exception.
-        if user is None:
-            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
 
         # Otherwise, we successfully identified as the user in the database!
         return user

@@ -14,7 +14,7 @@ class Redis:
     Helper class that provides the Redis connection pool.
     """
 
-    redis_instance: redis.Redis | None = None
+    redis_instance: redis.Redis[bytes] | None = None
 
     @classmethod
     def load_redis(cls) -> None:
@@ -30,7 +30,7 @@ class Redis:
         cls.redis_instance = redis.Redis(connection_pool=pool)
 
     @classmethod
-    def get_redis(cls) -> redis.Redis:
+    def get_redis(cls) -> redis.Redis[bytes]:
         """
         This method returns the redis connection pool instance.
         """

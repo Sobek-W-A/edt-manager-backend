@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from tortoise import Tortoise
-from tortoise.contrib.fastapi import register_tortoise
+from tortoise.contrib.fastapi import register_tortoise # type: ignore
 
 from app.utils.CustomExceptions import MissingEnvironnmentException
 
@@ -45,7 +45,7 @@ class Postgresql:
 
 
     @staticmethod
-    def get_available_models() -> map:
+    def get_available_models() -> map[str]:
         """
         This method returns a list of available models.
         These are located inside the tortoise module.
@@ -66,7 +66,7 @@ class Postgresql:
         models = Postgresql.get_available_models()        # Listing models available.
 
         # Initialize Tortoise ORM
-        await Tortoise.init(
+        await Tortoise.init( # type: ignore 
             db_url=url,
             modules={'models': models}
         )

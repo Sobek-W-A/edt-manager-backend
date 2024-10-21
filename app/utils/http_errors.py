@@ -4,10 +4,10 @@ This file provides Enums to use as standards to send error details to the Fronte
 
 import enum
 
-from fastapi import HTTPException
+# from fastapi import HTTPException
 
 
-class CommonErrorMessages(enum.Enum):
+class CommonErrorMessages(enum.StrEnum):
     """
     Enumeration to provide the commonly used error messages inside the API.
     """
@@ -24,12 +24,12 @@ class CommonErrorMessages(enum.Enum):
     TOKEN_EXPIRED            = "The token has expired."
 
 
-class ClassicExceptions(enum.Enum):
-    """
-    This enumeration provides several HTTPExceptions to use inside the program.
-    """
-    CREDENTIAL_EXCEPTION = HTTPException(
-        status_code=401,
-        detail=CommonErrorMessages.INVALID_CREDENTIALS,
-        headers={"WWW-Authenticate": "bearer"}
-    )
+# class ClassicExceptions(enum.Enum):
+#     """
+#     This enumeration provides several HTTPExceptions to use inside the program.
+#     """
+#     CREDENTIAL_EXCEPTION = HTTPException(
+#         status_code=401,
+#         detail=CommonErrorMessages.INVALID_CREDENTIALS,
+#         headers={"WWW-Authenticate": "bearer"}
+#     )

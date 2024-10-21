@@ -14,10 +14,12 @@ import redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
 from passlib.context import CryptContext
-from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
+from app.utils.CustomExceptions import MissingEnvironnmentException
 
 from app.utils.databases.redis_helper import Redis
-from app.utils.http_errors import ClassicExceptions, CommonErrorMessages
+from app.utils.http_errors import CommonErrorMessages
+
+from app.utils.type_hint import JWTData
 
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -91,16 +93,16 @@ class Token:
         """
         # Generating data for the token
         creation_date = datetime.now()
-        expire_date = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
-        jwt_data = {
+        expire_date = timedelta(minutes=float(self.attributes.expire_time)) # TODO
+        jwt_data: JWTData = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
             "iat": creation_date,
             "exp": expire_date
         }
-        self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm)
+        self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm) # type: ignore
 
-    def revoke(self, redis_db: redis.Redis = Redis.get_redis()) -> None:
+    def revoke(self, redis_db: redis.Redis[bytes] = Redis.get_redis()) -> None:
         """
         This method handles the necessary operations to revoke the token.
         """
@@ -108,18 +110,15 @@ class Token:
             return
 
         # Extracting payload
-        data: dict = self.extract_payload()
+        data: JWTData = self.extract_payload()
         # Adding the token to redis blocklist with an expiration date equal to the expiration date.
         redis_db.setex(self.value, data["exp"], self.attributes.token_type.value)
         self.value = None
 
-    def extract_payload(self) -> dict:
+    def extract_payload(self) -> JWTData:
         """
         This method extracts the payload from the current token.
         """
-
-        if self.value is None:
-            return {}
 
         # We check if the token has been revoked
         if self.is_revoked():
@@ -129,7 +128,7 @@ class Token:
         try:
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
-            data = jwt.decode(jwt=self.value,
+            data = jwt.decode(jwt=self.value, # type: ignore
                               key=str(self.attributes.secret),
                               algorithms=[self.attributes.algorithm])
 
@@ -144,7 +143,7 @@ class Token:
         # We return the payload
         return data
 
-    def is_revoked(self, redis_db: redis.Redis = Redis.get_redis()) -> bool:
+    def is_revoked(self, redis_db: redis.Redis[bytes] = Redis.get_redis()) -> bool:
         """
         This method checks if the token has been blacklisted inside Redis DB.
         """
@@ -161,7 +160,7 @@ class TokenPair:
     """
 
     access_token:  Token
-    refresh_token: Token
+    refresh_token: Token 
 
     def __init__(self, access_token: str | None = None, refresh_token: str | None = None):
         self.access_token  = Token(AvailableTokenAttributes.AUTH_TOKEN.value, access_token)
@@ -198,16 +197,10 @@ class TokenPair:
         This method uses the refresh token to create a new access token and refresh token.
         It stores the tokens inside the current object instance.
         """
-        if self.refresh_token is None:
-            raise RequiredFieldIsNone("No refresh token was provided ! Aborting refresh...")
-
         # Trying to decode the token given
         token_payload = self.refresh_token.extract_payload()
         user_id: int | None = token_payload.get("user_id")
 
-        # If we manage to decode the token, but user_id is None, we raise a credentials' exception.
-        if user_id is None:
-            raise ClassicExceptions.CREDENTIAL_EXCEPTION.value
         # We need to add the refresh_token and the acces_token to the blocklist since it does not
         # (and may not) have expired yet.
         self.revoke_tokens()
