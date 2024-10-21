@@ -38,7 +38,7 @@ class UserInDB(Model):
         return f"[INFO] - USER {self.login} ID : {self.id}"
 
     @staticmethod
-    def get_password_hash(password) -> str :
+    def get_password_hash(password: str) -> str :
         """
         This Method is designed to get the Hash of a password
         """
@@ -92,13 +92,13 @@ class UserInDB(Model):
         # Otherwise, we successfully identified as the user in the database!
         return user
 
-    def verify_password(self, password) -> bool:
+    def verify_password(self, password: str) -> bool:
         """
         This method will compare a hash provided with the hash of the object concerned.
         """
         return bcrypt.checkpw(password.encode('utf-8'), self.hash.encode('utf-8'))
 
-    class Meta:
+    class Meta: # type: ignore
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
