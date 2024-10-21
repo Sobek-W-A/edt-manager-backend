@@ -1,5 +1,18 @@
 name: 'sobekwa'
 services:
+  redis:
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/var/lib/redis/data
+    environment:
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
   postgres:
     image: postgres
     ports:
