@@ -102,7 +102,7 @@ class Token:
         }
         self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm) # type: ignore
 
-    def revoke(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> None:
+    def revoke(self, redis_db: redis.Redis[bytes] = Redis.get_redis()) -> None:
         """
         This method handles the necessary operations to revoke the token.
         """
@@ -143,7 +143,7 @@ class Token:
         # We return the payload
         return data
 
-    def is_revoked(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> bool:
+    def is_revoked(self, redis_db: redis.Redis[bytes] = Redis.get_redis()) -> bool:
         """
         This method checks if the token has been blacklisted inside Redis DB.
         """
