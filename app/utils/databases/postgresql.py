@@ -45,7 +45,7 @@ class Postgresql:
 
 
     @staticmethod
-    def get_available_models() -> map[str]:
+    def get_available_models() -> list[str]:
         """
         This method returns a list of available models.
         These are located inside the tortoise module.
@@ -53,7 +53,7 @@ class Postgresql:
         model_files = list(
             filter(lambda x : x.endswith(".py")
                     and x != "__init__.py", os.listdir("./app/models/tortoise")))
-        return map(lambda x : "app.models.tortoise." + x[:-3], model_files)
+        return ["app.models.tortoise." + x[:-3] for x in model_files]
 
     @staticmethod
     async def init_postgres_db(app: FastAPI) -> None:

@@ -93,7 +93,7 @@ class Token:
         """
         # Generating data for the token
         creation_date = datetime.now()
-        expire_date = timedelta(minutes=float(self.attributes.expire_time)) # TODO
+        expire_date = timedelta(minutes=float(self.attributes.expire_time))
         jwt_data: JWTData = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
