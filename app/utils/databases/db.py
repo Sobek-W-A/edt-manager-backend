@@ -16,7 +16,8 @@ async def startup_databases(app: FastAPI) -> None:
     This method initializes the needed databases.
     It also loads the dummy data if the current environnment is the development one.
     """
-    Redis.load_redis()
+    if Redis.get_redis() is None:
+        Redis.load_redis()
     await Postgresql.init_postgres_db(app)
 
     # Load dummy dataset if in development environment

@@ -66,7 +66,7 @@ class Postgresql:
         models = Postgresql.get_available_models()        # Listing models available.
 
         # Initialize Tortoise ORM
-        await Tortoise.init( # type: ignore 
+        await Tortoise.init( # type: ignore
             db_url=url,
             modules={'models': models}
         )

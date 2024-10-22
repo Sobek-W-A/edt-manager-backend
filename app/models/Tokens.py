@@ -6,7 +6,7 @@ It provides models and methods to do so.
 import enum
 import os
 from datetime import datetime, timedelta
-from typing import TypeAlias
+from typing import Optional, TypeAlias
 
 import bcrypt
 import jwt
@@ -14,7 +14,7 @@ import redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
 from passlib.context import CryptContext
-from app.utils.CustomExceptions import MissingEnvironnmentException
+from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
 
 from app.utils.databases.redis_helper import Redis
 from app.utils.http_errors import CommonErrorMessages
@@ -102,12 +102,15 @@ class Token:
         }
         self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm) # type: ignore
 
-    def revoke(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> None:
+    def revoke(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> None:
         """
         This method handles the necessary operations to revoke the token.
         """
         if self.value is None:
             return
+
+        if redis_db is None:
+            raise RequiredFieldIsNone("Redis instance is None !")
 
         # Extracting payload
         data: JWTData = self.extract_payload()
@@ -143,12 +146,14 @@ class Token:
         # We return the payload
         return data
 
-    def is_revoked(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> bool:
+    def is_revoked(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> bool:
         """
         This method checks if the token has been blacklisted inside Redis DB.
         """
         # We check if the token is revoked (in the redis DB)
         # If the result is None, the token was not revoked
+        if redis_db is None:
+            raise RequiredFieldIsNone("Redis instance is None !")
         return not (self.value is None or redis_db.get(self.value) is None)
 
 
@@ -160,7 +165,7 @@ class TokenPair:
     """
 
     access_token:  Token
-    refresh_token: Token 
+    refresh_token: Token
 
     def __init__(self, access_token: str | None = None, refresh_token: str | None = None):
         self.access_token  = Token(AvailableTokenAttributes.AUTH_TOKEN.value, access_token)
