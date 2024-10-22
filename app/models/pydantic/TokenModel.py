@@ -39,5 +39,5 @@ class PydanticTokenPair(PydanticTokenExporter):
     access_token: str
     refresh_token: str
 
-    def export_pydantic_to_model(self, attributes: TokenAttributes) -> TokenPair:
+    def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> TokenPair:
         return TokenPair(access_token=self.access_token, refresh_token=self.refresh_token)
