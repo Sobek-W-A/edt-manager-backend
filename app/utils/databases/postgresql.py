@@ -62,7 +62,7 @@ class Postgresql:
         It also initialises the models if they are not already present.
         """
         # Fetching basic data
-        url = Postgresql.get_db_url()
+        url    = Postgresql.get_db_url()
         models = Postgresql.get_available_models()        # Listing models available.
 
         # Initialize Tortoise ORM
