@@ -5,7 +5,7 @@ It provides models and methods to do so.
 
 import enum
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, TypeAlias
 
 import bcrypt
@@ -19,7 +19,7 @@ from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFie
 from app.utils.databases.redis_helper import Redis
 from app.utils.http_errors import CommonErrorMessages
 
-from app.utils.type_hint import JWTData
+from app.utils.type_hint import EncodableJWTData, JWTData
 
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -92,15 +92,17 @@ class Token:
         :return: A Json Web Token.
         """
         # Generating data for the token
-        creation_date = datetime.now()
-        expire_date = timedelta(minutes=float(self.attributes.expire_time))
-        jwt_data: JWTData = {
+        creation_date = datetime.now(tz=timezone.utc)
+        expire_date   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
+
+        jwt_data: EncodableJWTData = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
             "iat": creation_date,
             "exp": expire_date
         }
-        self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm) # type: ignore
+        self.value = jwt.encode(jwt_data, str(self.attributes.secret), # type: ignore
+                                self.attributes.algorithm)             # type: ignore
 
     def revoke(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> None:
         """

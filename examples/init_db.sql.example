@@ -5,6 +5,7 @@ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'sobek_wa_db');
 
 alter database sobek_wa_db set timezone to 'Europe/Paris';
 
-CREATE USER sobek_wa_admin WITH PASSWORD 'postgres_key_to_replace';
+SELECT 'CREATE USER sobek_wa_admin WITH PASSWORD postgres_key_to_replace' 
+WHERE NOT EXISTS (SELECT FROM user WHERE user = 'sobek_wa_admin');
 GRANT ALL PRIVILEGES ON DATABASE sobek_wa_db TO sobek_wa_admin;
 ALTER DATABASE sobek_wa_db OWNER TO sobek_wa_admin;

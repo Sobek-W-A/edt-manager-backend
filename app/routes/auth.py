@@ -4,13 +4,13 @@ Used to manage auth operations.
 """
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.models.Tokens import AvailableTokenAttributes, TokenPair
 from app.models.pydantic.TokenModel import PydanticTokenPair
 from app.models.tortoise.user import UserInDB
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
 
 authRouter = APIRouter()
 
@@ -25,11 +25,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     user = await UserInDB.authenticate_user(form_data.username, form_data.password)
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=CommonErrorMessages.INCORRECT_LOGIN_PASSWORD.value,
-            headers={"WWW-Authenticate": "bearer"}
-        )
+        raise IncorrectLoginOrPasswordException()
 
     # Building and giving token
     tokens = TokenPair()
