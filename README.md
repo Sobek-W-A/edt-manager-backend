@@ -31,4 +31,8 @@ This script will :
 The docker compose files will give a Postgresql database as well as a Database Explorer called Adminer.
 Adminer is reachable on the http://localhost:8080 address.
 
+It will also add a Token Storage using Redis. It is inside another Docker container. There is no need to 
+access it directly, but it is joinable using a Database Explorer. In order to find the address and the 
+credentials of this database, you will need to check the environnment variables.
+
 The documentation of the API is available at the root address of the API. Check the environnment variables to see the port used by the API.

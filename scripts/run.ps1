@@ -52,5 +52,4 @@ if (Test-Path $REQUIREMENTS_FILE) {
 
 # Run the FastAPI application
 Write-Host "[STATUS] - Starting FastAPI server..."
-Set-Location $APP_DIR
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
