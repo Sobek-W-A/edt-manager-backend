@@ -19,7 +19,7 @@ from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFie
 from app.utils.databases.redis_helper import Redis
 from app.utils.http_errors import CommonErrorMessages
 
-from app.utils.type_hint import EncodableJWTData, JWTData
+from app.utils.type_hint import JWTData
 
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -95,7 +95,7 @@ class Token:
         creation_date = datetime.now(tz=timezone.utc)
         expire_date   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
 
-        jwt_data: EncodableJWTData = {
+        jwt_data: JWTData = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
             "iat": creation_date,
@@ -116,8 +116,10 @@ class Token:
 
         # Extracting payload
         data: JWTData = self.extract_payload()
-        # Adding the token to redis blocklist with an expiration date equal to the expiration date.
-        redis_db.setex(self.value, data["exp"], self.attributes.token_type.value)
+        # Adding the token to redis blocklist with an expiration equal to 
+        # the expiration date - creation date.
+        ttl: timedelta = data["exp"] - data["iat"]
+        redis_db.setex(self.value, ttl, self.attributes.token_type.value)
         self.value = None
 
     def extract_payload(self) -> JWTData:
