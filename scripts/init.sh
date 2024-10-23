@@ -5,7 +5,13 @@
 # $2 : string to replace
 # $3 : file_path
 write_key() {
-    sed -i "s/$2/$1/g" "$3"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS Environnment.
+        sed -i '' "s/$2/$1/g" "$3"
+    else
+        # Linux Environnment.
+        sed -i "s/$2/$1/g" "$3"
+    fi
 }
 
 echo "[CONFIG] - Starting project's configuration... "
