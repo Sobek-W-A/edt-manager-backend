@@ -7,8 +7,6 @@ from typing import Optional
 import redis
 from dotenv import load_dotenv
 
-from app.utils.CustomExceptions import RequiredFieldIsNone
-
 
 class Redis:
     """
@@ -31,11 +29,11 @@ class Redis:
         cls.redis_instance = redis.Redis(connection_pool=pool)
 
     @classmethod
-    def get_redis(cls) -> "redis.Redis[bytes]":
+    def get_redis(cls) -> Optional["redis.Redis[bytes]"]:
         """
         This method returns the redis connection pool instance.
         """
         if cls.redis_instance is None:
-            raise RequiredFieldIsNone("Redis client was not properly initialized ! Aborting...")
+            cls.load_redis()
 
         return cls.redis_instance

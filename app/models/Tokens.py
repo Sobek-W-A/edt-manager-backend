@@ -5,8 +5,8 @@ It provides models and methods to do so.
 
 import enum
 import os
-from datetime import datetime, timedelta
-from typing import TypeAlias
+from datetime import datetime, timedelta, timezone
+from typing import Optional, TypeAlias
 
 import bcrypt
 import jwt
@@ -14,7 +14,7 @@ import redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
 from passlib.context import CryptContext
-from app.utils.CustomExceptions import MissingEnvironnmentException
+from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
 
 from app.utils.databases.redis_helper import Redis
 from app.utils.http_errors import CommonErrorMessages
@@ -33,7 +33,7 @@ class TokenTypes(enum.Enum):
 
 class TokenAttributes:
     """
-    This class provides environnment informations about a Token in a cleaner way.
+    This class provides environnment information about a Token in a cleaner way.
     """
 
     token_type:  TokenTypes
@@ -92,27 +92,34 @@ class Token:
         :return: A Json Web Token.
         """
         # Generating data for the token
-        creation_date = datetime.now()
-        expire_date = timedelta(minutes=float(self.attributes.expire_time))
+        creation_date = datetime.now(tz=timezone.utc)
+        expire_date   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
+
         jwt_data: JWTData = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
             "iat": creation_date,
             "exp": expire_date
         }
-        self.value = jwt.encode(jwt_data, str(self.attributes.secret), self.attributes.algorithm) # type: ignore
+        self.value = jwt.encode(jwt_data, str(self.attributes.secret), # type: ignore
+                                self.attributes.algorithm)             # type: ignore
 
-    def revoke(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> None:
+    def revoke(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> None:
         """
         This method handles the necessary operations to revoke the token.
         """
         if self.value is None:
             return
 
+        if redis_db is None:
+            raise RequiredFieldIsNone("Redis instance is None !")
+
         # Extracting payload
         data: JWTData = self.extract_payload()
-        # Adding the token to redis blocklist with an expiration date equal to the expiration date.
-        redis_db.setex(self.value, data["exp"], self.attributes.token_type.value)
+        # Adding the token to redis blocklist with an expiration equal to 
+        # the expiration date - creation date.
+        ttl: timedelta = data["exp"] - data["iat"]
+        redis_db.setex(self.value, ttl, self.attributes.token_type.value)
         self.value = None
 
     def extract_payload(self) -> JWTData:
@@ -143,12 +150,14 @@ class Token:
         # We return the payload
         return data
 
-    def is_revoked(self, redis_db: "redis.Redis[bytes]" = Redis.get_redis()) -> bool:
+    def is_revoked(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> bool:
         """
         This method checks if the token has been blacklisted inside Redis DB.
         """
         # We check if the token is revoked (in the redis DB)
         # If the result is None, the token was not revoked
+        if redis_db is None:
+            raise RequiredFieldIsNone("Redis instance is None !")
         return not (self.value is None or redis_db.get(self.value) is None)
 
 
@@ -160,7 +169,7 @@ class TokenPair:
     """
 
     access_token:  Token
-    refresh_token: Token 
+    refresh_token: Token
 
     def __init__(self, access_token: str | None = None, refresh_token: str | None = None):
         self.access_token  = Token(AvailableTokenAttributes.AUTH_TOKEN.value, access_token)
@@ -209,5 +218,5 @@ class TokenPair:
         # Generating new tokens
         self.generate_tokens(user_id=user_id)
 
-# This allows us to regroup the Token models into one type.
+# This allows us to regroup the Token models into one type.
 AvailableTokenModels: TypeAlias = Token | TokenPair
