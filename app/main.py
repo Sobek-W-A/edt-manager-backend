@@ -6,8 +6,9 @@ Also contains the startup operations (like DB init).
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from starlette.responses import RedirectResponse
 
 from app.routes import auth, user
@@ -42,6 +43,13 @@ app: FastAPI = FastAPI(title="SOBEK W.A. API",
                        description="API For the SOBEK W.A web application",
                        openapi_tags=tags_metadata,
                        lifespan=lifespan)
+
+@app.exception_handler(AssertionError)
+async def assertion_exception_handler(request: Request, exc: AssertionError) -> JSONResponse:
+    return JSONResponse(
+        status_code=400,
+        content={"detail": str(exc)}
+    )
 
 # List of requests origins that are allowed for the API
 # IMPORTANT NOTICE: Using the wildcard * is dangerous:
