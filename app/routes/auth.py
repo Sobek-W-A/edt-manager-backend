@@ -7,12 +7,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.models.Tokens import AvailableTokenAttributes, TokenPair
+from app.services.Tokens import AvailableTokenAttributes, TokenPair
 from app.models.pydantic.TokenModel import PydanticTokenPair
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
 
-authRouter = APIRouter()
+authRouter = APIRouter(prefix="/auth")
 
 
 @authRouter.post("/login", response_model=PydanticTokenPair)

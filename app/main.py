@@ -62,8 +62,8 @@ app.add_middleware(
 )
 
 # Importing API routes :
-app.include_router(user.userRouter, prefix="/user", tags=["user"])
-app.include_router(auth.authRouter, prefix="/auth", tags=["auth"])
+app.include_router(user.userRouter, tags=["user"])
+app.include_router(auth.authRouter, tags=["auth"])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

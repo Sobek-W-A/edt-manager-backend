@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
-from app.models.Tokens import TokenAttributes, Token, TokenPair, AvailableTokenModels
+from app.services.Tokens import TokenAttributes, Token, TokenPair, AvailableTokenModels
 
 
 # -------- pydantic models -------- #
