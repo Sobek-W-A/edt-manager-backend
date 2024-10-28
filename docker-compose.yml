@@ -35,7 +35,7 @@ services:
   api:
     build:
       dockerfile: Dockerfile
-    command: sh -c "/wait && uvicorn app.main:app --host "0.0.0.0" --port 8000 --forwarded-allow-ips="*" --proxy-headers"
+    command: sh -c "/wait && uvicorn app.main:app --host "0.0.0.0" --port ${API_SERVER_PORT} --forwarded-allow-ips="*" --proxy-headers"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -49,7 +49,7 @@ services:
       - REFRESH_TOKEN_EXPIRE=${REFRESH_TOKEN_EXPIRE}
       - WAIT_HOSTS=postgres:${POSTGRES_PORT}, redis:${REDIS_PORT}
       - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_SLEEP_INTERVAL=1
       - WAIT_HOST_CONNECT_TIMEOUT=30
     ports:
       - "8000:8000"
@@ -61,7 +61,3 @@ services:
 volumes:
   postgres_data:
   redis_data:
-
-
-
-  
