@@ -1,49 +1,75 @@
-function run_dev {
-    Write-Host "[STATUS] - Running Development environment."
+function Clean-UpStack {
+    param (
+        [string]$composeFile
+    )
 
-    # Removing pre-existing containers
-    docker compose -f ./docker-compose_backdev.yml down -v --remove-orphans
-    # Building the new containers.
-    docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans
+    Write-Output "[STATUS] - Cleaning up stack defined in $composeFile"
 
-    # Running the application.
-    ./scripts/run.ps1
+    # Stop and remove containers, networks, and volumes associated with the specified compose file
+    docker compose -f $composeFile down -v --remove-orphans
+    # Remove dangling images specific to this compose file (only those not used by other containers)
+    docker images -f "dangling=true" -q | ForEach-Object { docker rmi $_ }
+    # Remove any anonymous or dangling volumes specific to this stack
+    docker volume prune -f
+    # Cleaning the older images
+    docker rm -f (docker ps -a -q --filter "name=sobekwa") | Out-Null
+    docker rmi -f (docker images -q --filter "reference=sobekwa*") | Out-Null
+
+    Write-Output "[STATUS] - Stack cleaned up successfully."
 }
 
-function run_bundle {
-    Write-Host "[STATUS] - Running Bundled environment."
+function Run-Dev {
+    Write-Output "[STATUS] - Running Development environment."
 
-    # Removing pre-existing containers
-    docker compose -f ./docker-compose.yml down -v --remove-orphans
-    # Building the new containers.
+    # Clean up the development stack
+    Clean-UpStack "./docker-compose_backdev.yml"
+
+    # Build and start the containers with no cache
+    docker compose -f ./docker-compose_backdev.yml build --no-cache
+    docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans --force-recreate
+
+    # Run the application script
+    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+    ./scripts/run.sh
+}
+
+function Run-Bundle {
+    Write-Output "[STATUS] - Running Bundled environment."
+
+    # Clean up the bundled stack
+    Clean-UpStack "./docker-compose.yml"
+
+    # Build and start the containers with no cache
+    $cacheBust = (Get-Date -UFormat %s)
+    docker compose -f ./docker-compose.yml build --no-cache --build-arg CACHEBUST=$cacheBust
+    docker compose -f ./docker-compose.yml up -d --remove-orphans --force-recreate
+}
+
+function Run-Prod {
+    Write-Output "[STATUS] - Running Production environment."
+
+    # No stack clean-up to retain the production state
     docker compose -f ./docker-compose.yml up -d --remove-orphans
 }
 
-function run_prod {
-    Write-Host "[STATUS] - Running Production environment."
-
-    # We do not remove older containers.
-    # Building the new containers.
-    docker compose -f ./docker-compose.yml up -d --remove-orphans
-}
-
-# Variables:
-$ENVIRONMENT = $args[0]
-$PROD = "production"
-$DEV = "development"
-$BUNDLE = "bundle"
+# Variables
+$environment = $args[0]
+$prod = "production"
+$dev = "development"
+$bundle = "bundle"
 
 # Initializing project's files.
-./scripts/init.ps1
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+./scripts/init.sh
 
-if ($ENVIRONMENT) {
-    if ($ENVIRONMENT -eq $DEV) {
-        run_dev
-    } elseif ($ENVIRONMENT -eq $BUNDLE) {
-        run_bundle
-    } elseif ($ENVIRONMENT -eq $PROD) {
-        run_prod
+if ($environment) {
+    if ($environment -eq $dev) {
+        Run-Dev
+    } elseif ($environment -eq $bundle) {
+        Run-Bundle
+    } elseif ($environment -eq $prod) {
+        Run-Prod
     }
 } else {
-    run_dev
+    Run-Dev
 }
