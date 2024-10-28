@@ -2,18 +2,16 @@
 This module provieds a router for the /user endpoint.
 """
 from fastapi import APIRouter
-from fastapi.responses import Response
 
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
+from app.models.pydantic.UserModel import PydanticUserModify
 
 import app.services.UserService as UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
 
-@userRouter.patch("/{user_id}", response_model=PydanticUserResponse)
-async def modify_user(user_id: int, user_model: PydanticUserModify, response: Response) -> PydanticUserResponse:
+@userRouter.patch("/{user_id}", status_code=205)
+async def modify_user(user_id: int, user_model: PydanticUserModify) -> None:
     """
     This controllers is used when modifying user informations.
     """
-    resp: PydanticUserResponse = await UserService.modify_user(user_id, user_model)
-    return resp
+    await UserService.modify_user(user_id, user_model)
