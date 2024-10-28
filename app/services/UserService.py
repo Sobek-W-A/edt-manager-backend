@@ -17,6 +17,12 @@ async def modify_user(user_id: int, model: PydanticUserModify):
     if user_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 
+    if model.mail and await UserInDB.all().filter(mail=model.mail).count() != 0:
+        raise HTTPException(status_code=409, detail=CommonErrorMessages.MAIL_ALREADY_USED)
+    
+    if model.login and await UserInDB.all().filter(login=model.login).count() != 0:
+        raise HTTPException(status_code=409, detail=CommonErrorMessages.LOGIN_ALREADY_USED)
+
     try:
         user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True)) # type: ignore
         if model.password is not None:

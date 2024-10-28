@@ -2,6 +2,7 @@
 This module provides the User's DTO using pydantic.
 """
 from typing import Optional, Self
+from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 
 from app.utils.http_errors import CommonErrorMessages
@@ -27,7 +28,8 @@ class PydanticUserModify(BaseModel):
         This validator ensures that the two passwords provided match if they are not None.
         """
         if self.password is not None:
-            assert self.password == self.password_confirm, CommonErrorMessages.PASSWORDS_DONT_MATCH
+            if self.password != self.password_confirm:
+                raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
 
 class PydanticUserResponse(BaseModel):
