@@ -25,12 +25,10 @@ COPY ./app ./app
 # Instruction informs Docker that the container listens on port 8000
 EXPOSE 8000
 
-# Now we just want to our WORKDIR to be /build/app for simplicity
-# We could skip this part and then type
-# python -m uvicorn main.app:app ... below
-WORKDIR /build/app
+# Adding a wait command to wait for other containers to start.
+ENV WAIT_VERSION 2.11.0
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
+RUN chmod +x /wait
 
 # This command runs our uvicorn server
-# See Troubleshoots to understand why we need to type in --host 0.0.0.0 and --port 8080
-CMD python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
-
+CMD python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
