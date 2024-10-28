@@ -11,6 +11,9 @@ import app.services.UserService as UserService
 userRouter: APIRouter = APIRouter(prefix="/user")
 
 @userRouter.patch("/{user_id}", response_model=PydanticUserResponse)
-async def modify_user(user_id: int, user_model: PydanticUserModify) -> Response:
+async def modify_user(user_id: int, user_model: PydanticUserModify, response: Response) -> PydanticUserResponse:
+    """
+    This controllers is used when modifying user informations.
+    """
     resp: PydanticUserResponse = await UserService.modify_user(user_id, user_model)
-    return Response(content=resp, status_code=205)
+    return resp

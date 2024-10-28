@@ -12,7 +12,7 @@ class CommonErrorMessages(enum.StrEnum):
     PASSWORD_NOT_SECURE      = "The password provided is not secure enough."
     LOGIN_ALREADY_USED       = "This login has already been used."
     MAIL_ALREADY_USED        = "This mail address has already been used."
-    MAIL_INVALID             = "Invalid mail address." 
+    MAIL_INVALID             = "Invalid mail address."
     NAME_INVALID             = "Invalid name (name should only contain alphabetic characters and spaces)"
     LOGIN_INVALID            = "Invalid login (login should only contain alphabetic characters, digits and spaces)"
     USER_NOT_FOUND           = "User was not found."
