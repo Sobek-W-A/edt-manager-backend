@@ -25,12 +25,12 @@ function Run-Dev {
     Clean-UpStack "./docker-compose_backdev.yml"
 
     # Build and start the containers with no cache
-    docker compose -f ./docker-compose_backdev.yml build --no-cache
-    docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans --force-recreate
+    docker compose -f .\docker-compose_backdev.yml build --no-cache
+    docker compose -f .\docker-compose_backdev.yml up -d --remove-orphans --force-recreate
 
     # Run the application script
     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-    ./scripts/run.sh
+    .\scripts\run.ps1
 }
 
 function Run-Bundle {
@@ -41,15 +41,15 @@ function Run-Bundle {
 
     # Build and start the containers with no cache
     $cacheBust = (Get-Date -UFormat %s)
-    docker compose -f ./docker-compose.yml build --no-cache --build-arg CACHEBUST=$cacheBust
-    docker compose -f ./docker-compose.yml up -d --remove-orphans --force-recreate
+    docker compose -f .\docker-compose.yml build --no-cache --build-arg CACHEBUST=$cacheBust
+    docker compose -f .\docker-compose.yml up -d --remove-orphans --force-recreate
 }
 
 function Run-Prod {
     Write-Output "[STATUS] - Running Production environment."
 
     # No stack clean-up to retain the production state
-    docker compose -f ./docker-compose.yml up -d --remove-orphans
+    docker compose -f .\docker-compose.yml up -d --remove-orphans
 }
 
 # Variables
@@ -59,8 +59,7 @@ $dev = "development"
 $bundle = "bundle"
 
 # Initializing project's files.
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-./scripts/init.sh
+.\scripts\init.ps1
 
 if ($environment) {
     if ($environment -eq $dev) {
