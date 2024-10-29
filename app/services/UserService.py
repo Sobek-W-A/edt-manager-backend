@@ -31,3 +31,15 @@ async def modify_user(user_id: int, model: PydanticUserModify):
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
+
+async def delete_user(user_id: int):
+    """
+    This method deletes the user by id
+    raise exception if user is not found
+    """
+    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
+
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+    
+    await user.delete()
