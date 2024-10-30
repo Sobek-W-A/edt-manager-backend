@@ -3,7 +3,7 @@ This module provides the User's DTO using pydantic.
 """
 from typing import Optional, Self
 from fastapi import HTTPException
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, Field, EmailStr
 
 from app.utils.http_errors import CommonErrorMessages
 
@@ -31,6 +31,14 @@ class PydanticUserModify(BaseModel):
             if self.password != self.password_confirm:
                 raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
+
+class PydanticUserCreate(BaseModel):
+
+    login: str = Field(..., min_length=1)
+    firstname: str = Field(..., min_length=1)
+    lastname: str = Field(..., min_length=1)
+    mail: EmailStr = Field(..., min_length=1)
+    password: Optional[str] = None
 
 class PydanticUserResponse(BaseModel):
     """
