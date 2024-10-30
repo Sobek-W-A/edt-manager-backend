@@ -44,3 +44,26 @@ class CredentialsException(HTTPException):
     """
     def __init__(self, headers: Dict[str, str] | None = None) -> None:
         super().__init__(401, CommonErrorMessages.INVALID_CREDENTIALS.value, headers)
+
+
+class LoginAlreadyUsedException(HTTPException):
+    """
+    This Exception is meant to be used when the login provided is already used.
+    """
+    def __init__(self, headers: Dict[str, str] | None = None) -> None:
+        super().__init__(401, CommonErrorMessages.LOGIN_ALREADY_USED.value, headers)
+
+
+class MailAlreadyUsedException(HTTPException):
+    """
+    This Exception is meant to be used when the mail provided is already used.
+    """
+    def __init__(self, headers: Dict[str, str] | None = None) -> None:
+        super().__init__(401, CommonErrorMessages.MAIL_ALREADY_USED.value, headers)
+
+class MailIncorrectFormatException(HTTPException):
+    """
+    This Exception is meant to be used when the mail provided has an incorrect format.
+    """
+    def __init__(self, headers: Dict[str, str] | None = None) -> None:
+        super().__init__(401, CommonErrorMessages.MAIL_INCORRECT_FORMAT.value, headers)

@@ -99,10 +99,3 @@ class UserInDB(Model):
         table = "User"
 
 
-class CreateUserInDB(BaseModel):
-
-    login : str = Field(..., min_length=1)
-    firstname : str = Field(..., min_length=1)
-    lastname : str = Field(..., min_length=1)
-    mail : str = Field(..., min_length=1)
-    hash : Optional[str] = None
