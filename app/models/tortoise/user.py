@@ -13,7 +13,7 @@ from pydantic.v1 import BaseModel
 from tortoise import fields
 from tortoise.models import Model
 
-from app.models.Tokens import AvailableTokenAttributes, Token
+from app.services.Tokens import AvailableTokenAttributes, Token
 from app.models.pydantic.TokenModel import PydanticToken
 from app.utils.type_hint import JWTData
 

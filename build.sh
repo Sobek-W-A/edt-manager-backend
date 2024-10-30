@@ -1,38 +1,59 @@
 #!/bin/bash
 
+function clean_up_stack() {
+  local compose_file="$1"
+
+  echo "[STATUS] - Cleaning up stack defined in ${compose_file}"
+
+  # Stop and remove containers, networks, and volumes associated with the specified compose file
+  docker compose -f "${compose_file}" down -v --remove-orphans
+  # Remove dangling images specific to this compose file (only those not used by other containers)
+  docker images -f "dangling=true" -q | xargs -r docker rmi
+  # Remove any anonymous or dangling volumes specific to this stack
+  docker volume prune -f
+  # Cleaning the older images
+  docker rm -f $(docker ps -a -q --filter "name=sobekwa")
+  docker rmi -f $(docker images -q --filter "reference=sobekwa*")
+
+  echo "[STATUS] - Stack cleaned up successfully."
+}
+
 function run_dev() {
-  echo "[STATUS] - Running Development environnnement."
+  echo "[STATUS] - Running Development environment."
 
-  # Removing pre-existing containers
-  docker compose -f ./docker-compose_backdev.yml down -v --remove-orphans
-  # Building the new containers.
-  docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans
+  # Clean up the development stack
+  clean_up_stack ./docker-compose_backdev.yml
 
-  # Running the application.
+  # Build and start the containers with no cache
+  docker compose -f ./docker-compose_backdev.yml build --no-cache
+  docker compose -f ./docker-compose_backdev.yml up -d --remove-orphans --force-recreate
+
+  # Run the application script
   chmod +x ./scripts/run.sh
   ./scripts/run.sh
 }
 
 function run_bundle() {
-  echo "[STATUS] - Running Bundled environnnement."
+  echo "[STATUS] - Running Bundled environment."
 
+  # Clean up the bundled stack
+  clean_up_stack ./docker-compose.yml
 
-  # Removing pre-existing containers
-  docker compose -f ./docker-compose.yml down -v --remove-orphans
-  # Building the new containers.
-  docker compose -f ./docker-compose.yml up -d --remove-orphans
+  # Build and start the containers with no cache
+
+  docker compose -f ./docker-compose.yml build --no-cache --build-arg CACHEBUST=$(date +%s)
+  docker compose -f ./docker-compose.yml up -d --remove-orphans --force-recreate
 }
 
 function run_prod() {
-  echo "[STATUS] - Running Production environnnement."
+  echo "[STATUS] - Running Production environment."
 
-  # We do not remove older containers.
-  # Building the new containers.
+  # No stack clean-up to retain the production state
   docker compose -f ./docker-compose.yml up -d --remove-orphans
 }
 
-# Variables :
-ENVIRONNMENT="$1"
+# Variables:
+ENVIRONMENT="$1"
 PROD="production"
 DEV="development"
 BUNDLE="bundle"
@@ -41,12 +62,12 @@ BUNDLE="bundle"
 chmod +x ./scripts/init.sh
 ./scripts/init.sh
 
-if [[ -n "$ENVIRONNMENT" ]]; then
-  if [[ "$ENVIRONNMENT" == "$DEV" ]]; then
+if [[ -n "$ENVIRONMENT" ]]; then
+  if [[ "$ENVIRONMENT" == "$DEV" ]]; then
     run_dev
-  elif [[ "$ENVIRONNMENT" == "$BUNDLE" ]]; then
+  elif [[ "$ENVIRONMENT" == "$BUNDLE" ]]; then
     run_bundle
-  elif [[ "$ENVIRONNMENT" == "$PROD" ]]; then
+  elif [[ "$ENVIRONMENT" == "$PROD" ]]; then
     run_prod
   fi
 else

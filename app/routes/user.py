@@ -11,8 +11,11 @@ import string
 
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailIncorrectFormatException
+from app.models.pydantic.UserModel import PydanticUserModify
 
-userRouter: APIRouter = APIRouter()
+import app.services.UserService as UserService
+
+userRouter: APIRouter = APIRouter(prefix="/user")
 
 
 @userRouter.post("/create")
@@ -66,3 +69,11 @@ async def create_user(body: CreateUserInDB):
 
     #We return the password withou hashed because the admin need it to give it to the employee
     return "Password : " + password
+
+
+@userRouter.patch("/{user_id}", status_code=205)
+async def modify_user(user_id: int, user_model: PydanticUserModify) -> None:
+    """
+    This controllers is used when modifying user informations.
+    """
+    await UserService.modify_user(user_id, user_model)
