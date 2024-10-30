@@ -3,7 +3,7 @@ User-related operations service.
 Provides the methods to use when interacting with a user.
 """
 from fastapi import HTTPException
-from app.models.pydantic.UserModel import PydanticUserModify
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
 from app.models.tortoise.user import UserInDB
 from app.utils.http_errors import CommonErrorMessages
 
@@ -31,3 +31,21 @@ async def modify_user(user_id: int, model: PydanticUserModify):
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
+
+async def get_all_users():
+    """
+    Retrieves all users.
+    """
+    users = await UserInDB.all()
+    return [PydanticUserResponse(**user.__dict__) for user in users]
+
+
+async def get_user_by_id(user_id: int):
+    """
+    Retrieves a user by their ID.
+    """
+    user = await UserInDB.get_or_none(id=user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+    
+    return PydanticUserResponse(**user.__dict__)
