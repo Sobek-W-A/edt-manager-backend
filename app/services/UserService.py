@@ -9,13 +9,13 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from app.models.pydantic import validator
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
 from app.utils.http_errors import CommonErrorMessages
 
 
-async def modify_user(user_id: int, model: PydanticUserModify):
+async def modify_user(user_id: int, model: PydanticUserModify) -> None:
     """
     This method modifies the user qualified by the id provided.
     """
@@ -24,14 +24,14 @@ async def modify_user(user_id: int, model: PydanticUserModify):
     if user_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 
-    if await UserInDB.get(mail=model.mail).exists():
+    if await UserInDB.filter(mail=model.mail).exists():
         raise MailAlreadyUsedException
 
     if await UserInDB.filter(login=model.login).exists():
         raise LoginAlreadyUsedException
 
     try:
-        user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True))
+        user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True)) # type: ignore
         if model.password is not None:
             user_to_modify.hash = UserInDB.get_password_hash(model.password)
         await user_to_modify.save()
@@ -40,7 +40,7 @@ async def modify_user(user_id: int, model: PydanticUserModify):
         raise HTTPException(status_code=409, detail=str(e)) from e
 
 
-async def create_user(model: PydanticUserCreate) -> str:
+async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse:
     """
     This method creates a new user.
     """
@@ -67,7 +67,6 @@ async def create_user(model: PydanticUserCreate) -> str:
 
         password = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
     else:
-        validator.is_password(model.password)
         password = model.password
 
     #We hash the password
@@ -85,4 +84,4 @@ async def create_user(model: PydanticUserCreate) -> str:
         raise MailInvalidException from e
 
     #We return the password without hashed because the admin need it to give it to the employee
-    return password
+    return PydanticUserPasswordResponse(password=password)

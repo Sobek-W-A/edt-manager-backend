@@ -3,7 +3,7 @@ This module provides the User's DTO using pydantic.
 """
 from typing import Optional, Self
 from fastapi import HTTPException
-from pydantic import BaseModel, model_validator, Field, EmailStr
+from pydantic import BaseModel, model_validator
 
 from app.utils.http_errors import CommonErrorMessages
 
@@ -37,11 +37,27 @@ class PydanticUserCreate(BaseModel):
     This model is meant to be used when we need to create a new user.
     """
     login: Login
+    # The admin can choose the password or let it be generated
+    password: Optional[Password] = None
+    password_confirm: Optional[Password] = None
     firstname: Name
     lastname: Name
     mail: Mail
-    #The admin can choose the password or let it be generated
-    password: Optional[Password] = None
+
+
+    @model_validator(mode="after")
+    def check_password(self) -> Self:
+        """
+        This validator ensures that the two passwords provided match if they are not None.
+        This validator ensures that the two passwords are provided together or none.
+        """
+        if (self.password_confirm is None) != (self.password is None):
+            raise HTTPException(status_code=400,detail="Both 'password' and 'password_confirm' must be specified together or not at all.")
+
+        if self.password is not None:
+            if self.password != self.password_confirm:
+                raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
+        return self
 
 class PydanticUserResponse(BaseModel):
     """
@@ -52,3 +68,9 @@ class PydanticUserResponse(BaseModel):
     firstname: Name
     lastname:  Name
     mail:      Mail
+
+class PydanticUserPasswordResponse(BaseModel):
+    """
+    This model is meant to be used when we need to return the password of the user.
+    """
+    password: Password

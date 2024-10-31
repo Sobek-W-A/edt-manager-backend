@@ -3,15 +3,15 @@ This module provieds a router for the /user endpoint.
 """
 from fastapi import APIRouter, Response
 
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse
 
 import app.services.UserService as UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
 
 
-@userRouter.post("/create", status_code=201)
-async def create_user(body: PydanticUserCreate) -> str:
+@userRouter.post("", status_code=201)
+async def create_user(body: PydanticUserCreate) -> PydanticUserPasswordResponse:
     """
     This method creates a new user.
     """
