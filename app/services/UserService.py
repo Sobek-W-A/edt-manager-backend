@@ -37,7 +37,7 @@ async def get_all_users() -> list[PydanticUserResponse]:
     Retrieves all users.
     """
     users = await UserInDB.all()
-    return [PydanticUserResponse.from_orm(user) for user in users]  # Use from_orm for each user
+    return [PydanticUserResponse.model_validate(user) for user in users]  # Use model_validate for each user
 
 async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     """
@@ -46,5 +46,6 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     user = await UserInDB.get_or_none(id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
-    
-    return PydanticUserResponse.from_orm(user)  # Use from_orm to create the response model
+
+    return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
+

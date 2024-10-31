@@ -1,7 +1,7 @@
 """
 This module provieds a router for the /user endpoint.
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
 
