@@ -9,41 +9,12 @@ from app.utils.http_errors import CommonErrorMessages
 
 from .validator import Mail, Password, Name, Login
 
-class PydanticUserModify(BaseModel):
+class PydanticUserBasePassword(BaseModel):
     """
-    This model is meant to be used as model-check for user-modification
-    related requests.
+    Base model for the password with validation
     """
-
-    login:            Optional[Login]    = None
-    password:         Optional[Password] = None
-    password_confirm: Optional[Password] = None
-    firstname:        Optional[Name]     = None
-    lastname:         Optional[Name]     = None
-    mail:             Optional[Mail]     = None
-
-    @model_validator(mode="after")
-    def check_password(self) -> Self:
-        """
-        This validator ensures that the two passwords provided match if they are not None.
-        """
-        if self.password is not None:
-            if self.password != self.password_confirm:
-                raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
-        return self
-
-class PydanticUserCreate(BaseModel):
-    """
-    This model is meant to be used when we need to create a new user.
-    """
-    login: Login
-    # The admin can choose the password or let it be generated
     password: Optional[Password] = None
     password_confirm: Optional[Password] = None
-    firstname: Name
-    lastname: Name
-    mail: Mail
-
 
     @model_validator(mode="after")
     def check_password(self) -> Self:
@@ -52,12 +23,31 @@ class PydanticUserCreate(BaseModel):
         This validator ensures that the two passwords are provided together or none.
         """
         if (self.password_confirm is None) != (self.password is None):
-            raise HTTPException(status_code=400,detail="Both 'password' and 'password_confirm' must be specified together or not at all.")
+            raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED)
 
         if self.password is not None:
             if self.password != self.password_confirm:
-                raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
+                raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
+
+class PydanticUserModify(PydanticUserBasePassword):
+    """
+    This model is meant to be used as model-check for user-modification
+    related requests.
+    """
+    login:            Optional[Login]    = None
+    firstname:        Optional[Name]     = None
+    lastname:         Optional[Name]     = None
+    mail:             Optional[Mail]     = None
+
+class PydanticUserCreate(PydanticUserBasePassword):
+    """
+    This model is meant to be used when we need to create a new user.
+    """
+    login:          Login
+    firstname:      Name
+    lastname:       Name
+    mail:           Mail
 
 class PydanticUserResponse(BaseModel):
     """

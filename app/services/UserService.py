@@ -8,7 +8,6 @@ import string
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from app.models.pydantic import validator
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
