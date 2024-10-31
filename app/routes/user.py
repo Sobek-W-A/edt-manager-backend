@@ -10,10 +10,10 @@ import app.services.UserService as UserService
 userRouter: APIRouter = APIRouter(prefix="/user")
 
 
-@userRouter.post("/create")
+@userRouter.post("/create", status_code=201)
 async def create_user(body: PydanticUserCreate) -> str:
     """
-    This method create a new user.
+    This method creates a new user.
     """
     return await UserService.create_user(body)
 

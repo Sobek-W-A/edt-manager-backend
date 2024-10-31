@@ -33,12 +33,14 @@ class PydanticUserModify(BaseModel):
         return self
 
 class PydanticUserCreate(BaseModel):
-
-    login: str = Field(..., min_length=1)
-    firstname: str = Field(..., min_length=1)
-    lastname: str = Field(..., min_length=1)
-    mail: EmailStr = Field(..., min_length=1)
-    password: Optional[str] = None
+    """
+    This model is meant to be used when we need to create a new user.
+    """
+    login: Login
+    firstname: Name
+    lastname: Name
+    mail: Mail
+    password: Optional[Password] = None
 
 class PydanticUserResponse(BaseModel):
     """

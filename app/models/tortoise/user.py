@@ -8,8 +8,6 @@ import bcrypt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from pydantic import Field
-from pydantic.v1 import BaseModel
 from tortoise import fields
 from tortoise.models import Model
 
@@ -97,5 +95,3 @@ class UserInDB(Model):
         This class is used to indicate the name of the Table to create inside the database.
         """
         table = "User"
-
-

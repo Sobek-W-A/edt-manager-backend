@@ -8,6 +8,7 @@ import string
 from fastapi import HTTPException
 from pydantic import ValidationError
 
+from app.models.pydantic import validator
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailIncorrectFormatException
@@ -63,26 +64,22 @@ async def create_user(model: PydanticUserCreate):
 
         password = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
     else:
+        validator.is_password(model.password)
         password = model.password
-
-    #We generate a new id based on the last one
-    last_user = await UserInDB.all().order_by('-id').first()
-    new_id = last_user.id + 1 if last_user else 1
 
     #We hash the password
     hashed = UserInDB.get_password_hash(password)
 
     try:
         await UserInDB.create(
-            id=new_id,
             login=model.login,
             firstname=model.firstname,
             lastname=model.lastname,
             mail=model.mail,
             hash=hashed
         )
-    except ValidationError:
-        raise MailIncorrectFormatException
+    except ValidationError as e:
+        raise MailIncorrectFormatException from e
 
     #We return the password without hashed because the admin need it to give it to the employee
     return password
