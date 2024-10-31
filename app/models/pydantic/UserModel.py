@@ -40,6 +40,7 @@ class PydanticUserCreate(BaseModel):
     firstname: Name
     lastname: Name
     mail: Mail
+    #The admin can choose the password or let it be generated
     password: Optional[Password] = None
 
 class PydanticUserResponse(BaseModel):

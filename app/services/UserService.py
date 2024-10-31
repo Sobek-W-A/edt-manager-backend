@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from app.models.pydantic import validator
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate
 from app.models.tortoise.user import UserInDB
-from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailIncorrectFormatException
+from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
 from app.utils.http_errors import CommonErrorMessages
 
 
@@ -24,11 +24,11 @@ async def modify_user(user_id: int, model: PydanticUserModify):
     if user_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 
-    if model.mail and await UserInDB.all().filter(mail=model.mail).count() != 0:
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.MAIL_ALREADY_USED)
+    if await UserInDB.get(mail=model.mail).exists():
+        raise MailAlreadyUsedException
 
-    if model.login and await UserInDB.all().filter(login=model.login).count() != 0:
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.LOGIN_ALREADY_USED)
+    if await UserInDB.filter(login=model.login).exists():
+        raise LoginAlreadyUsedException
 
     try:
         user_to_modify.update_from_dict(
@@ -41,13 +41,17 @@ async def modify_user(user_id: int, model: PydanticUserModify):
         raise HTTPException(status_code=409, detail=str(e)) from e
 
 
-async def create_user(model: PydanticUserCreate):
+async def create_user(model: PydanticUserCreate) -> str:
+    """
+    This method creates a new user.
+    """
+
     #We check if the login or mail are already used
 
     if await UserInDB.filter(login=model.login).exists():
         raise LoginAlreadyUsedException
 
-    if await UserInDB.get(mail=model.mail).exists():
+    if await UserInDB.filter(mail=model.mail).exists():
         raise MailAlreadyUsedException
 
     #If no password mentionned in the body, we generate one
@@ -79,7 +83,7 @@ async def create_user(model: PydanticUserCreate):
             hash=hashed
         )
     except ValidationError as e:
-        raise MailIncorrectFormatException from e
+        raise MailInvalidException from e
 
     #We return the password without hashed because the admin need it to give it to the employee
     return password

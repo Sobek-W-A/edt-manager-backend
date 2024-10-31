@@ -17,7 +17,6 @@ class CommonErrorMessages(enum.StrEnum):
     LOGIN_INVALID            = "Invalid login (login should only contain alphabetic characters, digits and spaces)"
     USER_NOT_FOUND           = "User was not found."
     USER_NOT_ENABLED         = "This user is not enabled."
-    MAIL_INCORRECT_FORMAT    = "This user mail has a wrong format"
     # Credentials Errors
     INVALID_CREDENTIALS      = "Invalid credentials."
     INCORRECT_LOGIN_PASSWORD = "Incorrect login or password."
