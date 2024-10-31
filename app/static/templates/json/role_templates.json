@@ -1,0 +1,19 @@
+{
+    "roles": [
+        "Administrator" : {
+            
+        },
+        "Teacher" : {
+
+        },
+        "Educational Secretariat" : {
+
+        },
+        "Formation Manager" : {
+
+        },
+        "Department Manager" : {
+
+        }
+    ]
+}

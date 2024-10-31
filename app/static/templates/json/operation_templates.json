@@ -1,0 +1,20 @@
+{
+    "operations": [
+        {
+            "name": "Create",
+            "description": "Operations that correspond to creation of a resource"
+        },
+        {
+            "name": "Delete",
+            "description": "Operations that correspond to deletion of a resource"
+        },
+        {
+            "name": "Update",
+            "description": "Operations that correspond to an update of a resource"
+        },
+        {
+            "name": "Get",
+            "description": "Operations that correspond to retrieval of a resource"
+        }
+    ]
+}
