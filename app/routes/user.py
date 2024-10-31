@@ -29,7 +29,4 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     """
     Retrieves a user by their ID.
     """
-    try:
-        return await UserService.get_user_by_id(user_id)
-    except HTTPException as e:
-        raise e
+    return await UserService.get_user_by_id(user_id)

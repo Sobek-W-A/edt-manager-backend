@@ -32,15 +32,14 @@ async def modify_user(user_id: int, model: PydanticUserModify):
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
 
-async def get_all_users():
+async def get_all_users() -> list[PydanticUserResponse]:
     """
     Retrieves all users.
     """
     users = await UserInDB.all()
-    return [PydanticUserResponse(**user.__dict__) for user in users]
+    return [PydanticUserResponse.from_orm(user) for user in users]  # Use from_orm for each user
 
-
-async def get_user_by_id(user_id: int):
+async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     """
     Retrieves a user by their ID.
     """
@@ -48,4 +47,4 @@ async def get_user_by_id(user_id: int):
     if user is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
     
-    return PydanticUserResponse(**user.__dict__)
+    return PydanticUserResponse.from_orm(user)  # Use from_orm to create the response model
