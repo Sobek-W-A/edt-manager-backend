@@ -31,8 +31,7 @@ async def modify_user(user_id: int, model: PydanticUserModify):
         raise LoginAlreadyUsedException
 
     try:
-        user_to_modify.update_from_dict(
-            model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True))  # type: ignore
+        user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True))
         if model.password is not None:
             user_to_modify.hash = UserInDB.get_password_hash(model.password)
         await user_to_modify.save()
