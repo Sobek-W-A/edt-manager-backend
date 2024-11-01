@@ -12,10 +12,9 @@ import app.services.UserService as UserService
 userRouter: APIRouter = APIRouter(prefix="/user")
 
 @userRouter.patch("/{user_id}", status_code=205)
-async def modify_user(user_id: int, user_model: PydanticUserModify, current_user: Annotated[UserInDB, Depends(UserService.get_current_user)]) -> None:
+async def modify_user(user_id: int, user_model: PydanticUserModify, current_user: Annotated[UserInDB, Depends(UserService.get_current_user)]) -> Response:
     """
     This controllers is used when modifying user informations.
     """
-    await UserService.modify_user(user_id, user_model)
-    return Response(status_code=205)
     await UserService.modify_user(user_id, user_model, current_user)
+    return Response(status_code=205)
