@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.pydantic.UserModel import PydanticUserModify
 from app.models.tortoise.user import UserInDB
+from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, Token
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -40,7 +41,7 @@ async def modify_user(user_id: int, model: PydanticUserModify, current_user: Use
     try:
         user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True)) # type: ignore
         if model.password is not None:
-            user_to_modify.hash = UserInDB.get_password_hash(model.password)
+            user_to_modify.hash = SecurityService.get_password_hash(model.password)
         await user_to_modify.save()
 
     except ValueError as e:

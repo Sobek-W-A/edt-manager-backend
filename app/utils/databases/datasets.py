@@ -9,6 +9,7 @@ from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.user import UserInDB
 from app.models.tortoise.role import RoleInDB
+from app.services import SecurityService
 
 async def load_dummy_datasets() -> None:
     """
@@ -34,7 +35,7 @@ async def load_dummy_users() -> None:
             for user in data["users"]:
                 role = await RoleInDB.get_or_none(role_name=user["role"])
                 user = UserInDB(login=user["login"],
-                                hash=UserInDB.get_password_hash(user["password"]),
+                                hash=SecurityService.get_password_hash(user["password"]),
                                 mail=user["mail"],
                                 firstname=user["firstname"],
                                 lastname=user["lastname"],
