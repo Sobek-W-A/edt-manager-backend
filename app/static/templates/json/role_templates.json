@@ -1,19 +1,24 @@
 {
     "roles": [
-        "Administrator" : {
-            
+        {
+            "name": "Administrator",
+            "description": "Role that corresponds to the administrator of the system."
         },
-        "Teacher" : {
-
+        {
+            "name": "Department Manager",
+            "description": "Role that corresponds to the department manager."
         },
-        "Educational Secretariat" : {
-
+        {
+            "name": "Formation Manager",
+            "description": "Role that corresponds to the formation manager."
         },
-        "Formation Manager" : {
-
+        {
+            "name": "Educational Secretariat",
+            "description": "Role that corresponds to the educational secretariat."
         },
-        "Department Manager" : {
-
+        {
+            "name": "Teacher",
+            "description": "Role that corresponds to the teachers."
         }
     ]
 }
