@@ -2,7 +2,7 @@
 This module provieds a router for the /user endpoint.
 """
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 
 from app.models.pydantic.UserModel import PydanticUserModify
 
@@ -16,4 +16,6 @@ async def modify_user(user_id: int, user_model: PydanticUserModify, current_user
     """
     This controllers is used when modifying user informations.
     """
+    await UserService.modify_user(user_id, user_model)
+    return Response(status_code=205)
     await UserService.modify_user(user_id, user_model, current_user)
