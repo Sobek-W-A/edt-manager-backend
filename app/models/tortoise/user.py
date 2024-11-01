@@ -21,7 +21,7 @@ class UserInDB(Model):
     lastname  : Field[str]                   = CharField(max_length=128)
     mail      : Field[str]                   = CharField(unique=True, required=True, max_length=128)
     hash      : Field[str]                   = TextField(required=True)
-    role      : ForeignKeyRelation[RoleInDB] = ForeignKeyField("models.RoleInDB", related_name="role")
+    role      : ForeignKeyRelation[RoleInDB] = ForeignKeyField("models.RoleInDB", related_name="role", default="Administrator")
 
     def __str__(self) -> str:
         """
