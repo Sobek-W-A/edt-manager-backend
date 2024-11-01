@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.services import AuthService
 from app.models.pydantic.TokenModel import PydanticTokenPair
-from app.utils.type_hint import ClassicOkResponse
+from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 authRouter = APIRouter(prefix="/auth")
 
@@ -28,8 +28,7 @@ async def logout(tokens: PydanticTokenPair) -> ClassicOkResponse:
     """
     This method logs out the user.
     """
-    return await AuthService.logout(tokens) 
-
+    return await AuthService.logout(tokens)
 
 
 @authRouter.post("/refresh", response_model=PydanticTokenPair, status_code=200)

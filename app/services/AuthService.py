@@ -6,7 +6,7 @@ from app.models.pydantic.TokenModel import PydanticTokenPair
 from app.services import SecurityService
 from app.services.Tokens import AvailableTokenAttributes, TokenPair
 from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
-from app.utils.type_hint import ClassicOkResponse
+from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 
 async def login(username: str, password: str) -> PydanticTokenPair:

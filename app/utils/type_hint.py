@@ -12,10 +12,3 @@ class JWTData(TypedDict):
     salt: str
     iat: datetime
     exp: datetime
-
-
-class ClassicOkResponse():
-    """
-    This class is used to describe a classic response with a message.
-    """
-    message: str = "Ok"
