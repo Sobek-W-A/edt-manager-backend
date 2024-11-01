@@ -41,3 +41,5 @@ class PydanticUserResponse(BaseModel):
     firstname: Name
     lastname:  Name
     mail:      Mail
+    class Config:
+        from_attributes = True

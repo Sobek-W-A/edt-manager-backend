@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from app.models.pydantic.TokenModel import PydanticToken
-from app.models.pydantic.UserModel import PydanticUserModify
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
 from app.models.tortoise.user import UserInDB
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
@@ -48,7 +48,6 @@ async def modify_user(user_id: int, model: PydanticUserModify, current_user: Use
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
 
-
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
     """
     This method returns the user corresponding to the user ID stored inside the token provided.
@@ -67,3 +66,20 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Opt
 
     # Otherwise, we successfully identified as the user in the database!
     return user
+  
+async def get_all_users() -> list[PydanticUserResponse]:
+    """
+    Retrieves all users.
+    """
+    users = await UserInDB.all()
+    return [PydanticUserResponse.model_validate(user) for user in users]  # Use model_validate for each user
+
+async def get_user_by_id(user_id: int) -> PydanticUserResponse:
+    """
+    Retrieves a user by their ID.
+    """
+    user = await UserInDB.get_or_none(id=user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+
+    return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
