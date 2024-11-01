@@ -27,7 +27,8 @@ class PydanticToken(PydanticTokenExporter):
     """
     This class is a pydantic model for a signle Token.
     """
-    value: str
+    value:      str
+    token_type: str = "bearer"
 
     def export_pydantic_to_model(self, attributes: TokenAttributes) -> Token:
         return Token(attributes=attributes, value=self.value)
@@ -36,8 +37,9 @@ class PydanticTokenPair(PydanticTokenExporter):
     """
     This class is a pydantic model for a pair of Tokens.
     """
-    access_token: str
-    refresh_token: str
+    access_token:   str
+    refresh_token:  str
+    token_type:     str = "bearer"
 
     def export_pydantic_to_model(self, attributes: TokenAttributes | None = None) -> TokenPair:
         return TokenPair(access_token=self.access_token, refresh_token=self.refresh_token)

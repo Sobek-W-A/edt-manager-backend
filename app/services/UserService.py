@@ -18,7 +18,8 @@ from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
 from app.utils.type_hint import JWTData
 
-oauth2_scheme:  OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
+oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None:
@@ -48,15 +49,15 @@ async def modify_user(user_id: int, model: PydanticUserModify, current_user: Use
         raise HTTPException(status_code=409, detail=str(e)) from e
 
 
-async def get_current_user(token: Annotated[PydanticToken, Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
     """
     This method returns the user corresponding to the user ID stored inside the token provided.
     :param token: Token used to extract data from.
     """
     # Trying to decode the token given
-    token_model:  Token = token.export_pydantic_to_model(AvailableTokenAttributes
-                                                         .AUTH_TOKEN.value)
-    token_payload: JWTData = token_model.extract_payload()
+    token_pydantic: PydanticToken = PydanticToken(value=token)
+    token_model:    Token = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
+    token_payload:  JWTData = token_model.extract_payload()
 
     user_id: int = token_payload.get("user_id", None)
 
