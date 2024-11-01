@@ -1,4 +1,3 @@
-
 """
 This module provides a service to check if a user has the permission to perform a certain operation on a certain service.
 """
@@ -13,14 +12,13 @@ async def check_permissions(current_user: UserInDB, service: AvailableServices, 
     """
     This method checks if the provided user has the permission to perform the provided operation on the provided service.
     """
-    
     # We fetch the user's role.
     await current_user.fetch_related("role")
     role: RoleInDB = current_user.role
 
     # We fetch the permissions of the role.
-    permissions: list[PermissionInDB] = await role.fetch_related("permissions") # type: ignore
-
-
-
-    return False
+    # We also filter the permissions to get only the ones that match the service and the operation.
+    permissions: list[PermissionInDB] = await role.permissions.filter(service_name_id=service.value, operation_name_id=operation.value)
+    # If the list is empty, the user does not have the permission.
+    # Otherwise, the user has the permission to do the operation on the service.
+    return len(permissions) > 0
