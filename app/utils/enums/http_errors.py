@@ -24,3 +24,5 @@ class CommonErrorMessages(enum.StrEnum):
     TOKEN_REVOKED            = "The token has been revoked."
     TOKEN_INVALID            = "The token is invalid."
     TOKEN_EXPIRED            = "The token has expired."
+    # Permission Errors
+    FORBIDDEN_ACTION         = "You don't have the permission to perform this operation."
