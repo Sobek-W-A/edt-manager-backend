@@ -6,11 +6,16 @@ from tortoise.models import Model
 from tortoise import fields
 
 
-class Role(Model):
+class RoleInDB(Model):
     """
     This model represents a role that can be granted to a user.
     """
-    id                  = fields.IntField(pk=True)
-    role_name           = fields.CharField(max_length=128)
+    role_name           = fields.CharField(max_length=128, pk=True)
     role_description    = fields.TextField()
-    permissions         = fields.ManyToManyField("models.Permission", related_name="permission")
+    permissions         = fields.ManyToManyField("models.PermissionInDB", related_name="permission")
+
+    class Meta: # type: ignore
+        """
+        This class is used to indicate the name of the Table to create inside the database.
+        """
+        table = "Role"

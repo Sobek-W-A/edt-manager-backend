@@ -30,6 +30,7 @@ class UserInDB(Model):
     lastname = fields.CharField(max_length=128)
     mail = fields.CharField(unique=True, required=True, max_length=128)
     hash = fields.TextField(required=True)
+    role = fields.ForeignKeyField("models.RoleInDB", related_name="role") # type: ignore
 
     def __str__(self) -> str:
         """

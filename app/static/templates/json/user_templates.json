@@ -5,14 +5,16 @@
         "password": "Loliloulz1",
         "firstname": "Maxime",
         "lastname": "Marcelin",
-        "mail": "maisonmarc7@gmail.com"
+        "mail": "maisonmarc7@gmail.com",
+        "role": "Administrator"
       },
       {
         "login": "LeoPython",
         "password": "Loliloulz2",
         "firstname": "Leo",
         "lastname": "De Sa",
-        "mail": "test@test.com"
+        "mail": "test@test.com",
+        "role": "Department Manager"
       }
     ]
   }
