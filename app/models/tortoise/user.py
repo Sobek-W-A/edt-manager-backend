@@ -8,12 +8,15 @@ import bcrypt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from tortoise import fields
+from tortoise.fields import Field, IntField, ForeignKeyRelation, CharField, TextField, ForeignKeyField
 from tortoise.models import Model
 
 from app.services.Tokens import AvailableTokenAttributes, Token
 from app.models.pydantic.TokenModel import PydanticToken
 from app.utils.type_hint import JWTData
+
+from app.models.tortoise.role import RoleInDB
+
 
 pwd_context:    CryptContext         = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme:  OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -24,13 +27,13 @@ class UserInDB(Model):
     This class is designed to design the table inside of the database.
     It contains all the columns necessary to store the user.
     """
-    id = fields.IntField(primary_key=True)
-    login = fields.CharField(unique=True, required=True, max_length=128)
-    firstname = fields.CharField(max_length=128)
-    lastname = fields.CharField(max_length=128)
-    mail = fields.CharField(unique=True, required=True, max_length=128)
-    hash = fields.TextField(required=True)
-    role = fields.ForeignKeyField("models.RoleInDB", related_name="role") # type: ignore
+    id        : Field[int]                   = IntField(primary_key=True)
+    login     : Field[str]                   = CharField(unique=True, required=True, max_length=128)
+    firstname : Field[str]                   = CharField(max_length=128)
+    lastname  : Field[str]                   = CharField(max_length=128)
+    mail      : Field[str]                   = CharField(unique=True, required=True, max_length=128)
+    hash      : Field[str]                   = TextField(required=True)
+    role      : ForeignKeyRelation[RoleInDB] = ForeignKeyField("models.RoleInDB", related_name="role")
 
     def __str__(self) -> str:
         """

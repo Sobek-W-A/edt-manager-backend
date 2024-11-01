@@ -3,7 +3,7 @@ This module describes the services.
 These are basically the services (routes) that can be provided to a user.
 """
 from tortoise.models import Model
-from tortoise import fields
+from tortoise.fields import Field, CharField, TextField
 
 
 class ServiceInDB(Model):
@@ -11,8 +11,8 @@ class ServiceInDB(Model):
     This model represents a service that can be provided to a user.
     It is mainly used for permissions.
     """
-    service_name        = fields.CharField(max_length=128, pk=True)
-    service_description = fields.TextField()
+    service_name        : Field[str] = CharField(max_length=128, pk=True)
+    service_description : Field[str] = TextField()
 
     class Meta: # type: ignore
         """

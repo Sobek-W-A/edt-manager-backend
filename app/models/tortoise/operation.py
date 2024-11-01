@@ -3,7 +3,7 @@ This module describes the operations.
 These are basically CRUD actions that can be performed on a service.
 """
 from tortoise.models import Model
-from tortoise import fields
+from tortoise.fields import Field, CharField, TextField
 
 
 class OperationInDB(Model):
@@ -11,8 +11,8 @@ class OperationInDB(Model):
     This class regroups the CRUD operations that can be performed on a service.
     Mainly used for permissions.
     """
-    operation_name          = fields.CharField(max_length=128, pk=True)
-    operation_description   = fields.TextField()
+    operation_name        : Field[str] = CharField(max_length=128, pk=True)
+    operation_description : Field[str] = TextField()
 
     class Meta: # type: ignore
         """

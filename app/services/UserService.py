@@ -5,7 +5,7 @@ Provides the methods to use when interacting with a user.
 from fastapi import HTTPException
 from app.models.pydantic.UserModel import PydanticUserModify
 from app.models.tortoise.user import UserInDB
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.enums.http_errors import CommonErrorMessages
 
 
 async def modify_user(user_id: int, model: PydanticUserModify):
