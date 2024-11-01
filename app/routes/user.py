@@ -1,7 +1,7 @@
 """
 This module provieds a router for the /user endpoint.
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
 
@@ -10,7 +10,7 @@ import app.services.UserService as UserService
 userRouter: APIRouter = APIRouter(prefix="/user")
 
 @userRouter.patch("/{user_id}", status_code=205)
-async def modify_user(user_id: int, user_model: PydanticUserModify) -> None:
+async def modify_user(user_id: int, user_model: PydanticUserModify) -> Response:
     """
     This controllers is used when modifying user informations.
     """
