@@ -30,3 +30,10 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     Retrieves a user by their ID.
     """
     return await UserService.get_user_by_id(user_id)
+
+@userRouter.delete("/{user_id}", status_code=205)
+async def delete_user(user_id: int) -> None:
+    """
+    This route is used for deleting a user
+    """
+    await UserService.delete_user(user_id)
