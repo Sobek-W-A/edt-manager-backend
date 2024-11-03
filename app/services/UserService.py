@@ -2,33 +2,35 @@
 User-related operations service.
 Provides the methods to use when interacting with a user.
 """
-from typing import Annotated, Optional
-
 import random
 import string
+from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-
-from app.models.pydantic.TokenModel import PydanticToken
 from pydantic import ValidationError
 
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
+from app.models.pydantic.TokenModel import PydanticToken
+from app.models.pydantic.UserModel import (PydanticUserCreate,
+                                           PydanticUserModify,
+                                           PydanticUserPasswordResponse,
+                                           PydanticUserResponse)
 from app.models.tortoise.user import UserInDB
-from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, Token
+from app.utils.CustomExceptions import (LoginAlreadyUsedException,
+                                        MailAlreadyUsedException,
+                                        MailInvalidException)
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
 from app.utils.type_hint import JWTData
 
-
 oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None -> None:
+async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None:
     """
     This method modifies the user qualified by the id provided.
     """
@@ -104,7 +106,7 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
         password = model.password
 
     #We hash the password
-    hashed = UserInDB.get_password_hash(password)
+    hashed = SecurityService.get_password_hash(password)
 
     try:
         await UserInDB.create(
