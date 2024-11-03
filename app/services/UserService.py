@@ -49,25 +49,6 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
 
     return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
 
-
-async def get_all_users() -> list[PydanticUserResponse]:
-    """
-    Retrieves all users.
-    """
-    users = await UserInDB.all()
-    return [PydanticUserResponse.model_validate(user) for user in users]  # Use model_validate for each user
-
-async def get_user_by_id(user_id: int) -> PydanticUserResponse:
-    """
-    Retrieves a user by their ID.
-    """
-    user = await UserInDB.get_or_none(id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
-
-    return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
-
-
 async def delete_user(user_id: int):
     """
     This method deletes the user by id
