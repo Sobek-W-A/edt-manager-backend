@@ -8,7 +8,7 @@ import string
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
 from app.models.tortoise.user import UserInDB
 from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
 from app.utils.http_errors import CommonErrorMessages
@@ -84,3 +84,32 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
 
     #We return the password without hashed because the admin need it to give it to the employee
     return PydanticUserPasswordResponse(password=password)
+
+async def get_all_users() -> list[PydanticUserResponse]:
+    """
+    Retrieves all users.
+    """
+    users = await UserInDB.all()
+    return [PydanticUserResponse.model_validate(user) for user in users]  # Use model_validate for each user
+
+async def get_user_by_id(user_id: int) -> PydanticUserResponse:
+    """
+    Retrieves a user by their ID.
+    """
+    user = await UserInDB.get_or_none(id=user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+
+    return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
+
+async def delete_user(user_id: int):
+    """
+    This method deletes the user by id
+    raise exception if user is not found
+    """
+    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
+
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+    
+    await user.delete()
