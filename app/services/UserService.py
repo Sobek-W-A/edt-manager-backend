@@ -83,3 +83,15 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 
     return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
+
+async def delete_user(user_id: int):
+    """
+    This method deletes the user by id
+    raise exception if user is not found
+    """
+    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
+
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+    
+    await user.delete()
