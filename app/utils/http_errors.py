@@ -17,6 +17,7 @@ class CommonErrorMessages(enum.StrEnum):
     LOGIN_INVALID            = "Invalid login (login should only contain alphabetic characters, digits and spaces)"
     USER_NOT_FOUND           = "User was not found."
     USER_NOT_ENABLED         = "This user is not enabled."
+    PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
     # Credentials Errors
     INVALID_CREDENTIALS      = "Invalid credentials."
     INCORRECT_LOGIN_PASSWORD = "Incorrect login or password."
