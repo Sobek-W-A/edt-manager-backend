@@ -4,12 +4,18 @@ Provides the methods to use when interacting with a user.
 """
 from typing import Annotated, Optional
 
+import random
+import string
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from app.models.pydantic.TokenModel import PydanticToken
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserResponse
+from pydantic import ValidationError
+
+from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
 from app.models.tortoise.user import UserInDB
+from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, Token
@@ -22,7 +28,7 @@ from app.utils.type_hint import JWTData
 oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None:
+async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None -> None:
     """
     This method modifies the user qualified by the id provided.
     """
@@ -33,11 +39,11 @@ async def modify_user(user_id: int, model: PydanticUserModify, current_user: Use
     if user_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 
-    if model.mail and await UserInDB.all().filter(mail=model.mail).count() != 0:
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.MAIL_ALREADY_USED)
-    
-    if model.login and await UserInDB.all().filter(login=model.login).count() != 0:
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.LOGIN_ALREADY_USED)
+    if await UserInDB.filter(mail=model.mail).exists():
+        raise MailAlreadyUsedException
+
+    if await UserInDB.filter(login=model.login).exists():
+        raise LoginAlreadyUsedException
 
     try:
         user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True)) # type: ignore
@@ -67,6 +73,53 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Opt
     # Otherwise, we successfully identified as the user in the database!
     return user
   
+
+async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse:
+    """
+    This method creates a new user.
+    """
+
+    #We check if the login or mail are already used
+
+    if await UserInDB.filter(login=model.login).exists():
+        raise LoginAlreadyUsedException
+
+    if await UserInDB.filter(mail=model.mail).exists():
+        raise MailAlreadyUsedException
+
+    #If no password mentionned in the body, we generate one
+    if model.password is None:
+        char_types = {
+            "L": string.ascii_uppercase,  # Maj
+            "l": string.ascii_lowercase,  # Min
+            "d": string.digits,  # Number
+            "s": string.punctuation  # Symbol
+        }
+
+        #The schema of our password
+        schema = "Llllddss"
+
+        password = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
+    else:
+        password = model.password
+
+    #We hash the password
+    hashed = UserInDB.get_password_hash(password)
+
+    try:
+        await UserInDB.create(
+            login=model.login,
+            firstname=model.firstname,
+            lastname=model.lastname,
+            mail=model.mail,
+            hash=hashed
+        )
+    except ValidationError as e:
+        raise MailInvalidException from e
+
+    #We return the password without hashed because the admin need it to give it to the employee
+    return PydanticUserPasswordResponse(password=password)
+
 async def get_all_users() -> list[PydanticUserResponse]:
     """
     Retrieves all users.
