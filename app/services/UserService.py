@@ -4,20 +4,38 @@ Provides the methods to use when interacting with a user.
 """
 import random
 import string
+from typing import Annotated, Optional
 
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
 
-from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
+from app.models.pydantic.TokenModel import PydanticToken
+from app.models.pydantic.UserModel import (PydanticUserCreate,
+                                           PydanticUserModify,
+                                           PydanticUserPasswordResponse,
+                                           PydanticUserResponse)
 from app.models.tortoise.user import UserInDB
-from app.utils.CustomExceptions import LoginAlreadyUsedException, MailAlreadyUsedException, MailInvalidException
-from app.utils.http_errors import CommonErrorMessages
+from app.services import SecurityService
+from app.services.PermissionService import check_permissions
+from app.services.Tokens import AvailableTokenAttributes, Token
+from app.utils.CustomExceptions import (LoginAlreadyUsedException,
+                                        MailAlreadyUsedException,
+                                        MailInvalidException)
+from app.utils.enums.http_errors import CommonErrorMessages
+from app.utils.enums.permission_enums import (AvailableOperations,
+                                              AvailableServices)
+from app.utils.type_hint import JWTData
+
+oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-async def modify_user(user_id: int, model: PydanticUserModify) -> None:
+async def modify_user(user_id: int, model: PydanticUserModify, current_user: UserInDB) -> None:
     """
     This method modifies the user qualified by the id provided.
     """
+    await check_permissions(current_user, AvailableServices.USER_SERVICE, AvailableOperations.UPDATE)
+
     user_to_modify: UserInDB | None = await UserInDB.get_or_none(id=user_id)
 
     if user_to_modify is None:
@@ -32,12 +50,31 @@ async def modify_user(user_id: int, model: PydanticUserModify) -> None:
     try:
         user_to_modify.update_from_dict(model.model_dump(exclude={"password", "password_confirm"}, exclude_none=True)) # type: ignore
         if model.password is not None:
-            user_to_modify.hash = UserInDB.get_password_hash(model.password)
+            user_to_modify.hash = SecurityService.get_password_hash(model.password)
         await user_to_modify.save()
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
 
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Optional["UserInDB"]:
+    """
+    This method returns the user corresponding to the user ID stored inside the token provided.
+    :param token: Token used to extract data from.
+    """
+    # Trying to decode the token given
+    token_pydantic: PydanticToken = PydanticToken(value=token)
+    token_model:    Token = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
+    token_payload:  JWTData = token_model.extract_payload()
+
+    user_id: int = token_payload.get("user_id", None)
+
+    # If we get here, that means we managed to decode the token, and we got an user_id.
+    # Then, we try to get a user that corresponds to the user_id
+    user = await UserInDB.get_or_none(id=user_id)
+
+    # Otherwise, we successfully identified as the user in the database!
+    return user
+  
 
 async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse:
     """
@@ -69,7 +106,7 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
         password = model.password
 
     #We hash the password
-    hashed = UserInDB.get_password_hash(password)
+    hashed = SecurityService.get_password_hash(password)
 
     try:
         await UserInDB.create(

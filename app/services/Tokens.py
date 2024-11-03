@@ -17,7 +17,7 @@ from passlib.context import CryptContext
 from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFieldIsNone
 
 from app.utils.databases.redis_helper import Redis
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.enums.http_errors import CommonErrorMessages
 
 from app.utils.type_hint import JWTData
 

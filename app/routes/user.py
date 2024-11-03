@@ -1,10 +1,12 @@
 """
 This module provieds a router for the /user endpoint.
 """
-from fastapi import APIRouter, Response
+from typing import Annotated
+from fastapi import APIRouter, Depends, Response
 
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
 
+from app.models.tortoise.user import UserInDB
 import app.services.UserService as UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
@@ -20,11 +22,11 @@ async def create_user(body: PydanticUserCreate) -> PydanticUserPasswordResponse:
 
 
 @userRouter.patch("/{user_id}", status_code=205)
-async def modify_user(user_id: int, user_model: PydanticUserModify) -> Response:
+async def modify_user(user_id: int, user_model: PydanticUserModify, current_user: Annotated[UserInDB, Depends(UserService.get_current_user)]) -> Response:
     """
     This controllers is used when modifying user informations.
     """
-    await UserService.modify_user(user_id, user_model)
+    await UserService.modify_user(user_id, user_model, current_user)
     return Response(status_code=205)
 
 @userRouter.get("/", response_model=list[PydanticUserResponse], status_code=200)

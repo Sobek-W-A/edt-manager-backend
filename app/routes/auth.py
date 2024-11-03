@@ -7,50 +7,33 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.services.Tokens import AvailableTokenAttributes, TokenPair
+from app.services import AuthService
 from app.models.pydantic.TokenModel import PydanticTokenPair
-from app.models.tortoise.user import UserInDB
-from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
+from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 authRouter = APIRouter(prefix="/auth")
 
 
-@authRouter.post("/login", response_model=PydanticTokenPair)
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+@authRouter.post("/login", response_model=PydanticTokenPair, status_code=200)
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> PydanticTokenPair:
     """
     This method logs in the user.
     Checks if credentials are correct.
     """
-    # Checking credentials
-    user = await UserInDB.authenticate_user(form_data.username, form_data.password)
-
-    if not user:
-        raise IncorrectLoginOrPasswordException()
-
-    # Building and giving token
-    tokens = TokenPair()
-    tokens.generate_tokens(user.id)
-    return tokens.get_tokens_in_response()
+    return await AuthService.login(form_data.username, form_data.password)
 
 
-@authRouter.post("/logout")
-async def logout(tokens: PydanticTokenPair):
+@authRouter.post("/logout", response_model=ClassicOkResponse, status_code=200)
+async def logout(tokens: PydanticTokenPair) -> ClassicOkResponse:
     """
     This method logs out the user.
     """
-    # Invalidating tokens
-    token_model = tokens.export_pydantic_to_model()
-    token_model.revoke_tokens()
-    # Returning a confirmation message
-    return {"message": "ok"}
+    return await AuthService.logout(tokens)
 
 
-@authRouter.post("/refresh")
-async def refresh_user_tokens(tokens: PydanticTokenPair):
+@authRouter.post("/refresh", response_model=PydanticTokenPair, status_code=200)
+async def refresh_user_tokens(tokens: PydanticTokenPair) -> PydanticTokenPair:
     """
     This method refreshes the user's tokens.
     """
-    # Refreshing tokens
-    token_model = tokens.export_pydantic_to_model(AvailableTokenAttributes.REFRESH_TOKEN.value)
-    token_model.refresh_tokens()
-    return token_model.get_tokens_in_response()
+    return await AuthService.refresh_user_tokens(tokens)

@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from pydantic.functional_validators import AfterValidator
 
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.enums.http_errors import CommonErrorMessages
 
 def is_mail(string: str) -> str:
     """

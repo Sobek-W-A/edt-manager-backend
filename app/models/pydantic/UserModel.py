@@ -5,7 +5,7 @@ from typing import Optional, Self
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.enums.http_errors import CommonErrorMessages
 
 from .validator import Mail, Password, Name, Login
 

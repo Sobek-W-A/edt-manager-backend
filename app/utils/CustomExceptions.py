@@ -5,7 +5,7 @@ This module collects all custom exceptions that don't fit in any package very we
 from typing import Dict
 from fastapi import HTTPException
 
-from app.utils.http_errors import CommonErrorMessages
+from app.utils.enums.http_errors import CommonErrorMessages
 
 
 # Program Exceptions.
