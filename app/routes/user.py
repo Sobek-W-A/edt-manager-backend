@@ -11,7 +11,6 @@ import app.services.UserService as UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
 
-
 @userRouter.post("", status_code=201)
 async def create_user(body: PydanticUserCreate) -> PydanticUserPasswordResponse:
     """
