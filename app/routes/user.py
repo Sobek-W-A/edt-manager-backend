@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Response
 from app.models.pydantic.UserModel import PydanticUserModify, PydanticUserCreate, PydanticUserPasswordResponse, PydanticUserResponse
 
 from app.models.tortoise.user import UserInDB
-import app.services.UserService as UserService
+from app.services import UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
 
@@ -42,6 +42,14 @@ async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     Retrieves a user by their ID.
     """
     return await UserService.get_user_by_id(user_id)
+
+@userRouter.get("/me", response_model=PydanticUserResponse, status_code=200)
+async def get_current_user(current_user: Annotated[UserInDB, Depends(UserService.get_current_user)]) -> PydanticUserResponse:
+    """
+    Retrieves data from the currently connected user.
+    """
+    return PydanticUserResponse.model_validate(current_user)
+
 
 @userRouter.delete("/{user_id}", status_code=205)
 async def delete_user(user_id: int) -> None:
