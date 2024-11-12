@@ -23,6 +23,9 @@ def is_password(string: str) -> str:
     """
     Checks if a string is a password (i.e. at least 8 caracters: a lowercase, an uppercase, a digit and a special caracter)
     """
+    if string is None:
+        return string
+
     if re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", string) is None:
         raise HTTPException(status_code=400, detail=CommonErrorMessages.PASSWORD_NOT_SECURE)
     return string
