@@ -22,6 +22,9 @@ class PydanticUserBasePassword(BaseModel):
         This validator ensures that the two passwords provided match if they are not None.
         This validator ensures that the two passwords are provided together or none.
         """
+        if self.password is None and self.password_confirm is None:
+            return self
+
         if (self.password_confirm is None) != (self.password is None):
             raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED)
 

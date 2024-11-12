@@ -95,7 +95,7 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
             "L": string.ascii_uppercase,  # Maj
             "l": string.ascii_lowercase,  # Min
             "d": string.digits,  # Number
-            "s": string.punctuation  # Symbol
+            "s": "@$!%*?&"   # Symbol
         }
 
         #The schema of our password
