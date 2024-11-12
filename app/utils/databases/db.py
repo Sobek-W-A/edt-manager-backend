@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from app.utils.databases.datasets import load_dummy_datasets
+from app.utils.databases.datasets import load_dummy_datasets, load_persistent_datasets
 from app.utils.databases.postgresql import Postgresql
 from app.utils.databases.redis_helper import Redis
 
@@ -24,3 +24,5 @@ async def startup_databases(app: FastAPI) -> None:
     load_dotenv(".env")
     if os.getenv("ENVIRONMENT") == "development":
         await load_dummy_datasets()
+    else :
+        await load_persistent_datasets()

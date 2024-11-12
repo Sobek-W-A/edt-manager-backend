@@ -7,6 +7,7 @@ from tortoise.fields import Field, IntField, ForeignKeyRelation, CharField, Text
 from tortoise.models import Model
 
 from app.models.tortoise.role import RoleInDB
+from app.utils.enums.permission_enums import AvailableRoles
 
 
 
@@ -21,7 +22,7 @@ class UserInDB(Model):
     lastname  : Field[str]                   = CharField(max_length=128)
     mail      : Field[str]                   = CharField(unique=True, required=True, max_length=128)
     hash      : Field[str]                   = TextField(required=True)
-    role      : ForeignKeyRelation[RoleInDB] = ForeignKeyField("models.RoleInDB", related_name="role", default="Administrator")
+    role      : ForeignKeyRelation[RoleInDB] = ForeignKeyField("models.RoleInDB", related_name="role", default=AvailableRoles.ADMIN.value.role_name)
 
     def __str__(self) -> str:
         """

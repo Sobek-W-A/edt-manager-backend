@@ -102,3 +102,12 @@ async def load_dummy_services() -> None:
                 service = ServiceInDB(service_name=service["name"],
                                       service_description=service["description"])
                 await service.save()
+
+async def load_persistent_datasets() -> None:
+    """
+    This method loads all datasets needed for production purposes.
+    """
+    await load_dummy_operations()
+    await load_dummy_services()
+    await load_dummy_permissions()
+    await load_dummy_roles()
