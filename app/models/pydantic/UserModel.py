@@ -28,8 +28,7 @@ class PydanticUserBasePassword(BaseModel):
         if (self.password_confirm is None) != (self.password is None):
             raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED)
 
-        if self.password is not None:
-            if self.password != self.password_confirm:
+        if self.password is not None and self.password != self.password_confirm:
                 raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
 

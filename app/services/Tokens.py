@@ -47,7 +47,7 @@ class TokenAttributes:
         load_dotenv(".env")
 
         # Algorithm used for encoding the tokens
-        self.algorithm  = os.environ.get("JWT_ALGORITHM", "HS256")
+        self.algorithm: str  = os.environ.get("JWT_ALGORITHM", "HS256")
 
         env_variable_name: str = f"{token_type.value}_EXPIRE"
         temp: str | None = os.environ.get(env_variable_name, None)
@@ -92,8 +92,8 @@ class Token:
         :return: A Json Web Token.
         """
         # Generating data for the token
-        creation_date = datetime.now(tz=timezone.utc)
-        expire_date   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
+        creation_date: datetime = datetime.now(tz=timezone.utc)
+        expire_date: datetime   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
 
         jwt_data: JWTData = {
             "user_id": user_id,
@@ -135,7 +135,7 @@ class Token:
         try:
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
-            data = jwt.decode(jwt=self.value, # type: ignore
+            data: JWTData = jwt.decode(jwt=self.value, # type: ignore
                               key=str(self.attributes.secret),
                               algorithms=[self.attributes.algorithm])
 
@@ -207,7 +207,7 @@ class TokenPair:
         It stores the tokens inside the current object instance.
         """
         # Trying to decode the token given
-        token_payload = self.refresh_token.extract_payload()
+        token_payload: JWTData = self.refresh_token.extract_payload()
         user_id: int | None = token_payload.get("user_id")
 
         # We need to add the refresh_token and the acces_token to the blocklist since it does not

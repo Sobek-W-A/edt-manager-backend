@@ -51,7 +51,7 @@ async def get_current_user(current_user: Annotated[UserInDB, Depends(UserService
     return PydanticUserResponse.model_validate(current_user)
 
 
-@userRouter.delete("/{user_id}", status_code=205)
+@userRouter.delete("/{user_id}", status_code=204)
 async def delete_user(user_id: int) -> None:
     """
     This route is used for deleting a user

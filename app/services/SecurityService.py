@@ -17,7 +17,7 @@ def get_password_hash(password: str) -> str:
     """
     This Method is designed to get the Hash of a password
     """
-    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash: bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return password_hash.decode('utf-8')
 
 async def authenticate_user(login: str, password: str) -> Optional["UserInDB"]:
@@ -29,7 +29,7 @@ async def authenticate_user(login: str, password: str) -> Optional["UserInDB"]:
     :return: None value if the user could not be authenticated, a UserInDB otherwise.
     """
     # Checking if the user exists or not and checking its password.
-    user = await UserInDB.get_or_none(login=login)
+    user: UserInDB | None = await UserInDB.get_or_none(login=login)
     if user is None or not verify_password(user, password):
         return None
     return user

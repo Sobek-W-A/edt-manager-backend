@@ -70,7 +70,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Opt
 
     # If we get here, that means we managed to decode the token, and we got an user_id.
     # Then, we try to get a user that corresponds to the user_id
-    user = await UserInDB.get_or_none(id=user_id)
+    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
 
     # Otherwise, we successfully identified as the user in the database!
     return user
@@ -91,7 +91,7 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
 
     #If no password mentionned in the body, we generate one
     if model.password is None:
-        char_types = {
+        char_types: dict[str, str] = {
             "L": string.ascii_uppercase,  # Maj
             "l": string.ascii_lowercase,  # Min
             "d": string.digits,  # Number
@@ -99,14 +99,14 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
         }
 
         #The schema of our password
-        schema = "Llllddss"
+        schema: str = "Llllddss"
 
-        password = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
+        password: str = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
     else:
-        password = model.password
+        password: str = model.password
 
     #We hash the password
-    hashed = SecurityService.get_password_hash(password)
+    hashed: str = SecurityService.get_password_hash(password)
 
     try:
         await UserInDB.create(
@@ -126,14 +126,14 @@ async def get_all_users() -> list[PydanticUserResponse]:
     """
     Retrieves all users.
     """
-    users = await UserInDB.all()
+    users: list[UserInDB] = await UserInDB.all()
     return [PydanticUserResponse.model_validate(user) for user in users]  # Use model_validate for each user
 
 async def get_user_by_id(user_id: int) -> PydanticUserResponse:
     """
     Retrieves a user by their ID.
     """
-    user = await UserInDB.get_or_none(id=user_id)
+    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
 

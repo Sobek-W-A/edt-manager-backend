@@ -19,7 +19,7 @@ def is_mail(string: str) -> str:
 
 Mail = Annotated[str, AfterValidator(is_mail)]
 
-def is_password(string: str) -> str:
+def is_password(string: str | None) -> str | None:
     """
     Checks if a string is a password (i.e. at least 8 caracters: a lowercase, an uppercase, a digit and a special caracter)
     """
