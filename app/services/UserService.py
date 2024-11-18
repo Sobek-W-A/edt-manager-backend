@@ -74,7 +74,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Opt
 
     # Otherwise, we successfully identified as the user in the database!
     return user
-  
+
 
 async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse:
     """
@@ -148,5 +148,5 @@ async def delete_user(user_id: int):
 
     if user is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
-    
+
     await user.delete()

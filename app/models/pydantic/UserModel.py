@@ -29,7 +29,7 @@ class PydanticUserBasePassword(BaseModel):
             raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED)
 
         if self.password is not None and self.password != self.password_confirm:
-                raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
+            raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
 
 class PydanticUserModify(PydanticUserBasePassword):
@@ -60,7 +60,11 @@ class PydanticUserResponse(BaseModel):
     firstname: Name
     lastname:  Name
     mail:      Mail
+
     class Config:
+        """
+        Config class used to allow the model to be created from a dictionary.
+        """
         from_attributes = True
 
 class PydanticUserPasswordResponse(BaseModel):

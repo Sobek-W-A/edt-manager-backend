@@ -116,7 +116,7 @@ class Token:
 
         # Extracting payload
         data: JWTData = self.extract_payload()
-        # Adding the token to redis blocklist with an expiration equal to 
+        # Adding the token to redis blocklist with an expiration equal to
         # the expiration date - creation date.
         ttl: timedelta = data["exp"] - data["iat"]
         redis_db.setex(self.value, ttl, self.attributes.token_type.value)
