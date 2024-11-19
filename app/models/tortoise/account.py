@@ -3,7 +3,7 @@ This module provides the Account model to the API.
 It is used to handle auth related operation and separate user information from auth information.
 """
 
-from tortoise.fields import Field, IntField, TextField
+from tortoise.fields import Field, IntField, TextField, CharField
 from tortoise.models import Model
 
 
@@ -13,7 +13,7 @@ class Account(Model):
     Will probably be removed in the future when UL auth will be used.
     """
     id:     Field[int] = IntField(primary_key=True)
-    login:  Field[str] = TextField(unique=True, required=True)
+    login:  Field[str] = CharField(unique=True, required=True, max_length=128)
     hash:   Field[str] = TextField(required=True)
 
     def __str__(self) -> str:

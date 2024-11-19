@@ -8,7 +8,7 @@ from app.models.pydantic.validator import Login, Password
 
 class PydanticCreateAccountModel():
     """
-    Pydantic model for accounts
+    Pydantic model for accounts.
     """
     login            : Login
     password         : Password
@@ -16,8 +16,15 @@ class PydanticCreateAccountModel():
 
 class PydanticModifyAccountModel():
     """
-    Pydantic model for account modification
+    Pydantic model for account modification.
     """
     login            : Optional[Login]    = None
     password         : Optional[Password] = None
     password_confirm : Optional[Password] = None
+
+class PydanticAccountModel():
+    """
+    Pydantic model for account retrieval.
+    """
+    id    : int
+    login : Login

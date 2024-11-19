@@ -6,6 +6,6 @@ tortoise-orm[asyncpg]===0.21.7
 python-dotenv[standard]===0.21.1
 bcrypt[standard]===4.2.0
 passlib[standard]===1.7.4
-PyJWT[standard]===2.7.0
+PyJWT[standard]===2.10.0
 redis[standard]===4.6.0
 regex[standard]===2024.9.11

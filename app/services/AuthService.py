@@ -3,7 +3,7 @@ This module provides services to manage Auth Operations.
 """
 
 from app.models.pydantic.TokenModel import PydanticTokenPair
-from app.models.tortoise.user import UserInDB
+from app.models.tortoise.account import Account
 from app.services import SecurityService
 from app.services.Tokens import AvailableTokenAttributes, TokenPair
 from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
@@ -16,14 +16,14 @@ async def login(username: str, password: str) -> PydanticTokenPair:
     It returns a pair of tokens to access the application.
     """
     # Checking credentials
-    user: UserInDB | None = await SecurityService.authenticate_user(username, password)
+    account: Account | None = await SecurityService.authenticate_user(username, password)
 
-    if not user:
+    if not account:
         raise IncorrectLoginOrPasswordException()
 
     # Building and giving token
     tokens: TokenPair = TokenPair()
-    tokens.generate_tokens(user.id)
+    tokens.generate_tokens(account.id)
     access_token  : str = str(tokens.access_token.value)
     refresh_token : str = str(tokens.refresh_token.value)
 

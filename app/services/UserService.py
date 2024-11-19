@@ -18,14 +18,13 @@ from app.models.pydantic.UserModel import (PydanticUserCreate,
 from app.models.tortoise.user import UserInDB
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
-from app.services.Tokens import AvailableTokenAttributes, Token
+from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import (LoginAlreadyUsedException,
                                         MailAlreadyUsedException,
                                         MailInvalidException)
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
-from app.utils.type_hint import JWTData
 
 oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -66,11 +65,11 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Opt
     token_model:    Token = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
     token_payload:  JWTData = token_model.extract_payload()
 
-    user_id: int = token_payload.get("user_id", None)
+    account_id: int = token_payload.account_id
 
     # If we get here, that means we managed to decode the token, and we got an user_id.
     # Then, we try to get a user that corresponds to the user_id
-    user: UserInDB | None = await UserInDB.get_or_none(id=user_id)
+    user: UserInDB | None = await UserInDB.get_or_none(id=account_id)
 
     # Otherwise, we successfully identified as the user in the database!
     return user
