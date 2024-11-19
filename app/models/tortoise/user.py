@@ -2,13 +2,16 @@
 This module is made to provide different user models to the API.
 It contains pydantic and Tortoise models.
 """
-
-from tortoise.fields import Field, IntField, ForeignKeyRelation, CharField, TextField, ForeignKeyField
+from tortoise.fields import (Field,
+                             IntField,
+                             ForeignKeyRelation,
+                             CharField,
+                             TextField,
+                             ForeignKeyField)
 from tortoise.models import Model
 
 from app.models.tortoise.role import RoleInDB
 from app.utils.enums.permission_enums import AvailableRoles
-
 
 
 class UserInDB(Model):
@@ -28,7 +31,7 @@ class UserInDB(Model):
         """
         This method will output a str describing the UserInDB class.
         """
-        return f"[INFO] - USER {self.login} ID : {self.id}"
+        return f"[INFO] - USER {self.firstname} {self.lastname} ID : {self.id}"
 
     class Meta: # type: ignore
         """
