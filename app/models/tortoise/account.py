@@ -7,7 +7,7 @@ from tortoise.fields import Field, IntField, TextField, CharField
 from tortoise.models import Model
 
 
-class Account(Model):
+class AccountInDB(Model):
     """
     This class is the tortoise model for authentication.
     Will probably be removed in the future when UL auth will be used.

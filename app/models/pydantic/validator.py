@@ -21,7 +21,8 @@ Mail = Annotated[str, AfterValidator(is_mail)]
 
 def is_password(string: str | None) -> str | None:
     """
-    Checks if a string is a password (i.e. at least 8 caracters: a lowercase, an uppercase, a digit and a special caracter)
+    Checks if a string is a password (i.e. at least 8 caracters: a lowercase,
+    an uppercase, a digit and a special caracter)
     """
     if string is None:
         return string
@@ -44,7 +45,8 @@ Name = Annotated[str, AfterValidator(is_name)]
 
 def is_login(string: str) -> str:
     """
-    Checks if a string is a login (i.e. only alphabetical characters, digits and underscores, and at least 5 caracters)
+    Checks if a string is a login (i.e. only alphabetical characters, 
+    digits and underscores, and at least 5 caracters)
     """
     if re.match(r"^[a-zA-Z0-9_]+$", string) is None:
         raise HTTPException(status_code=400, detail=CommonErrorMessages.LOGIN_INVALID)

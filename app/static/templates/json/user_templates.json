@@ -1,20 +1,31 @@
 {
-    "users": [
-      {
-        "login": "Maximelego",
-        "password": "Loliloulz1",
-        "firstname": "Maxime",
-        "lastname": "Marcelin",
-        "mail": "maisonmarc7@gmail.com",
-        "role": "Administrator"
-      },
-      {
-        "login": "LeoPython",
-        "password": "Loliloulz2",
-        "firstname": "Leo",
-        "lastname": "De Sa",
-        "mail": "test@test.com",
-        "role": "Department Manager"
-      }
-    ]
-  }
+  "users": [
+    {
+      "account_id": 1,
+      "firstname": "Maxime",
+      "lastname": "Marcelin",
+      "mail": "maisonmarc7@gmail.com",
+      "role": "Administrator"
+    },
+    {
+      "account_id": 2,
+      "firstname": "Leo",
+      "lastname": "De Sa",
+      "mail": "test@test.com",
+      "role": "Department Manager"
+    },
+    {
+      "account_id": 3,
+      "firstname": "test",
+      "lastname": "user",
+      "mail": "test@user.test",
+      "role": "Department Manager"
+    },
+    {
+      "account_id": null,
+      "firstname": "test",
+      "lastname": "user",
+      "mail": "test@testfafa.test"
+    }
+  ]
+}

@@ -1,74 +1,42 @@
 """
 This module provides the User's DTO using pydantic.
 """
-from typing import Optional, Self
-from fastapi import HTTPException
-from pydantic import BaseModel, model_validator
+from typing import Optional
+from pydantic import BaseModel
 
-from app.utils.enums.http_errors import CommonErrorMessages
+from app.models.pydantic.validator import Mail, Name
 
-from .validator import Mail, Password, Name, Login
-
-class PydanticUserBasePassword(BaseModel):
-    """
-    Base model for the password with validation
-    """
-    password: Optional[Password] = None
-    password_confirm: Optional[Password] = None
-
-    @model_validator(mode="after")
-    def check_password(self) -> Self:
-        """
-        This validator ensures that the two passwords provided match if they are not None.
-        This validator ensures that the two passwords are provided together or none.
-        """
-        if self.password is None and self.password_confirm is None:
-            return self
-
-        if (self.password_confirm is None) != (self.password is None):
-            raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED)
-
-        if self.password is not None and self.password != self.password_confirm:
-            raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
-        return self
-
-class PydanticUserModify(PydanticUserBasePassword):
+class PydanticUserModify(BaseModel):
     """
     This model is meant to be used as model-check for user-modification
     related requests.
     """
-    login:            Optional[Login]    = None
-    firstname:        Optional[Name]     = None
-    lastname:         Optional[Name]     = None
-    mail:             Optional[Mail]     = None
+    firstname   : Optional[Name] = None
+    lastname    : Optional[Name] = None
+    mail        : Optional[Mail] = None
+    account_id  : Optional[int]  = None
 
-class PydanticUserCreate(PydanticUserBasePassword):
+class PydanticUserCreate(BaseModel):
     """
     This model is meant to be used when we need to create a new user.
     """
-    login:          Login
     firstname:      Name
     lastname:       Name
     mail:           Mail
+    account_id:     Optional[int] = None
 
 class PydanticUserResponse(BaseModel):
     """
     This model is meant to be used when we need to return a user to the frontend.
     """
-    id:        int
-    login:     Login
-    firstname: Name
-    lastname:  Name
-    mail:      Mail
+    id:         int
+    firstname:  Name
+    lastname:   Name
+    mail:       Mail
+    account_id: Optional[int] = None
 
     class Config:
         """
         Config class used to allow the model to be created from a dictionary.
         """
         from_attributes = True
-
-class PydanticUserPasswordResponse(BaseModel):
-    """
-    This model is meant to be used when we need to return the password of the user.
-    """
-    password: Password

@@ -2,8 +2,7 @@
 User-related operations service.
 Provides the methods to use when interacting with a user.
 """
-import random
-import string
+
 from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException
@@ -81,39 +80,14 @@ async def create_user(model: PydanticUserCreate) -> PydanticUserPasswordResponse
     """
 
     #We check if the login or mail are already used
-
-    if await UserInDB.filter(login=model.login).exists():
-        raise LoginAlreadyUsedException
-
     if await UserInDB.filter(mail=model.mail).exists():
         raise MailAlreadyUsedException
 
-    #If no password mentionned in the body, we generate one
-    if model.password is None:
-        char_types: dict[str, str] = {
-            "L": string.ascii_uppercase,  # Maj
-            "l": string.ascii_lowercase,  # Min
-            "d": string.digits,  # Number
-            "s": "@$!%*?&"   # Symbol
-        }
-
-        #The schema of our password
-        schema: str = "Llllddss"
-
-        password: str = "".join(random.choice(char_types[char]) for char in schema if char in char_types)
-    else:
-        password: str = model.password
-
-    #We hash the password
-    hashed: str = SecurityService.get_password_hash(password)
-
     try:
         await UserInDB.create(
-            login=model.login,
             firstname=model.firstname,
             lastname=model.lastname,
-            mail=model.mail,
-            hash=hashed
+            mail=model.mail
         )
     except ValidationError as e:
         raise MailInvalidException from e
