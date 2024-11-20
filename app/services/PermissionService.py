@@ -3,21 +3,30 @@ This module provides a service to check if a user has the permission to perform 
 """
 
 from fastapi import HTTPException
+from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.account_metadata import AccountMetadata
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
-from app.models.tortoise.user import UserInDB
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
 
 
-async def check_permissions(current_user: UserInDB, service: AvailableServices, operation: AvailableOperations) -> None:
+async def check_permissions(service: AvailableServices,
+                            operation: AvailableOperations,
+                            current_account: AccountInDB) -> None:
     """
     This method checks if the provided user has the permission to perform the provided operation on the provided service.
     """
     # We fetch the user's role.
-    await current_user.fetch_related("role")
-    role: RoleInDB = current_user.role
+    metadata: AccountMetadata | None = await AccountMetadata.get_or_none(account_id=current_account.id)
+    print(metadata)
+    if metadata is None:
+        raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
 
+    role    : RoleInDB        | None = await RoleInDB.get_or_none(id=metadata.role)
+    print(role)
+    if role is None:
+        raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
     # We fetch the permissions of the role.
     # We also filter the permissions to get only the ones that match the service and the operation.
     permissions: list[PermissionInDB] = await role.permissions.filter(service_name_id=service.value.service_name,

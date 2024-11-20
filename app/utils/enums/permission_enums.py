@@ -1,7 +1,8 @@
 """
 This module provides Enums to help manage permissions.
 These are basically static data that needs to be stored in database at creation.
-They are used to check if a user has the permission to perform a certain operation on a certain service.
+They are used to check if a user has the permission to perform a certain operation 
+on a certain service.
 """
 import enum
 
@@ -66,14 +67,18 @@ class AvailableServices(enum.Enum):
     """
     Enumeration to provide the available services.
     """
-    USER_SERVICE = Service("User Service", "Service that manages users")
+    USER_SERVICE    = Service("User Service", "Service that manages users")
+    ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
 
 
 class AvailablePermissions(enum.Enum):
     """
     Class that provides the available permissions.
     """
-    CRUD_USER = Permission(AvailableServices.USER_SERVICE.value,
+    CRUD_USER    = Permission(AvailableServices.USER_SERVICE.value,
+                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
+                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
+    CRUD_SERVICE = Permission(AvailableServices.ACCOUNT_SERVICE.value,
                            [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
                             AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
 class AvailableRoles(enum.Enum):

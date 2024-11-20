@@ -2,11 +2,11 @@
 This module provides the User's DTO using pydantic.
 """
 from typing import Optional
-from pydantic import BaseModel
 
+from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.validator import Mail, Name
 
-class PydanticUserModify(BaseModel):
+class PydanticUserModify(AcademicYearPydanticModel):
     """
     This model is meant to be used as model-check for user-modification
     related requests.
@@ -16,7 +16,7 @@ class PydanticUserModify(BaseModel):
     mail        : Optional[Mail] = None
     account_id  : Optional[int]  = None
 
-class PydanticUserCreate(BaseModel):
+class PydanticUserCreate(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to create a new user.
     """
@@ -25,7 +25,7 @@ class PydanticUserCreate(BaseModel):
     mail:           Mail
     account_id:     Optional[int] = None
 
-class PydanticUserResponse(BaseModel):
+class PydanticUserResponse(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to return a user to the frontend.
     """

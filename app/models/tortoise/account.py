@@ -23,7 +23,7 @@ class AccountInDB(Model):
         return f"[INFO] - ACCOUNT {self.login} ID : {self.id}"
 
     class Meta: # type: ignore
-        """
+        """a
         This class is used to indicate the name of the Table to create inside the database.
         """
         table = "Account"

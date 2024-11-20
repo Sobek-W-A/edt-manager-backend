@@ -53,3 +53,16 @@ def is_login(string: str) -> str:
     return string
 
 Login = Annotated[str, AfterValidator(is_login)]
+
+def is_academic_year(years: tuple[int, int]) -> tuple[int, int]:
+    """
+    We check that the tuple contains 2 values and that the second element is 
+    equal to the first one + 1.
+    """
+    if len(years) != 2:
+        raise ValueError("Le tuple doit contenir exactement deux éléments.")
+    if years[1] != years[0] + 1:
+        raise ValueError("Le second élément doit être égal au premier + 1.")
+    return years
+
+AcademicYear = Annotated[str, AfterValidator(is_academic_year)]

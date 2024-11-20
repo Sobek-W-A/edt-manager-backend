@@ -5,40 +5,52 @@ Account services. Basically the real functionalities concerning the account mode
 
 import random
 import string
+from typing import Optional
 
 from fastapi import HTTPException
 
-from app.models.pydantic.AccountModel import (PydanticAccountModel, PydanticAccountPasswordResponse,
-                                              PydanticCreateAccountModel, PydanticModifyAccountModel)
+from app.models.pydantic.AccountModel import (PydanticAccountModel,
+                                              PydanticAccountPasswordResponse,
+                                              PydanticCreateAccountModel,
+                                              PydanticModifyAccountModel)
+from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
 from app.services import SecurityService
+from app.services.PermissionService import check_permissions
+from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
 from app.utils.enums.http_errors import CommonErrorMessages
+from app.models.annotations import OAuthToken
+from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
 
-
-async def get_account(account_id: int):
+async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
     """
     This method retrieves an account by its ID.
     """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.GET, current_account)
+
     account : AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
     if account is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND.value)
 
     return PydanticAccountModel.model_validate(account)
 
-
-async def get_all_accounts():
+async def get_all_accounts(current_account: AccountInDB):
     """
     This method retrieves all accounts.
     """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.GET, current_account)
+
     accounts : list[AccountInDB] = await AccountInDB.all()
     return [PydanticAccountModel.model_validate(account) for account in accounts]
 
-async def create_account(account: PydanticCreateAccountModel) -> PydanticAccountPasswordResponse:
+async def create_account(account: PydanticCreateAccountModel, current_account: AccountInDB) -> PydanticAccountPasswordResponse:
     """
     This method creates an account.
     """
-    if await AccountInDB.get_or_none(login=account.login):
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.CREATE, current_account)
+
+    if await AccountInDB.filter(login=account.login).exists():
         raise LoginAlreadyUsedException
 
     # If no password mentionned in the body, we generate one
@@ -60,7 +72,6 @@ async def create_account(account: PydanticCreateAccountModel) -> PydanticAccount
     # We hash the password
     hashed: str = SecurityService.get_password_hash(password)
 
-
     account_to_create: AccountInDB = AccountInDB(login=account.login,
                                                  hash=hashed)
     await account_to_create.save()
@@ -68,10 +79,11 @@ async def create_account(account: PydanticCreateAccountModel) -> PydanticAccount
     return PydanticAccountPasswordResponse(password=password)
 
 
-async def delete_account(account_id: int) -> None:
+async def delete_account(account_id: int, current_account: AccountInDB) -> None:
     """
     This method deletes an account by its ID.
     """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.DELETE, current_account)
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -80,10 +92,13 @@ async def delete_account(account_id: int) -> None:
     
     await account.delete()
 
-async def modify_account(account_id: int, account: PydanticModifyAccountModel) -> None:
+async def modify_account(account_id: int, account: PydanticModifyAccountModel, current_account: AccountInDB) -> None:
     """
     This method modifies an account by its ID.
     """
+
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.UPDATE, current_account)
+
 
     account_to_modify: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -106,3 +121,23 @@ async def modify_account(account_id: int, account: PydanticModifyAccountModel) -
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
+
+
+async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
+    """
+    This method returns the user corresponding to the user ID stored inside the token provided.
+    :param token: Token used to extract data from.
+    """
+    # Trying to decode the token given
+    token_pydantic: PydanticToken = PydanticToken(value=token)
+    token_model:    Token = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
+    token_payload:  JWTData = token_model.extract_payload()
+
+    account_id: int = token_payload.account_id
+
+    # If we get here, that means we managed to decode the token, and we got an user_id.
+    # Then, we try to get a user that corresponds to the user_id
+    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
+
+    # Otherwise, we successfully identified as the user in the database!
+    return account
