@@ -14,7 +14,7 @@ class ServiceInDB(Model):
     service_name        : Field[str] = CharField(max_length=128, pk=True)
     service_description : Field[str] = TextField()
 
-    class Meta: # type: ignore
+    class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """

@@ -30,7 +30,7 @@ class UserInDB(Model):
         """
         return f"[INFO] - USER {self.login} ID : {self.id}"
 
-    class Meta: # type: ignore
+    class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
