@@ -13,7 +13,7 @@ from app.services import UserService
 userRouter: APIRouter = APIRouter(prefix="/user")
 tag: Tag = Tag("User", "User-related operations.")
 
-@userRouter.post("", status_code=201)
+@userRouter.post("/", status_code=201)
 async def create_user(body: PydanticUserCreate, current_account: AuthenticatedAccount) -> None:
     """
     This method creates a new user
@@ -51,9 +51,7 @@ async def get_current_user(current_account: AuthenticatedAccount) -> PydanticUse
     """
     Retrieves data from the currently connected user.
     """
-    # TODO : AAAAAAAAAAAAAAA THIS IS A USER, NOT AN ACCOUNT AAAAAAAAAAAAAA
-    return PydanticUserResponse.model_validate(current_account)
-
+    return await UserService.get_current_user(current_account)
 
 @userRouter.delete("/{user_id}", status_code=204)
 async def delete_user(user_id: int, current_account: AuthenticatedAccount) -> None:

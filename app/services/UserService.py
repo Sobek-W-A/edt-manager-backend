@@ -80,6 +80,18 @@ async def get_user_by_id(user_id: int, current_account: AccountInDB) -> Pydantic
 
     return PydanticUserResponse.model_validate(user)  # Use model_validate to create the response model
 
+async def get_current_user(current_account: AccountInDB) -> PydanticUserResponse:
+    """
+    Retrieves the current user.
+    """
+    await check_permissions(AvailableServices.USER_SERVICE, AvailableOperations.GET, current_account)
+
+    user : UserInDB | None = await UserInDB.get_or_none(account=current_account.id)
+    if user is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+
+    return PydanticUserResponse.model_validate(user)
+
 async def delete_user(user_id: int, current_account: AccountInDB) -> None:
     """
     This method deletes the user by id
