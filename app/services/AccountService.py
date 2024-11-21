@@ -144,8 +144,8 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     """
     # Trying to decode the token given
     token_pydantic: PydanticToken = PydanticToken(value=token)
-    token_model:    Token = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
-    token_payload:  JWTData = token_model.extract_payload()
+    token_model:    Token         = token_pydantic.export_pydantic_to_model(AvailableTokenAttributes.AUTH_TOKEN.value)
+    token_payload:  JWTData       = token_model.extract_payload()
 
     account_id: int = token_payload.account_id
 

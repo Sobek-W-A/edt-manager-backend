@@ -7,11 +7,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
+from app.routes.tags import Tag
 from app.services import AuthService
 from app.models.pydantic.TokenModel import PydanticTokenPair
 from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 authRouter = APIRouter(prefix="/auth")
+tag: Tag = Tag("Auth", "Authentication operations.")
 
 
 @authRouter.post("/login", response_model=PydanticTokenPair, status_code=200)

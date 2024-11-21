@@ -102,8 +102,8 @@ class Token:
     It uses the Attributes specified by a specific instance of TokenAttributes.
     """
 
-    value: str | None = None
-    attributes: TokenAttributes
+    value      : str | None      = None
+    attributes : TokenAttributes
 
     def __init__(self, attributes: TokenAttributes, value: str | None = None):
         self.attributes = attributes
@@ -161,9 +161,14 @@ class Token:
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
             if self.value is not None:
-                data: JWTData = decode(jwt=self.value,
-                                           key=str(self.attributes.secret),
-                                           algorithms=[self.attributes.algorithm])
+                data: Any = decode(jwt=self.value,
+                                       key=str(self.attributes.secret),
+                                       algorithms=[self.attributes.algorithm])
+
+                data = JWTData(account_id=data["account_id"],
+                               salt=data["salt"],
+                               iat=datetime.fromtimestamp(data["iat"]),
+                               exp=datetime.fromtimestamp(data["exp"]))
             else:
                 raise RequiredFieldIsNone("Token value is None !")
 

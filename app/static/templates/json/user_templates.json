@@ -4,25 +4,21 @@
       "account_id": 1,
       "firstname": "Maxime",
       "lastname": "Marcelin",
-      "mail": "maisonmarc7@gmail.com",
-      "role": "Administrator"
+      "mail": "maisonmarc7@gmail.com"
     },
     {
       "account_id": 2,
       "firstname": "Leo",
       "lastname": "De Sa",
-      "mail": "test@test.com",
-      "role": "Department Manager"
+      "mail": "test@test.com"
     },
     {
       "account_id": 3,
       "firstname": "test",
       "lastname": "user",
-      "mail": "test@user.test",
-      "role": "Department Manager"
+      "mail": "test@user.test"
     },
     {
-      "account_id": null,
       "firstname": "test",
       "lastname": "user",
       "mail": "test@testfafa.test"

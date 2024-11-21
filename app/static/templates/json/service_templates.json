@@ -2,7 +2,11 @@
     "services": [
         {
             "name": "User Service",
-            "description": "Service that corresponds to user-related operations"
+            "description": "Service that manages users."
+        },
+        {
+            "name": "Account Service",
+            "description": "Service that manages accounts and logging."
         }
     ]
 }

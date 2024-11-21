@@ -19,12 +19,10 @@ async def check_permissions(service: AvailableServices,
     """
     # We fetch the user's role.
     metadata: AccountMetadata | None = await AccountMetadata.get_or_none(account_id=current_account.id)
-    print(metadata)
     if metadata is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
 
     role    : RoleInDB        | None = await RoleInDB.get_or_none(id=metadata.role)
-    print(role)
     if role is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
     # We fetch the permissions of the role.

@@ -4,6 +4,7 @@ It should use JSON provided in a specific folder.
 """
 
 import json
+from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.service import ServiceInDB
@@ -20,6 +21,7 @@ async def load_dummy_datasets() -> None:
     await load_dummy_permissions()
     await load_dummy_roles()
 
+    await load_dummy_accounts()
     await load_dummy_users()
 
 
@@ -33,14 +35,24 @@ async def load_dummy_users() -> None:
             # Load the data from the file
             data = json.load(file)
             for user in data["users"]:
-                role = await RoleInDB.get_or_none(role_name=user["role"])
-                user = UserInDB(login=user["login"],
-                                hash=SecurityService.get_password_hash(user["password"]),
-                                mail=user["mail"],
+                user = UserInDB(mail=user["mail"],
                                 firstname=user["firstname"],
-                                lastname=user["lastname"],
-                                role=role)
+                                lastname=user["lastname"])
                 await user.save()
+
+async def load_dummy_accounts() -> None:
+    """
+    This method loads dummy accounts from a json file.
+    """
+    # We ensure that we don't replace any existing data.
+    if await AccountInDB.all().count() == 0:
+        with open('./app/static/templates/json/account_templates.json', 'r', encoding="utf-8") as file:
+            # Load the data from the file
+            data = json.load(file)
+            for account in data["accounts"]:
+                account_to_create = AccountInDB(login=account["login"],
+                                                hash=SecurityService.get_password_hash(account["password"]))
+                await account_to_create.save()
 
 async def load_dummy_roles() -> None:
     """

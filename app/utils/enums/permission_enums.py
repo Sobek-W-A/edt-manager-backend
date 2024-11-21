@@ -67,7 +67,7 @@ class AvailableServices(enum.Enum):
     """
     Enumeration to provide the available services.
     """
-    USER_SERVICE    = Service("User Service", "Service that manages users")
+    USER_SERVICE    = Service("User Service", "Service that manages users.")
     ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
 
 

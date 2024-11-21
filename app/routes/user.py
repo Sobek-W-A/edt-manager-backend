@@ -7,9 +7,11 @@ from app.models.pydantic.UserModel import (PydanticUserModify,
                                            PydanticUserCreate,
                                            PydanticUserResponse)
 from app.models.aliases import AuthenticatedAccount
+from app.routes.tags import Tag
 from app.services import UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")
+tag: Tag = Tag("User", "User-related operations.")
 
 @userRouter.post("", status_code=201)
 async def create_user(body: PydanticUserCreate, current_account: AuthenticatedAccount) -> None:
