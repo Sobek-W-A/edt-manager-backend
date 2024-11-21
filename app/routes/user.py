@@ -6,7 +6,7 @@ from fastapi import APIRouter, Response
 from app.models.pydantic.UserModel import (PydanticUserModify,
                                            PydanticUserCreate,
                                            PydanticUserResponse)
-from app.models.annotations import AuthenticatedAccount
+from app.models.aliases import AuthenticatedAccount
 from app.services import UserService
 
 userRouter: APIRouter = APIRouter(prefix="/user")

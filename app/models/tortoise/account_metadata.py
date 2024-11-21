@@ -13,8 +13,8 @@ class AccountMetadata(Model):
     """
     This class is a M2M relation that links accounts and permissions by Academic years.
     """
-    account       : ForeignKeyRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="account")
-    role          : ForeignKeyRelation[RoleInDB]    = ForeignKeyField("models.RoleInDB", related_name="role")
+    account       : ForeignKeyRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="metadata")
+    role          : ForeignKeyRelation[RoleInDB]    = ForeignKeyField("models.RoleInDB", related_name="metadata")
     academic_year : Field[int]                      = IntField(required=True)
     
     class Meta: # type: ignore

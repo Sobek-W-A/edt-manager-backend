@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from app.models.pydantic.AccountModel import PydanticCreateAccountModel, PydanticModifyAccountModel
 from app.services import AccountService
 
-from app.models.annotations import AuthenticatedAccount
+from app.models.aliases import AuthenticatedAccount
 
 accountRouter: APIRouter = APIRouter(prefix="/account")
 

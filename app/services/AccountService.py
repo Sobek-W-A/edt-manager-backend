@@ -5,9 +5,10 @@ Account services. Basically the real functionalities concerning the account mode
 
 import random
 import string
-from typing import Optional
+from typing import Annotated, Optional, TypeAlias
 
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
@@ -20,14 +21,15 @@ from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
 from app.utils.enums.http_errors import CommonErrorMessages
-from app.models.annotations import OAuthToken
 from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
 
 async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
     """
     This method retrieves an account by its ID.
     """
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.GET, current_account)
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
 
     account : AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
     if account is None:
@@ -39,7 +41,9 @@ async def get_all_accounts(current_account: AccountInDB):
     """
     This method retrieves all accounts.
     """
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.GET, current_account)
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
 
     accounts : list[AccountInDB] = await AccountInDB.all()
     return [PydanticAccountModel.model_validate(account) for account in accounts]
@@ -48,7 +52,9 @@ async def create_account(account: PydanticCreateAccountModel, current_account: A
     """
     This method creates an account.
     """
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.CREATE, current_account)
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.CREATE,
+                            current_account)
 
     if await AccountInDB.filter(login=account.login).exists():
         raise LoginAlreadyUsedException
@@ -83,7 +89,9 @@ async def delete_account(account_id: int, current_account: AccountInDB) -> None:
     """
     This method deletes an account by its ID.
     """
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.DELETE, current_account)
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.DELETE,
+                            current_account)
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -97,8 +105,9 @@ async def modify_account(account_id: int, account: PydanticModifyAccountModel, c
     This method modifies an account by its ID.
     """
 
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE, AvailableOperations.UPDATE, current_account)
-
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account)
 
     account_to_modify: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -122,6 +131,11 @@ async def modify_account(account_id: int, account: PydanticModifyAccountModel, c
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
 
+
+
+# This is a token that is provided by the OAuth Scheme.
+oauth2_scheme : OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
+OAuthToken    : TypeAlias = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     """
