@@ -18,4 +18,4 @@ class AcademicYear(Model):
         """
         This class specifies that our schema is abstract.
         """
-        abstract = True
+        abstrac : bool = True

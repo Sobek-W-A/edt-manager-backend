@@ -26,4 +26,4 @@ class AccountInDB(Model):
         """a
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "Account"
+        table : str = "Account"

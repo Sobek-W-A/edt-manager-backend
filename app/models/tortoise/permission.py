@@ -19,4 +19,4 @@ class PermissionInDB(Model):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "Permission"
+        table : str = "Permission"

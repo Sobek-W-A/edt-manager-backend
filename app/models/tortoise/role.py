@@ -20,4 +20,4 @@ class RoleInDB(Model):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "Role"
+        table : str = "Role"

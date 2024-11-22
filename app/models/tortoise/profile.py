@@ -33,5 +33,5 @@ class ProfileInDB(AcademicYear):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "Profile"
-        abstract = False
+        table    : str  = "Profile"
+        abstract : bool = False

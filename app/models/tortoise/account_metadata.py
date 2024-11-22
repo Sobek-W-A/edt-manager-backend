@@ -20,4 +20,4 @@ class AccountMetadata(AcademicYear):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "AccountMetadata"
+        table : str = "AccountMetadata"
