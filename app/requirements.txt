@@ -9,3 +9,4 @@ passlib[standard]===1.7.4
 PyJWT[standard]===2.7.0
 redis[standard]===4.6.0
 regex[standard]===2024.9.11
+cryptography===43.0.3

@@ -6,7 +6,7 @@ It provides models and methods to do so.
 import enum
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional, TypeAlias
+from typing import TYPE_CHECKING, Any, Optional, TypeAlias, cast
 
 import bcrypt
 import jwt
@@ -95,14 +95,15 @@ class Token:
         creation_date: datetime = datetime.now(tz=timezone.utc)
         expire_date: datetime   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
 
-        jwt_data: JWTData = {
+        jwt_data: JWTData | dict[str, Any] = {
             "user_id": user_id,
             "salt": str(bcrypt.gensalt()),
             "iat": creation_date,
             "exp": expire_date
         }
-        self.value = jwt.encode(jwt_data, str(self.attributes.secret), # type: ignore
-                                self.attributes.algorithm)             # type: ignore
+        if TYPE_CHECKING:
+            jwt_data = cast(dict[str, Any], jwt_data)
+        self.value = jwt.encode(jwt_data, self.attributes.secret, self.attributes.algorithm)
 
     def revoke(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> None:
         """
@@ -133,9 +134,10 @@ class Token:
 
         # We try to extract the payload from the token
         try:
+            assert self.value is not None # should never happen, just for type checker
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
-            data: JWTData = jwt.decode(jwt=self.value, # type: ignore
+            data: JWTData = jwt.decode(jwt=self.value,
                               key=str(self.attributes.secret),
                               algorithms=[self.attributes.algorithm])
 

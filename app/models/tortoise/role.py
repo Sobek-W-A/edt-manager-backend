@@ -16,7 +16,7 @@ class RoleInDB(Model):
     role_description : Field[str]                         = TextField()
     permissions      : ManyToManyRelation[PermissionInDB] = ManyToManyField("models.PermissionInDB", related_name="permission")
 
-    class Meta: # type: ignore
+    class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
