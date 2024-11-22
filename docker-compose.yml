@@ -1,5 +1,18 @@
 name: 'sobekwa'
 services:
+  redis:
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/var/lib/redis/data
+    environment:
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
   postgres:
     image: postgres
     ports:
@@ -22,27 +35,33 @@ services:
   api:
     build:
       dockerfile: Dockerfile
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+    command: sh -c "/wait && uvicorn app.main:app --host "0.0.0.0" --port ${API_SERVER_PORT} --forwarded-allow-ips="*" --proxy-headers"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=postgres    # We need to force the host value here.
+      - POSTGRES_DB=${POSTGRES_DB}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=redis          # We need to force the host value here.
       - API_SERVER_PORT=${API_SERVER_PORT}
-      - JWT_AUTH_SECRET_KEY=${JWT_AUTH_SECRET_KEY}
-      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - JWT_AUTH_TOKEN_SECRET_KEY=${JWT_AUTH_TOKEN_SECRET_KEY}
+      - JWT_REFRESH_TOKEN_SECRET_KEY=${JWT_REFRESH_TOKEN_SECRET_KEY}
       - AUTH_TOKEN_EXPIRE=${AUTH_TOKEN_EXPIRE}
       - REFRESH_TOKEN_EXPIRE=${REFRESH_TOKEN_EXPIRE}
+      - WAIT_HOSTS=postgres:${POSTGRES_PORT}, redis:${REDIS_PORT}
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=1
+      - WAIT_HOST_CONNECT_TIMEOUT=30
     ports:
       - "8000:8000"
-    restart: always
+    restart: unless-stopped
     depends_on:
       - postgres
+      - redis
 
 volumes:
   postgres_data:
   redis_data:
-
-
-
-  

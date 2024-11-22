@@ -5,22 +5,28 @@
 # $2 : string to replace
 # $3 : file_path
 write_key() {
-    sed -i "s/$2/$1/g" "$3"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS Environnment.
+        sed -i '' "s/$2/$1/g" "$3"
+    else
+        # Linux Environnment.
+        sed -i "s/$2/$1/g" "$3"
+    fi
 }
 
-echo "[STATUS] - Starting project's configuration... "
+echo "[CONFIG] - Starting project's configuration... "
 
 POSTGRES_KEY=$(openssl rand -hex 32)
 REDIS_KEY=$(openssl rand -hex 32)
 JWT_AUTH_KEY=$(openssl rand -hex 32)
 JWT_REFRESH_KEY=$(openssl rand -hex 32)
 
-echo "[STATUS] - Copying files... "
+echo "[CONFIG] - Copying files... "
 
 cp -f ./examples/init_db.sql.example ./init_db.sql
 cp -f ./examples/.env.example ./.env
 
-echo "[STATUS] - Installing keys ..."
+echo "[CONFIG] - Installing keys ..."
 
 # PostgreSQL key
 write_key "$POSTGRES_KEY" "postgres_key_to_replace" './.env'
@@ -33,4 +39,4 @@ write_key "$REDIS_KEY" "redis_key_to_replace" './.env'
 write_key "$JWT_AUTH_KEY" "jwt_auth_key_to_replace" './.env'
 write_key "$JWT_REFRESH_KEY" "jwt_refresh_key_to_replace" './.env'
 
-echo "[STATUS] - Configuration done !"
+echo "[CONFIG] - Configuration done !"
