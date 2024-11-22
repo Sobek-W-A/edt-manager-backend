@@ -7,12 +7,12 @@ from tortoise.fields import (Field,
                              CharField,
                              ForeignKeyNullableRelation,
                              ForeignKeyField)
-from tortoise.models import Model
 
+from app.models.tortoise.academic_year import AcademicYear
 from app.models.tortoise.account import AccountInDB
 
 
-class UserInDB(Model):
+class ProfileInDB(AcademicYear):
     """
     This class is designed to design the table inside of the database.
     It contains all the columns necessary to store the user.
@@ -21,7 +21,7 @@ class UserInDB(Model):
     firstname : Field[str]                              = CharField(max_length=128)
     lastname  : Field[str]                              = CharField(max_length=128)
     mail      : Field[str]                              = CharField(unique=True, required=True, max_length=128)
-    account   : ForeignKeyNullableRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="users", null=True)
+    account   : ForeignKeyNullableRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="profile", null=True)
 
     def __str__(self) -> str:
         """
@@ -29,8 +29,9 @@ class UserInDB(Model):
         """
         return f"[INFO] - USER {self.firstname} {self.lastname} ID : {self.id}"
 
-    class Meta(Model.Meta):
+    class Meta(AcademicYear.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "User"
+        table = "Profile"
+        abstract = False

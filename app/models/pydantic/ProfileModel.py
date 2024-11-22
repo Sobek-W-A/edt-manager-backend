@@ -1,14 +1,14 @@
 """
-This module provides the User's DTO using pydantic.
+This module provides the Profile's DTO using pydantic.
 """
 from typing import Optional
 
 from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.validator import Mail, Name
 
-class PydanticUserModify(AcademicYearPydanticModel):
+class PydanticProfileModify(AcademicYearPydanticModel):
     """
-    This model is meant to be used as model-check for user-modification
+    This model is meant to be used as model-check for Profile-modification
     related requests.
     """
     firstname   : Optional[Name] = None
@@ -16,18 +16,18 @@ class PydanticUserModify(AcademicYearPydanticModel):
     mail        : Optional[Mail] = None
     account_id  : Optional[int]  = None
 
-class PydanticUserCreate(AcademicYearPydanticModel):
+class PydanticProfileCreate(AcademicYearPydanticModel):
     """
-    This model is meant to be used when we need to create a new user.
+    This model is meant to be used when we need to create a new Profile.
     """
     firstname:      Name
     lastname:       Name
     mail:           Mail
     account_id:     Optional[int] = None
 
-class PydanticUserResponse(AcademicYearPydanticModel):
+class PydanticProfileResponse(AcademicYearPydanticModel):
     """
-    This model is meant to be used when we need to return a user to the frontend.
+    This model is meant to be used when we need to return a Profile to the frontend.
     """
     id:         int
     firstname:  Name

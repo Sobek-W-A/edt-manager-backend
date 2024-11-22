@@ -158,7 +158,6 @@ class Token:
 
         # We try to extract the payload from the token
         try:
-            assert self.value is not None # should never happen, just for type checker
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
             if self.value is not None:

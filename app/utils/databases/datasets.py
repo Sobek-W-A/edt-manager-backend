@@ -8,7 +8,7 @@ from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.service import ServiceInDB
-from app.models.tortoise.user import UserInDB
+from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.role import RoleInDB
 from app.services import SecurityService
 
@@ -22,23 +22,23 @@ async def load_dummy_datasets() -> None:
     await load_dummy_roles()
 
     await load_dummy_accounts()
-    await load_dummy_users()
+    await load_dummy_profiles()
 
 
-async def load_dummy_users() -> None:
+async def load_dummy_profiles() -> None:
     """
-    This method loads dummy users from a json file.
+    This method loads dummy profiles from a json file.
     """
     # We ensure that we don't replace any existing data.
-    if await UserInDB.all().count() == 0:
-        with open('./app/static/templates/json/user_templates.json', 'r', encoding="utf-8") as file:
+    if await ProfileInDB.all().count() == 0:
+        with open('./app/static/templates/json/profile_templates.json', 'r', encoding="utf-8") as file:
             # Load the data from the file
             data = json.load(file)
-            for user in data["users"]:
-                user = UserInDB(mail=user["mail"],
-                                firstname=user["firstname"],
-                                lastname=user["lastname"])
-                await user.save()
+            for profile in data["profiles"]:
+                profile = ProfileInDB(mail=profile["mail"],
+                                      firstname=profile["firstname"],
+                                      lastname=profile["lastname"])
+                await profile.save()
 
 async def load_dummy_accounts() -> None:
     """
