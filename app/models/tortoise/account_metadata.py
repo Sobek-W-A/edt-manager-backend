@@ -4,7 +4,7 @@ links accounts and permissions by Academic years.
 """
 
 from tortoise.fields import ForeignKeyField, ForeignKeyRelation
-from app.models.tortoise.academic_year import AcademicYear
+from app.models.tortoise.abstract.academic_year import AcademicYear
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.role import RoleInDB
 

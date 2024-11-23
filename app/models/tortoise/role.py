@@ -6,17 +6,16 @@ from tortoise.models import Model
 from tortoise.fields import Field, CharField, TextField, ManyToManyField, ManyToManyRelation
 
 from app.models.tortoise.permission import PermissionInDB
+from models.tortoise.abstract.classic_model import ClassicModel
 
 
-class RoleInDB(Model):
+class RoleInDB(ClassicModel):
     """
     This model represents a role that can be granted to a user.
     """
-    role_name        : Field[str]                         = CharField(max_length=128, pk=True)
-    role_description : Field[str]                         = TextField()
-    permissions      : ManyToManyRelation[PermissionInDB] = ManyToManyField("models.PermissionInDB", related_name="permission")
+    permissions : ManyToManyRelation[PermissionInDB] = ManyToManyField("models.PermissionInDB", related_name="permission")
 
-    class Meta(Model.Meta):
+    class Meta(ClassicModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """

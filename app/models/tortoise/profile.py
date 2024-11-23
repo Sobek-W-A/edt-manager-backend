@@ -8,7 +8,7 @@ from tortoise.fields import (Field,
                              ForeignKeyNullableRelation,
                              ForeignKeyField)
 
-from app.models.tortoise.academic_year import AcademicYear
+from app.models.tortoise.abstract.academic_year import AcademicYear
 from app.models.tortoise.account import AccountInDB
 
 

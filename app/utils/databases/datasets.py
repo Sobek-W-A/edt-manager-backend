@@ -111,8 +111,8 @@ async def load_dummy_services() -> None:
             # Load the data from the file
             data = json.load(file)
             for service in data["services"]:
-                service = ServiceInDB(service_name=service["name"],
-                                      service_description=service["description"])
+                service = ServiceInDB(name=service["name"],
+                                      description=service["description"])
                 await service.save()
 
 async def load_persistent_datasets() -> None:
