@@ -4,7 +4,7 @@ This is where the FastAPI app is defined, as well as the different tags for the 
 Also contains the startup operations (like DB init).
 """
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, Dict, List, cast
+from typing import Any, AsyncGenerator, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,7 +36,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
 # Creation of the main router
 app: FastAPI = FastAPI(title="SOBEK W.A. API",
                        description="API For the SOBEK W.A web application",
-                       openapi_tags=cast(List[Dict[str, str]], tags_metadata),
+                       openapi_tags=cast(list[dict[str, str]], tags_metadata),
                        lifespan=lifespan)
 
 # List of requests origins that are allowed for the API
