@@ -1,13 +1,14 @@
 """
 This module provides Enums to help manage permissions.
 These are basically static data that needs to be stored in database at creation.
-They are used to check if a user has the permission to perform a certain operation on a certain service.
+They are used to check if a user has the permission to perform a certain operation 
+on a certain service.
 """
 import enum
 
-class Operation():
+class Operation:
     """
-    Describes what an Operation is
+    Describes what an Operation is.
     """
     operation_name: str
     operation_description: str
@@ -16,9 +17,9 @@ class Operation():
         self.operation_name = operation_name
         self.operation_description = operation_description
 
-class Service():
+class Service:
     """
-    Describes what a Service is
+    Describes what a Service is.
     """
     service_name: str
     service_description: str
@@ -27,7 +28,7 @@ class Service():
         self.service_name = service_name
         self.service_description = service_description
 
-class Permission():
+class Permission:
     """
     Describes what a permission is.
     """
@@ -38,7 +39,7 @@ class Permission():
         self.service = service
         self.operations = operations
 
-class Role():
+class Role:
     """
     Describes what a role is.
     """
@@ -66,18 +67,22 @@ class AvailableServices(enum.Enum):
     """
     Enumeration to provide the available services.
     """
-    USER_SERVICE = Service("User Service", "Service that manages users")
+    PROFILE_SERVICE    = Service("Profile Service", "Service that manages profiles.")
+    ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
 
 
 class AvailablePermissions(enum.Enum):
     """
     Class that provides the available permissions.
     """
-    CRUD_USER = Permission(AvailableServices.USER_SERVICE.value,
+    CRUD_PROFILE = Permission(AvailableServices.PROFILE_SERVICE.value,
+                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
+                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
+    CRUD_SERVICE = Permission(AvailableServices.ACCOUNT_SERVICE.value,
                            [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
                             AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
 class AvailableRoles(enum.Enum):
     """
     Class that provides the available roles.
     """
-    ADMIN = Role("Administrator", "Role that corresponds to the administrator of the system.", [AvailablePermissions.CRUD_USER.value])
+    ADMIN = Role("Administrator", "Role that corresponds to the administrator of the system.", [AvailablePermissions.CRUD_PROFILE.value])

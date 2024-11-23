@@ -1,15 +1,16 @@
 """
-This module provides the User's DTO using pydantic.
+Pydantic models for account operations.
 """
+
 from typing import Optional, Self
+
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
-
+from app.models.pydantic.validator import Login, Password
 from app.utils.enums.http_errors import CommonErrorMessages
 
-from .validator import Mail, Password, Name, Login
 
-class PydanticUserBasePassword(BaseModel):
+class PydanticAccountBasePassword(BaseModel):
     """
     Base model for the password with validation
     """
@@ -32,42 +33,33 @@ class PydanticUserBasePassword(BaseModel):
             raise HTTPException(status_code=422, detail=CommonErrorMessages.PASSWORDS_DONT_MATCH)
         return self
 
-class PydanticUserModify(PydanticUserBasePassword):
+class PydanticCreateAccountModel(PydanticAccountBasePassword):
     """
-    This model is meant to be used as model-check for user-modification
-    related requests.
+    Pydantic model for accounts.
     """
-    login:            Optional[Login]    = None
-    firstname:        Optional[Name]     = None
-    lastname:         Optional[Name]     = None
-    mail:             Optional[Mail]     = None
+    login : Login
 
-class PydanticUserCreate(PydanticUserBasePassword):
-    """
-    This model is meant to be used when we need to create a new user.
-    """
-    login:          Login
-    firstname:      Name
-    lastname:       Name
-    mail:           Mail
 
-class PydanticUserResponse(BaseModel):
+class PydanticModifyAccountModel(PydanticAccountBasePassword):
     """
-    This model is meant to be used when we need to return a user to the frontend.
+    Pydantic model for account modification.
     """
-    id:        int
-    login:     Login
-    firstname: Name
-    lastname:  Name
-    mail:      Mail
+    login : Optional[Login]    = None
+
+class PydanticAccountModel(BaseModel):
+    """
+    Pydantic model for account retrieval.
+    """
+    id    : int
+    login : Login
 
     class Config:
         """
-        Config class used to allow the model to be created from a dictionary.
+        Pydantic configuration.
         """
         from_attributes = True
 
-class PydanticUserPasswordResponse(BaseModel):
+class PydanticAccountPasswordResponse(BaseModel):
     """
     This model is meant to be used when we need to return the password of the user.
     """

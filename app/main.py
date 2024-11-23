@@ -4,26 +4,22 @@ This is where the FastAPI app is defined, as well as the different tags for the 
 Also contains the startup operations (like DB init).
 """
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import auth, user
+from app.routes import account, auth, profile
+from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
 
 # Array for the routes descriptions and names.
-tags_metadata: list[dict[str, str]] = [
-    {
-        "name": "user",
-        "description": "User operations."
-    },
-    {
-        "name": "auth",
-        "description": "Authentication endpoints."
-    }
+tags_metadata: list[Tag] = [
+    account.tag,
+    auth.tag,
+    profile.tag
 ]
 
 @asynccontextmanager
@@ -40,7 +36,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
 # Creation of the main router
 app: FastAPI = FastAPI(title="SOBEK W.A. API",
                        description="API For the SOBEK W.A web application",
-                       openapi_tags=tags_metadata,
+                       openapi_tags=cast(list[dict[str, str]], tags_metadata),
                        lifespan=lifespan)
 
 # List of requests origins that are allowed for the API
@@ -62,8 +58,9 @@ app.add_middleware(
 )
 
 # Importing API routes :
-app.include_router(user.userRouter, tags=["user"])
-app.include_router(auth.authRouter, tags=["auth"])
+app.include_router(account.accountRouter, tags=[account.tag["name"]])
+app.include_router(auth.authRouter,       tags=[auth.tag["name"]])
+app.include_router(profile.profileRouter, tags=[profile.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

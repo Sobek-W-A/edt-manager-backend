@@ -22,7 +22,6 @@ class PydanticTokenExporter(ABC, BaseModel):
         This method exports the current pydantic model
         """
 
-
 class PydanticToken(PydanticTokenExporter):
     """
     This class is a pydantic model for a signle Token.

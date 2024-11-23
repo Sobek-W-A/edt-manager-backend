@@ -18,4 +18,4 @@ class ServiceInDB(Model):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table = "Service"
+        table : str = "Service"

@@ -21,8 +21,8 @@ async def startup_databases(app: FastAPI) -> None:
     await Postgresql.init_postgres_db(app)
 
     # Load dummy dataset if in development environment
-    load_dotenv(".env")
-    if os.getenv("ENVIRONMENT") == "development":
+    load_dotenv("./.env")
+    if os.getenv(key="APP_ENVIRONMENT") == "development":
         await load_dummy_datasets()
     else :
         await load_persistent_datasets()

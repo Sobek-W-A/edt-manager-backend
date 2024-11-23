@@ -7,7 +7,7 @@ from typing import Optional
 import bcrypt
 from passlib.context import CryptContext
 
-from app.models.tortoise.user import UserInDB
+from app.models.tortoise.account import AccountInDB
 
 
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -20,7 +20,7 @@ def get_password_hash(password: str) -> str:
     password_hash: bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return password_hash.decode('utf-8')
 
-async def authenticate_user(login: str, password: str) -> Optional["UserInDB"]:
+async def authenticate_user(login: str, password: str) -> Optional["AccountInDB"]:
     """
     This method allows us to authenticate the user referenced by the login, 
     using the password provided.
@@ -29,13 +29,13 @@ async def authenticate_user(login: str, password: str) -> Optional["UserInDB"]:
     :return: None value if the user could not be authenticated, a UserInDB otherwise.
     """
     # Checking if the user exists or not and checking its password.
-    user: UserInDB | None = await UserInDB.get_or_none(login=login)
-    if user is None or not verify_password(user, password):
+    account: AccountInDB | None = await AccountInDB.get_or_none(login=login)
+    if account is None or not verify_password(account, password):
         return None
-    return user
+    return account
 
-def verify_password(user: UserInDB, password: str) -> bool:
+def verify_password(account: AccountInDB, password: str) -> bool:
     """
     This method will compare a hash provided with the hash of the object concerned.
     """
-    return bcrypt.checkpw(password.encode('utf-8'), user.hash.encode('utf-8'))
+    return bcrypt.checkpw(password.encode('utf-8'), account.hash.encode('utf-8'))
