@@ -39,4 +39,4 @@ class PydanticProfileResponse(AcademicYearPydanticModel):
         """
         Config class used to allow the model to be created from a dictionary.
         """
-        from_attributes = True
+        from_attributes : bool = True

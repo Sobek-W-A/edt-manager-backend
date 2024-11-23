@@ -6,9 +6,9 @@ on a certain service.
 """
 import enum
 
-class Operation():
+class Operation:
     """
-    Describes what an Operation is
+    Describes what an Operation is.
     """
     operation_name: str
     operation_description: str
@@ -17,9 +17,9 @@ class Operation():
         self.operation_name = operation_name
         self.operation_description = operation_description
 
-class Service():
+class Service:
     """
-    Describes what a Service is
+    Describes what a Service is.
     """
     service_name: str
     service_description: str
@@ -28,7 +28,7 @@ class Service():
         self.service_name = service_name
         self.service_description = service_description
 
-class Permission():
+class Permission:
     """
     Describes what a permission is.
     """
@@ -39,7 +39,7 @@ class Permission():
         self.service = service
         self.operations = operations
 
-class Role():
+class Role:
     """
     Describes what a role is.
     """
@@ -75,7 +75,7 @@ class AvailablePermissions(enum.Enum):
     """
     Class that provides the available permissions.
     """
-    CRUD_PROFILE    = Permission(AvailableServices.PROFILE_SERVICE.value,
+    CRUD_PROFILE = Permission(AvailableServices.PROFILE_SERVICE.value,
                            [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
                             AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
     CRUD_SERVICE = Permission(AvailableServices.ACCOUNT_SERVICE.value,

@@ -22,7 +22,7 @@ from app.utils.enums.http_errors import CommonErrorMessages
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-class JWTData():
+class JWTData:
     """
     Class used to describe the encoded data from the JSON Web Tokens.
     """

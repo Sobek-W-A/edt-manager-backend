@@ -13,7 +13,10 @@ from app.models.pydantic.TokenModel import PydanticTokenPair
 from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 authRouter = APIRouter(prefix="/auth")
-tag: Tag = Tag("Auth", "Authentication operations.")
+tag: Tag = {
+    "name": "Auth",
+    "description": "Authentication-related operations."
+}
 
 
 @authRouter.post("/login", response_model=PydanticTokenPair, status_code=200)

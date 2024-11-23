@@ -33,11 +33,11 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
 
     account : AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
     if account is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
     return PydanticAccountModel.model_validate(account)
 
-async def get_all_accounts(current_account: AccountInDB):
+async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
@@ -96,7 +96,7 @@ async def delete_account(account_id: int, current_account: AccountInDB) -> None:
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
     if account is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
     
     await account.delete()
 
@@ -112,7 +112,7 @@ async def modify_account(account_id: int, account: PydanticModifyAccountModel, c
     account_to_modify: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
     if account_to_modify is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.USER_NOT_FOUND)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
     if await AccountInDB.filter(login=account.login).exists():
         raise LoginAlreadyUsedException

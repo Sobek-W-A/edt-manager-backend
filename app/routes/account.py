@@ -13,7 +13,10 @@ from app.services import AccountService
 from app.models.aliases import AuthenticatedAccount
 
 accountRouter: APIRouter = APIRouter(prefix="/account")
-tag: Tag = Tag("Account", "Account-related operations.")
+tag: Tag = {
+    "name": "Account",
+    "description": "Account-related operations."
+}
 
 @accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
 async def get_all_accounts(current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:

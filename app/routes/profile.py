@@ -11,7 +11,10 @@ from app.routes.tags import Tag
 from app.services import ProfileService
 
 profileRouter: APIRouter = APIRouter(prefix="/profile")
-tag: Tag = Tag("Profile", "Profile-related operations.")
+tag: Tag = {
+    "name": "Profile",
+    "description": "Profile-related operations."
+}
 
 @profileRouter.post("/", status_code=201)
 async def create_profile(body: PydanticProfileCreate, current_account: AuthenticatedAccount) -> None:
