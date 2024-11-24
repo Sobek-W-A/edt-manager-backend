@@ -2,10 +2,7 @@
 This module describes the operations.
 These are basically CRUD actions that can be performed on a service.
 """
-from tortoise.models import Model
-from tortoise.fields import Field, CharField, TextField
-
-from models.tortoise.abstract.classic_model import ClassicModel
+from app.models.tortoise.abstract.classic_model import ClassicModel
 
 
 class OperationInDB(ClassicModel):

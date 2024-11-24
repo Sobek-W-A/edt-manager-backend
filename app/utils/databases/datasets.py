@@ -66,8 +66,8 @@ async def load_dummy_roles() -> None:
             for role in data["roles"]:
                 permissions = role["permissions"]
                 available_perms: list[PermissionInDB] = await PermissionInDB.filter(id__in=permissions)
-                role = RoleInDB(role_name=role["name"],
-                                role_description=role["description"])
+                role = RoleInDB(name=role["name"],
+                                description=role["description"])
                 await role.save()
                 for perm in available_perms :
                     await role.permissions.add(perm)
@@ -97,8 +97,8 @@ async def load_dummy_operations() -> None:
             # Load the data from the file
             data = json.load(file)
             for operation in data["operations"]:
-                operation = OperationInDB(operation_name=operation["name"],
-                                          operation_description=operation["description"])
+                operation = OperationInDB(name=operation["name"],
+                                          description=operation["description"])
                 await operation.save()
 
 async def load_dummy_services() -> None:
