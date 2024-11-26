@@ -6,6 +6,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 import jsonschema
+from fastapi.testclient import TestClient
 
 from app.main import app
 
@@ -15,7 +16,7 @@ class AppTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.app = app
+        cls.app = TestClient(app)
 
     def assertSchemaValidation(self, response: json_type, schema_path: str) -> None:
         try:
