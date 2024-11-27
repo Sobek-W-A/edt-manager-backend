@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import account, auth, profile
+from app.routes import account, auth, profile,role
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
@@ -19,7 +19,8 @@ from app.utils.databases.db import startup_databases
 tags_metadata: list[Tag] = [
     account.tag,
     auth.tag,
-    profile.tag
+    profile.tag,
+    role.tag
 ]
 
 @asynccontextmanager
@@ -61,6 +62,8 @@ app.add_middleware(
 app.include_router(account.accountRouter, tags=[account.tag["name"]])
 app.include_router(auth.authRouter,       tags=[auth.tag["name"]])
 app.include_router(profile.profileRouter, tags=[profile.tag["name"]])
+
+app.include_router(role.roleRouter, tags=[role.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")
