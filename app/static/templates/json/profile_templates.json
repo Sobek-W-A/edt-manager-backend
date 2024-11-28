@@ -4,6 +4,7 @@
       "firstname": "Alice",
       "lastname": "Johnson",
       "mail": "alice.johnson@example.com",
+      "academic_year": 2024,
       "status_id": "Manager"
   },
   {
@@ -11,6 +12,7 @@
       "firstname": "John",
       "lastname": "Doe",
       "mail": "john.doe@example.com",
+      "academic_year": 2024,
       "status_id": "Teacher"
   },
   {
@@ -18,6 +20,7 @@
       "firstname": "Sophia",
       "lastname": "Smith",
       "mail": "sophia.smith@example.com",
+      "academic_year": 2024,
       "status_id": "Teacher"
   },
   {
@@ -25,30 +28,35 @@
       "firstname": "Michael",
       "lastname": "Brown",
       "mail": "michael.brown@example.com",
+      "academic_year": 2024,
       "status_id": "Department Manager"
   },
   {
       "firstname": "Isabella",
       "lastname": "Williams",
       "mail": "isabella.williams@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "James",
       "lastname": "Davis",
       "mail": "james.davis@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Emily",
       "lastname": "Garcia",
       "mail": "emily.garcia@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Oliver",
       "lastname": "Martinez",
       "mail": "oliver.martinez@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
@@ -56,6 +64,7 @@
       "firstname": "Charlotte",
       "lastname": "Hernandez",
       "mail": "charlotte.hernandez@example.com",
+      "academic_year": 2024,
       "status_id": "Teacher"
   },
   {
@@ -63,66 +72,77 @@
       "firstname": "Liam",
       "lastname": "Lee",
       "mail": "liam.lee@example.com",
+      "academic_year": 2024,
       "status_id": "Manager"
   },
   {
       "firstname": "Noah",
       "lastname": "Anderson",
       "mail": "noah.anderson@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Ava",
       "lastname": "Moore",
       "mail": "ava.moore@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Elijah",
       "lastname": "Taylor",
       "mail": "elijah.taylor@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Amelia",
       "lastname": "Thomas",
       "mail": "amelia.thomas@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Lucas",
       "lastname": "Jackson",
       "mail": "lucas.jackson@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Mia",
       "lastname": "White",
       "mail": "mia.white@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Ethan",
       "lastname": "Harris",
       "mail": "ethan.harris@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Harper",
       "lastname": "Martin",
       "mail": "harper.martin@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "William",
       "lastname": "Thompson",
       "mail": "william.thompson@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   },
   {
       "firstname": "Sophia",
       "lastname": "Garcia",
       "mail": "sophia.garcia@example.com",
+      "academic_year": 2024,
       "status_id": "Individual"
   }
 ]

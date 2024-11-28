@@ -5,15 +5,24 @@ It should use JSON provided in a specific folder.
 
 
 import json
-from typing import Any
+from typing import Any, Type
 from pydantic import BaseModel
-from tortoise import Model
+from tortoise.models import Model
 
 from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
 from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
+from app.models.pydantic.PermissionModel import PydanticPermissionModelFromJSON
+from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
+from app.models.pydantic.PydanticRole import PydanticRoleModelFromJSON
+from app.models.pydantic.ServiceModel import PydanticServiceModelFromJSON
+from app.models.pydantic.StatusModel import PydanticStatusModelFromJSON
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.operation import OperationInDB
+from app.models.tortoise.permission import PermissionInDB
+from app.models.tortoise.profile import ProfileInDB
+from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
+from app.models.tortoise.status import StatusInDB
 from app.services import SecurityService
 
 JSON_FILE_PATH : str = "./app/static/templates/json/"
@@ -27,8 +36,16 @@ async def load_persistent_datasets() -> None:
                                             JSON_FILE_PATH + "operation_templates.json")
     await load_json_into_model_via_pydantic(ServiceInDB,
                                             PydanticServiceModelFromJSON,
-                                            JSON_FILE_PATH + "operation_templates.json")
-
+                                            JSON_FILE_PATH + "service_templates.json")
+    await load_json_into_model_via_pydantic(PermissionInDB,
+                                            PydanticPermissionModelFromJSON,
+                                            JSON_FILE_PATH + "permission_templates.json")
+    await load_json_into_model_via_pydantic(RoleInDB,
+                                            PydanticRoleModelFromJSON,
+                                            JSON_FILE_PATH + "role_templates.json")
+    await load_json_into_model_via_pydantic(StatusInDB,
+                                            PydanticStatusModelFromJSON,
+                                            JSON_FILE_PATH + "status_templates.json")
 
 async def load_dummy_datasets() -> None:
     """
@@ -39,20 +56,23 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(AccountInDB,
                                             PydanticAccountModelFromJSON,
                                             JSON_FILE_PATH + "account_templates.json")
+    await load_json_into_model_via_pydantic(ProfileInDB,
+                                            PydanticProfileModelFromJSON,
+                                            JSON_FILE_PATH + "profile_templates.json")
 
 async def load_json_into_model_via_pydantic(
-    model: Model,
-    schema: BaseModel.__class__,
-    file_path: str
+    model       : Type[Model],
+    schema      : Type[BaseModel],
+    file_path   : str
 ) -> None:
     """
-    Charge des données depuis un fichier JSON dans un modèle Tortoise,
-    en utilisant un modèle Pydantic pour validation et transformation.
+    Loads data from a JSON file into a Tortoise model,
+    using a Pydantic model for validation and transformation.
 
     Args:
-        model (Type[T]): Classe du modèle Tortoise.
-        schema (Type[P]): Classe du modèle Pydantic.
-        file_path (str): Chemin vers le fichier JSON.
+        model (Type[Model]): Tortoise model class.
+        schema (Type[BaseModel]): Pydantic model class.
+        file_path (str): Path to the JSON file.
 
     Returns:
         None
@@ -71,17 +91,40 @@ async def load_json_into_model_via_pydantic(
         # Trying to use pydantic to conform JSON data :
         data: list[BaseModel] = [schema(**item) for item in raw_data]
         
-        # Insertion des données dans la base de données
+        # Insert data into the database
         for item in data:
             element: dict[str, Any] = item.model_dump(exclude_unset=True)
-            print(element)
 
-            if "hash" in element:
+            # Identify and extract m2m fields based on `_m2m` suffix
+            m2m_relations = {
+                field_name[:-4]: field_value  # Strip `_m2m` to get the actual field name
+                for field_name, field_value in element.items()
+                if field_name.endswith("_m2m")
+            }
+
+            # Remove m2m fields from the main element
+            for m2m_field in m2m_relations.keys():
+                element.pop(f"{m2m_field}_m2m")
+
+            if "hash" in element:  # Handle hashed fields if needed
                 element["hash"] = SecurityService.get_password_hash(element["hash"])
 
-            await model.create(**element)
+            # Create the model instance
+            instance: Model = await model.create(**element)
 
-        print(f"INFO:   {len(data)} instances added init {model.__name__}")
+            # Assign m2m relations
+            for field, ids in m2m_relations.items():
+                # I'm sorry for the following pylint comments, there is no other way to do what i need to do without it.
+                # It is common practice to use the _meta protected attribute in Tortoise, don't worry.
+                if field in model._meta.m2m_fields:                                            # pylint: disable=protected-access # type: ignore
+                    # Fetch related model instances based on IDs
+                    related_model : Type[Model]  = model._meta.fields_map[field].related_model # pylint: disable=protected-access # type: ignore
+                    related_instances = await related_model.filter(id__in=ids)                 # pylint: disable=protected-access # type: ignore
+                    m2m_manager = getattr(instance, field)
+                    await m2m_manager.add(*related_instances)
+
+
+        print(f"INFO:     {len(data)} instances added init {model.__name__}")
 
     except Exception as e:
-        print(f"ERROR:  Failed loading data for model {model.__name__} : {e}")
+        print(f"ERROR:    Failed loading data for model {model.__name__} : {e}")
