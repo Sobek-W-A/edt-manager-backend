@@ -1,27 +1,128 @@
-{
-  "profiles": [
-    {
+[
+  {
       "account_id": 1,
-      "firstname": "Maxime",
-      "lastname": "Marcelin",
-      "mail": "maisonmarc7@gmail.com"
-    },
-    {
+      "firstname": "Alice",
+      "lastname": "Johnson",
+      "mail": "alice.johnson@example.com",
+      "status_id": "Manager"
+  },
+  {
       "account_id": 2,
-      "firstname": "Leo",
-      "lastname": "De Sa",
-      "mail": "test@test.com"
-    },
-    {
+      "firstname": "John",
+      "lastname": "Doe",
+      "mail": "john.doe@example.com",
+      "status_id": "Teacher"
+  },
+  {
       "account_id": 3,
-      "firstname": "test",
-      "lastname": "user",
-      "mail": "test@user.test"
-    },
-    {
-      "firstname": "test",
-      "lastname": "user",
-      "mail": "test@testfafa.test"
-    }
-  ]
-}
+      "firstname": "Sophia",
+      "lastname": "Smith",
+      "mail": "sophia.smith@example.com",
+      "status_id": "Teacher"
+  },
+  {
+      "account_id": 4,
+      "firstname": "Michael",
+      "lastname": "Brown",
+      "mail": "michael.brown@example.com",
+      "status_id": "Department Manager"
+  },
+  {
+      "firstname": "Isabella",
+      "lastname": "Williams",
+      "mail": "isabella.williams@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "James",
+      "lastname": "Davis",
+      "mail": "james.davis@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Emily",
+      "lastname": "Garcia",
+      "mail": "emily.garcia@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Oliver",
+      "lastname": "Martinez",
+      "mail": "oliver.martinez@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "account_id": 5,
+      "firstname": "Charlotte",
+      "lastname": "Hernandez",
+      "mail": "charlotte.hernandez@example.com",
+      "status_id": "Teacher"
+  },
+  {
+      "account_id": 6,
+      "firstname": "Liam",
+      "lastname": "Lee",
+      "mail": "liam.lee@example.com",
+      "status_id": "Manager"
+  },
+  {
+      "firstname": "Noah",
+      "lastname": "Anderson",
+      "mail": "noah.anderson@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Ava",
+      "lastname": "Moore",
+      "mail": "ava.moore@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Elijah",
+      "lastname": "Taylor",
+      "mail": "elijah.taylor@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Amelia",
+      "lastname": "Thomas",
+      "mail": "amelia.thomas@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Lucas",
+      "lastname": "Jackson",
+      "mail": "lucas.jackson@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Mia",
+      "lastname": "White",
+      "mail": "mia.white@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Ethan",
+      "lastname": "Harris",
+      "mail": "ethan.harris@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Harper",
+      "lastname": "Martin",
+      "mail": "harper.martin@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "William",
+      "lastname": "Thompson",
+      "mail": "william.thompson@example.com",
+      "status_id": "Individual"
+  },
+  {
+      "firstname": "Sophia",
+      "lastname": "Garcia",
+      "mail": "sophia.garcia@example.com",
+      "status_id": "Individual"
+  }
+]

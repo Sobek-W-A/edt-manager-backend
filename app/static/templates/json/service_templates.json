@@ -1,7 +1,7 @@
 {
     "services": [
         {
-            "name": "User Service",
+            "name": "Profile Service",
             "description": "Service that manages users."
         },
         {

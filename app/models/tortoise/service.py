@@ -2,29 +2,18 @@
 This module describes the services.
 These are basically the services (routes) that can be provided to a user.
 """
-from tortoise.models import Model
-from tortoise.fields import Field, CharField, TextField
+from app.models.tortoise.abstract.classic_model import ClassicModel
 
 
-class ServiceInDB(Model):
+class ServiceInDB(ClassicModel):
     """
     This model represents a service that can be provided to a user.
     It is mainly used for permissions.
     """
-    service_name        : Field[str] = CharField(max_length=128, pk=True)
-    service_description : Field[str] = TextField()
 
-    def to_dict(self) -> dict:
-        """
-        Convert the ServiceInDB instance to a dictionary.
-        """
-        return {
-            "service_name": self.service_name,
-            "service_description": self.service_description
-        }
-
-    class Meta(Model.Meta):
+    class Meta(ClassicModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table : str = "Service"
+        table    : str = "Service"
+        abstract : bool = False
