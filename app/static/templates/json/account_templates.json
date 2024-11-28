@@ -1,16 +1,14 @@
-{
-    "accounts" :[
-        {
-            "login": "Maximelego",
-            "password": "Loliloulz1"
-        },
-        {
-            "login": "LeoPython",
-            "password": "Loliloulz2"
-        },
-        {
-            "login": "fafa",
-            "password": "Loliloulz42"
-        }
-    ]
-}
+[
+    {
+        "login": "Maximelego",
+        "hash": "Loliloulz1"
+    },
+    {
+        "login": "LeoPython",
+        "hash": "Loliloulz2"
+    },
+    {
+        "login": "fafa",
+        "hash": "Loliloulz42"
+    }
+]

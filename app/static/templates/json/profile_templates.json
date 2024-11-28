@@ -4,24 +4,28 @@
       "account_id": 1,
       "firstname": "Maxime",
       "lastname": "Marcelin",
-      "mail": "maisonmarc7@gmail.com"
+      "mail": "maisonmarc7@gmail.com",
+      "status_id": "Manager"
     },
     {
       "account_id": 2,
       "firstname": "Leo",
       "lastname": "De Sa",
-      "mail": "test@test.com"
+      "mail": "test@test.com",
+      "status_id": "Teacher"
     },
     {
       "account_id": 3,
       "firstname": "test",
       "lastname": "user",
-      "mail": "test@user.test"
+      "mail": "test@user.test",
+      "status_id": "Teacher"
     },
     {
       "firstname": "test",
       "lastname": "user",
-      "mail": "test@testfafa.test"
+      "mail": "test@testfafa.test",
+      "status_id": "Individual"
     }
   ]
 }
