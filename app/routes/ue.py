@@ -30,8 +30,8 @@ async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
     """
     return await UEService.add_ue(body)
 
-@ueRouter.patch("/{ue_id}", status_code=205, response_model=PydanticUEModel)
-async def modify_ue(ue_id: int, body: PydanticCreateUEModel) -> PydanticUEModel:
+@ueRouter.patch("/{ue_id}", status_code=205)
+async def modify_ue(ue_id: int, body: PydanticCreateUEModel) -> None:
     """
     This method modifies the UE of the given UE id.
     """

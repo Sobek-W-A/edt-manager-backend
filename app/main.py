@@ -63,8 +63,8 @@ app.add_middleware(
 app.include_router(account.accountRouter, tags=[account.tag["name"]])
 app.include_router(auth.authRouter,       tags=[auth.tag["name"]])
 app.include_router(profile.profileRouter, tags=[profile.tag["name"]])
-
 app.include_router(role.roleRouter, tags=[role.tag["name"]])
+app.include_router(ue.ueRouter, tags=[ue.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")
