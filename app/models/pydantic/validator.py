@@ -65,4 +65,4 @@ def is_academic_year(years: tuple[int, int]) -> tuple[int, int]:
         raise HTTPException(status_code=422, detail="Le second élément doit être égal au premier + 1.")
     return years
 
-AcademicYear = Annotated[str, AfterValidator(is_academic_year)]
+AcademicYear = Annotated[list[int], AfterValidator(is_academic_year)]
