@@ -15,6 +15,22 @@
         {
             "service_name": "User Service",
             "operation_name": "Update"
+        },
+        {
+            "service_name": "Account Service",
+            "operation_name": "Create"
+        },
+        {
+            "service_name": "Account Service",
+            "operation_name": "Delete"
+        },
+        {
+            "service_name": "Account Service",
+            "operation_name": "Get"
+        },
+        {
+            "service_name": "Account Service",
+            "operation_name": "Update"
         }
     ]
 }
