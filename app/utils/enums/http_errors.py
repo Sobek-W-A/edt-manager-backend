@@ -30,4 +30,6 @@ class CommonErrorMessages(enum.StrEnum):
     FORBIDDEN_ACTION         = "You don't have the permission to perform this operation."
     # Folder Errors
     FOLDER_AND_UE_NOT_ENABLED= "You can't have a folder with a folder and an UE"
+    # UE Errors
+    UE_NOT_FOUND             = "UE was not found"
 
