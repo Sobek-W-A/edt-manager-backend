@@ -1,0 +1,47 @@
+"""
+UE routes.
+Used to manage ue operations.
+"""
+from fastapi import APIRouter
+
+
+
+from app.models.pydantic.UEModel import PydanticUEModel
+from app.routes.tags import Tag
+from app.services import UEService
+
+ueRouter: APIRouter = APIRouter(prefix="/ue")
+tag: Tag = {
+    "name": "UE",
+    "description": "UE-related operations."
+}
+
+@ueRouter.get("/{ue_id}",status_code=200, response_model=PydanticUEModel)
+async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
+    """
+    This method returns the UE of the given UE id.
+    """
+    return await UEService.get_ue_by_id(ue_id)
+
+@ueRouter.post("/", status_code=201, response_model=PydanticUEModel)
+async def add_ue(body: PydanticUEModel) -> PydanticUEModel:
+    """
+    This method creates a new role.
+    """
+    return None
+
+@ueRouter.patch("/{ue_id}", status_code=205, response_model=PydanticUEModel)
+async def modify_ue(ue_id: int) -> PydanticUEModel:
+    """
+    This method modifies the role of the given role id.
+    """
+    return None
+
+
+@ueRouter.delete("/{ue_id}", status_code=204, response_model=PydanticUEModel)
+async def delete_ue(ue_id: int) -> PydanticUEModel:
+    """
+    This method deletes the role of the given role id.
+    """
+    return None
+

@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import account, auth, profile,role
+from app.routes import account, auth, profile, role, ue
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
@@ -20,7 +20,8 @@ tags_metadata: list[Tag] = [
     account.tag,
     auth.tag,
     profile.tag,
-    role.tag
+    role.tag,
+    ue.tag
 ]
 
 @asynccontextmanager

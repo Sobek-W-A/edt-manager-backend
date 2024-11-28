@@ -28,3 +28,6 @@ class CommonErrorMessages(enum.StrEnum):
     TOKEN_EXPIRED            = "The token has expired."
     # Permission Errors
     FORBIDDEN_ACTION         = "You don't have the permission to perform this operation."
+    # Folder Errors
+    FOLDER_AND_UE_NOT_ENABLED= "You can't have a folder with a folder and an UE"
+
