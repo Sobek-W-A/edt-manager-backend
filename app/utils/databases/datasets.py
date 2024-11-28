@@ -5,18 +5,30 @@ It should use JSON provided in a specific folder.
 
 
 import json
-from typing import cast
-from tortoise.models import ModelMeta
+from typing import Any
+from pydantic import BaseModel
+from tortoise import Model
+
+from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
+from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
 from app.models.tortoise.account import AccountInDB
-from app.models.tortoise.account_metadata import AccountMetadata
 from app.models.tortoise.operation import OperationInDB
-from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.service import ServiceInDB
-from app.models.tortoise.profile import ProfileInDB
-from app.models.tortoise.role import RoleInDB
 from app.services import SecurityService
 
 JSON_FILE_PATH : str = "./app/static/templates/json/"
+
+async def load_persistent_datasets() -> None:
+    """
+    This method loads all datasets needed for production purposes.
+    """
+    await load_json_into_model_via_pydantic(OperationInDB,
+                                            PydanticOperationModelFromJSON,
+                                            JSON_FILE_PATH + "operation_templates.json")
+    await load_json_into_model_via_pydantic(ServiceInDB,
+                                            PydanticServiceModelFromJSON,
+                                            JSON_FILE_PATH + "operation_templates.json")
+
 
 async def load_dummy_datasets() -> None:
     """
@@ -24,156 +36,52 @@ async def load_dummy_datasets() -> None:
     """
     await load_persistent_datasets()
 
-    await load_json_into_model(AccountInDB, "account_templates.json")
+    await load_json_into_model_via_pydantic(AccountInDB,
+                                            PydanticAccountModelFromJSON,
+                                            JSON_FILE_PATH + "account_templates.json")
 
-
-
-async def load_dummy_account_meta() -> None:
+async def load_json_into_model_via_pydantic(
+    model: Model,
+    schema: BaseModel.__class__,
+    file_path: str
+) -> None:
     """
-    This method loads the account metadatas.
-    """
-    if await AccountMetadata.all().count() == 0:
-        with open('./app/static/templates/json/account_metadata.json', 'r', encoding="utf-8") as file:
-            # Load the data from the file
-            data = json.load(file)
-            for account_meta in data["metadatas"]:
-                account_meta = AccountMetadata(account_id=account_meta["account_id"],
-                                               role_id=account_meta["role_id"])
-                await account_meta.save()
+    Charge des données depuis un fichier JSON dans un modèle Tortoise,
+    en utilisant un modèle Pydantic pour validation et transformation.
 
-
-async def load_persistent_datasets() -> None:
-    """
-    This method loads all datasets needed for production purposes.
-    """
-    # await load_operations()
-    # await load_services()
-    # await load_permissions()
-    # await load_roles()
-
-
-# async def load_profiles() -> None:
-#     """
-#     This method loads dummy profiles from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await ProfileInDB.all().count() == 0:
-#         with open('./app/static/templates/json/profile_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for profile in data["profiles"]:
-#                 profile = ProfileInDB(mail=profile["mail"],
-#                                       firstname=profile["firstname"],
-#                                       lastname=profile["lastname"])
-#                 await profile.save()
-
-# async def load_accounts() -> None:
-#     """
-#     This method loads dummy accounts from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await AccountInDB.all().count() == 0:
-#         with open('./app/static/templates/json/account_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for account in data["accounts"]:
-#                 account_to_create = AccountInDB(login=account["login"],
-#                                                 hash=SecurityService.get_password_hash(account["password"]))
-#                 await account_to_create.save()
-
-# async def load_roles() -> None:
-#     """
-#     This method loads roles from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await RoleInDB.all().count() == 0:
-#         with open('./app/static/templates/json/role_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for role in data["roles"]:
-#                 permissions = role["permissions"]
-#                 available_perms: list[PermissionInDB] = await PermissionInDB.filter(id__in=permissions)
-#                 role = RoleInDB(name=role["name"],
-#                                 description=role["description"])
-#                 await role.save()
-#                 for perm in available_perms :
-#                     await role.permissions.add(perm)
-#                 await role.save()
-
-# async def load_permissions() -> None:
-#     """
-#     This method loads permissions from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await PermissionInDB.all().count() == 0:
-#         with open('./app/static/templates/json/permission_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for permission in data["permissions"]:
-#                 permission = PermissionInDB(service_name_id=permission["service_name"],
-#                                             operation_name_id=permission["operation_name"])
-#                 await permission.save()
-
-# async def load_operations() -> None:
-#     """
-#     This method loads operations from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await OperationInDB.all().count() == 0:
-#         with open('./app/static/templates/json/operation_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for operation in data["operations"]:
-#                 operation = OperationInDB(name=operation["name"],
-#                                           description=operation["description"])
-#                 await operation.save()
-
-# async def load_services() -> None:
-#     """
-#     This method loads services from a json file.
-#     """
-#     # We ensure that we don't replace any existing data.
-#     if await ServiceInDB.all().count() == 0:
-#         with open('./app/static/templates/json/service_templates.json', 'r', encoding="utf-8") as file:
-#             # Load the data from the file
-#             data = json.load(file)
-#             for service in data["services"]:
-#                 service = ServiceInDB(name=service["name"],
-#                                       description=service["description"])
-#                 await service.save()
-
-
-async def load_json_into_model(model: ModelMeta, file_name: str):
-    """
-    Load data from a JSON file into a Tortoise model, hashing any keys named 'hash'.
-    
     Args:
-        model (ModelMeta): Tortoise model class.
-        file_name (str): Name of the JSON file, with the .json extension.
-        
+        model (Type[T]): Classe du modèle Tortoise.
+        schema (Type[P]): Classe du modèle Pydantic.
+        file_path (str): Chemin vers le fichier JSON.
+
     Returns:
         None
     """
+    if await model.all().count() > 0:
+        return
+
     try:
-        # Load JSON data from the file
-        with open(f'{JSON_FILE_PATH}{file_name}', "r", encoding="utf-8") as f:
-            data = json.load(f)
+        # Charger les données JSON
+        with open(file_path, "r", encoding="utf-8") as file:
+            raw_data = json.load(file)
+        
+        if isinstance(raw_data, dict):  # Si le fichier contient un seul objet
+            raw_data: list[dict[str, Any]] = [raw_data]
 
-        # Ensure data is a list
-        if isinstance(data, dict):  # in case we get a single object
-            data = [data]
-
-        if not isinstance(data, list):
-            raise ValueError("The JSON file must contain an object or a list of objects.")
-
-        # Process each item to hash keys named 'hash'
+        # Trying to use pydantic to conform JSON data :
+        data: list[BaseModel] = [schema(**item) for item in raw_data]
+        
+        # Insertion des données dans la base de données
         for item in data:
-            if "hash" in item and isinstance(item["hash"], str):
-                item["hash"] = SecurityService.get_password_hash(cast(str, item["hash"]))
+            element: dict[str, Any] = item.model_dump(exclude_unset=True)
+            print(element)
 
-        # Bulk create the data in the Tortoise model
-        await model.bulk_create([model(**item) for item in data])
-        print(f"{len(data)} instances added to {model.__name__}")
+            if "hash" in element:
+                element["hash"] = SecurityService.get_password_hash(element["hash"])
+
+            await model.create(**element)
+
+        print(f"INFO:   {len(data)} instances added init {model.__name__}")
 
     except Exception as e:
-        print(f"Error loading data into model {model.__name__}: {e}")
+        print(f"ERROR:  Failed loading data for model {model.__name__} : {e}")
