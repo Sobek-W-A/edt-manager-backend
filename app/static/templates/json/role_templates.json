@@ -1,29 +1,27 @@
-{
-    "roles": [
-        {
-            "name": "Administrator",
-            "description": "Role that corresponds to the administrator of the system.",
-            "permissions": [1,2,3,4,5,6,7,8]
-        },
-        {
-            "name": "Department Manager",
-            "description": "Role that corresponds to the department manager.",
-            "permissions": [1,2,3,4,7]
-        },
-        {
-            "name": "Formation Manager",
-            "description": "Role that corresponds to the formation manager.",
-            "permissions": [1,7]
-        },
-        {
-            "name": "Educational Secretariat",
-            "description": "Role that corresponds to the educational secretariat.",
-            "permissions": [1,7]
-        },
-        {
-            "name": "Teacher",
-            "description": "Role that corresponds to the teachers.",
-            "permissions": [1,7]
-        }
-    ]
-}
+[
+    {
+        "name": "Administrator",
+        "description": "Role that corresponds to the administrator of the system.",
+        "permissions": [1,2,3,4,5,6,7,8]
+    },
+    {
+        "name": "Department Manager",
+        "description": "Role that corresponds to the department manager.",
+        "permissions": [1,2,3,4,7]
+    },
+    {
+        "name": "Formation Manager",
+        "description": "Role that corresponds to the formation manager.",
+        "permissions": [1,7]
+    },
+    {
+        "name": "Educational Secretariat",
+        "description": "Role that corresponds to the educational secretariat.",
+        "permissions": [1,7]
+    },
+    {
+        "name": "Teacher",
+        "description": "Role that corresponds to the teachers.",
+        "permissions": [1,7]
+    }
+]

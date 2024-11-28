@@ -1,24 +1,72 @@
-{
-    "metadatas": [
-        {
-            "account_id": 1,
-            "role_id": "Administrator",
-            "academic_year": 2024
-        },
-        {
-            "account_id": 2,
-            "role_id": "Department Manager",
-            "academic_year": 2024
-        },
-        {
-            "account_id": 3,
-            "role_id": "Teacher",
-            "academic_year": 2024
-        },
-        {
-            "account_id": 3,
-            "role_id": "Formation Manager",
-            "academic_year": 2025
-        }
-    ]
-}
+[
+    {
+        "account_id": 1,
+        "role_id": "Administrator",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 1,
+        "role_id": "Teacher",
+        "academic_year": 2025
+    },
+    {
+        "account_id": 2,
+        "role_id": "Department Manager",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 2,
+        "role_id": "Formation Manager",
+        "academic_year": 2025
+    },
+    {
+        "account_id": 3,
+        "role_id": "Teacher",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 3,
+        "role_id": "Formation Manager",
+        "academic_year": 2025
+    },
+    {
+        "account_id": 4,
+        "role_id": "Teacher",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 4,
+        "role_id": "Department Manager",
+        "academic_year": 2026
+    },
+    {
+        "account_id": 5,
+        "role_id": "Formation Manager",
+        "academic_year": 2025
+    },
+    {
+        "account_id": 5,
+        "role_id": "Administrator",
+        "academic_year": 2026
+    },
+    {
+        "account_id": 6,
+        "role_id": "Department Manager",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 6,
+        "role_id": "Teacher",
+        "academic_year": 2025
+    },
+    {
+        "account_id": 7,
+        "role_id": "Administrator",
+        "academic_year": 2024
+    },
+    {
+        "account_id": 7,
+        "role_id": "Formation Manager",
+        "academic_year": 2026
+    }
+]

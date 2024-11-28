@@ -65,8 +65,6 @@ class Postgresql:
         url    = Postgresql.get_db_url()
         models = Postgresql.get_available_models()        # Listing models available.
 
-        print(models)
-
         # Initialize Tortoise ORM
         await Tortoise.init( # type: ignore
             db_url=url,

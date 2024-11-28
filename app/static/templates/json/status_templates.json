@@ -1,19 +1,42 @@
-{
-    "statuses": [
-        {
-            "name": "Manager",
-            "description": "Status attributed to managers.",
-            "academic_year": 2024
-        },
-        {
-            "name": "Teacher",
-            "description": "Status attributed to teachers.",
-            "academic_year": 2024
-        },
-        {
-            "name": "Individual",
-            "description": "Status attributed to individuals. It has no real access to the app.",
-            "academic_year": 2024
-        }
-    ]
-}
+[
+    {
+        "name": "Manager",
+        "description": "Status attributed to managers.",
+        "academic_year": 2024
+    },
+    {
+        "name": "Department Manager",
+        "description": "Status attributed to department managers.",
+        "academic_year": 2024
+    },
+    {
+        "name": "Teacher",
+        "description": "Status attributed to teachers.",
+        "academic_year": 2024
+    },
+    {
+        "name": "Individual",
+        "description": "Status attributed to individuals. It has no real access to the app.",
+        "academic_year": 2024
+    },
+    {
+        "name": "Manager",
+        "description": "Status attributed to managers.",
+        "academic_year": 2025
+    },
+    {
+        "name": "Department Manager",
+        "description": "Status attributed to department managers.",
+        "academic_year": 2025
+    },
+    {
+        "name": "Teacher",
+        "description": "Status attributed to teachers.",
+        "academic_year": 2025
+    },
+    {
+        "name": "Individual",
+        "description": "Status attributed to individuals. It has no real access to the app.",
+        "academic_year": 2025
+    }
+]
