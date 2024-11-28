@@ -8,6 +8,7 @@ import json
 from typing import cast
 from tortoise.models import ModelMeta
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.account_metadata import AccountMetadata
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.service import ServiceInDB
@@ -24,6 +25,21 @@ async def load_dummy_datasets() -> None:
     await load_persistent_datasets()
 
     await load_json_into_model(AccountInDB, "account_templates.json")
+
+
+
+async def load_dummy_account_meta() -> None:
+    """
+    This method loads the account metadatas.
+    """
+    if await AccountMetadata.all().count() == 0:
+        with open('./app/static/templates/json/account_metadata.json', 'r', encoding="utf-8") as file:
+            # Load the data from the file
+            data = json.load(file)
+            for account_meta in data["metadatas"]:
+                account_meta = AccountMetadata(account_id=account_meta["account_id"],
+                                               role_id=account_meta["role_id"])
+                await account_meta.save()
 
 
 async def load_persistent_datasets() -> None:
