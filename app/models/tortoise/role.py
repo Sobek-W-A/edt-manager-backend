@@ -16,6 +16,16 @@ class RoleInDB(Model):
     role_description : Field[str]                         = TextField()
     permissions      : ManyToManyRelation[PermissionInDB] = ManyToManyField("models.PermissionInDB", related_name="permission")
 
+    async def to_dict(self) -> dict:
+        """
+        Converts RoleInDB instance into a dictionary, including related permissions.
+        """
+        return {
+            "role_name": self.role_name,
+            "role_description": self.role_description,
+            "permissions": [await permission.to_dict() for permission in await self.permissions.all()],
+        }
+
     class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.

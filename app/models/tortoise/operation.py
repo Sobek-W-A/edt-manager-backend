@@ -14,6 +14,15 @@ class OperationInDB(Model):
     operation_name        : Field[str] = CharField(max_length=128, pk=True)
     operation_description : Field[str] = TextField()
 
+    def to_dict(self) -> dict:
+        """
+        Convert the OperationInDB instance to a dictionary.
+        """
+        return {
+            "operation_name": self.operation_name,
+            "operation_description": self.operation_description
+        }
+
     class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.

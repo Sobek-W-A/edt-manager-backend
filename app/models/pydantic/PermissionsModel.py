@@ -10,7 +10,8 @@ from app.models.pydantic.ServiceModel import PydanticServiceModel
 class PydanticPermissionsModel(BaseModel):
 
     permission_id: int
-    service_id: PydanticServiceModel
-    operation_id: PydanticOperationModel
+    service_name: PydanticServiceModel
+    operation_name: PydanticOperationModel
 
-
+    class Config:
+        from_attributes = True

@@ -14,6 +14,15 @@ class ServiceInDB(Model):
     service_name        : Field[str] = CharField(max_length=128, pk=True)
     service_description : Field[str] = TextField()
 
+    def to_dict(self) -> dict:
+        """
+        Convert the ServiceInDB instance to a dictionary.
+        """
+        return {
+            "service_name": self.service_name,
+            "service_description": self.service_description
+        }
+
     class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.

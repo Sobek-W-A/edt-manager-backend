@@ -21,12 +21,12 @@ async def get_all_roles() -> list[PydanticRoleModel]:
     return await RoleService.get_all_roles()
 
 
-@roleRouter.get("/{role_id}", status_code=200, response_model=PydanticRoleModel)
-async def get_role_by_id(role_id: int) -> PydanticRoleModel:
+@roleRouter.get("/{role_name}", status_code=200, response_model=PydanticRoleModel)
+async def get_role_by_id(role_name: str) -> PydanticRoleModel:
     """
-    This method returns the role of the given role id.
+    This method returns the role of the given role name.
     """
-    return await RoleService.get_role_by_id(role_id)
+    return await RoleService.get_role_by_id(role_name)
 
 @roleRouter.post("/", status_code=201, response_model=PydanticRoleModel)
 async def add_role( body: PydanticCreateRoleModel ) -> PydanticRoleModel:
@@ -43,11 +43,11 @@ async def modify_role(body : PydanticCreateRoleModel, role_id: int) -> None :
     await RoleService.modify_role(role_id, body)
 
 
-@roleRouter.delete("/{role_id}", status_code=204)
-async def delete_role( role_id: int) -> None:
+@roleRouter.delete("/{role_name}", status_code=204)
+async def delete_role( role_name: str) -> None:
     """
     This method deletes the role of the given role id.
     """
-    await RoleService.delete_role(role_id)
+    await RoleService.delete_role(role_name)
 
 
