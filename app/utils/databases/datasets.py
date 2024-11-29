@@ -116,10 +116,12 @@ async def load_json_into_model_via_pydantic(
             for field, ids in m2m_relations.items():
                 # I'm sorry for the following pylint comments, there is no other way to do what i need to do without it.
                 # It is common practice to use the _meta protected attribute in Tortoise, don't worry.
-                if field in model._meta.m2m_fields:                                            # pylint: disable=protected-access # type: ignore
+                meta = model._meta          # pylint: disable=protected-access # type: ignore
+
+                if field in meta.m2m_fields:
                     # Fetch related model instances based on IDs
-                    related_model : Type[Model]  = model._meta.fields_map[field].related_model # pylint: disable=protected-access # type: ignore
-                    related_instances = await related_model.filter(id__in=ids)                 # pylint: disable=protected-access # type: ignore
+                    related_model    : Type[Model] = meta.fields_map[field].related_model   # pylint: disable=protected-access # type: ignore
+                    related_instances: list[Model] = await related_model.filter(id__in=ids) # pylint: disable=protected-access # type: ignore
                     m2m_manager = getattr(instance, field)
                     await m2m_manager.add(*related_instances)
 

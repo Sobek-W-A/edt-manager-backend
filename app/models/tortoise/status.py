@@ -4,15 +4,18 @@ These are used to determine the coefficients that needs to be applied
 when we need to calculate the total of hours dispensed.
 """
 
+from tortoise.fields import Field, IntField, CharField, TextField
 from app.models.tortoise.abstract.academic_year import AcademicYear
-from app.models.tortoise.abstract.classic_model import ClassicModel
 
-class StatusInDB(AcademicYear, ClassicModel):
+class StatusInDB(AcademicYear):
     """
     This model represents a status that can be assigned to a profile.
     """
+    id          : Field[int] = IntField(pk=True)
+    name        : Field[str] = CharField(max_length=128)
+    description : Field[str] = TextField()
 
-    class Meta(AcademicYear.Meta, ClassicModel.Meta):
+    class Meta(AcademicYear.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
