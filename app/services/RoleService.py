@@ -4,16 +4,16 @@ Provides the methods to use when interacting with a role.
 """
 from fastapi import HTTPException
 
+from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.ClassicModel import ClassicModel
-from app.models.pydantic.PermissionsModel import PydanticPermissionsModel
-from app.models.pydantic.RoleModel import PydanticRoleModel, PydanticCreateRoleModel
+from app.models.pydantic.RoleModel import PydanticCreateRoleModel, PydanticRoleModel, PydanticRoleResponseModel
 from app.models.tortoise.role import RoleInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
 
-async def get_all_roles(current_account) -> list[ClassicModel]:
+async def get_all_roles(current_account: AuthenticatedAccount) -> list[PydanticRoleResponseModel]:
     """
     This method retrieves all roles.
     """
@@ -23,20 +23,19 @@ async def get_all_roles(current_account) -> list[ClassicModel]:
                             current_account)
 
     roles: list[RoleInDB] = await RoleInDB.all()
-    roles_list = []
+    roles_list : list[PydanticRoleResponseModel] = []
 
     for role in roles:
-
-        role_dict = ClassicModel(
+        role_dict: PydanticRoleResponseModel = PydanticRoleResponseModel(
             name=role.name,
             description=role.description
         )
-
         roles_list.append(role_dict)
 
     return roles_list
 
-async def get_role_by_id(name: str,current_account) -> ClassicModel:
+
+async def get_role_by_id(name: str, current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
         This method retrieves a role with given name.
     """
@@ -57,7 +56,7 @@ async def get_role_by_id(name: str,current_account) -> ClassicModel:
     return role_dict
 
 
-async def add_role(role: PydanticCreateRoleModel,current_account) -> None:
+async def add_role(role: PydanticCreateRoleModel, current_account: AuthenticatedAccount) -> None:
     """
         This method delete a role with given name.
     """
@@ -69,7 +68,7 @@ async def add_role(role: PydanticCreateRoleModel,current_account) -> None:
     if await RoleInDB.filter(name=role.name).exists():
         raise HTTPException(status_code=409, detail=CommonErrorMessages.ROLE_ALREADY_EXIST.value)
 
-    role_to_create: RoleInDB = RoleInDB(name=role.name,description=role.description)
+    role_to_create: RoleInDB = RoleInDB(name=role.name, description=role.description)
 
     await role_to_create.save()
 
@@ -78,11 +77,12 @@ async def add_role(role: PydanticCreateRoleModel,current_account) -> None:
         await role_to_create.permissions.add(*permissions)
 
 
-
-async def modify_role(role_name, body,current_account) -> None :
+async def modify_role(role_name : str, body: PydanticRoleModel , current_account: AuthenticatedAccount) -> None:
     """
         This method modify a role with given name.
     """
+
+    #TODO
 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.UPDATE,
@@ -94,13 +94,11 @@ async def modify_role(role_name, body,current_account) -> None :
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
 
 
-    ##TO DO
-
 
     return None
 
 
-async def delete_role(role_name: str, current_account) -> None:
+async def delete_role(role_name: str, current_account: AuthenticatedAccount) -> None:
     """
         This method delete a role with given name.
     """

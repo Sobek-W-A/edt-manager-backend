@@ -8,9 +8,10 @@ from pydantic import BaseModel
 from app.models.pydantic.ClassicModel import ClassicModel
 from app.models.pydantic.PermissionsModel import PydanticPermissionsModel
 
-
 class PydanticRoleModel(ClassicModel):
-
+    """
+    Pydantic Model for Role. This model is a role.
+    """
     permissions: List[PydanticPermissionsModel]
 
     class Config:
@@ -20,10 +21,10 @@ class PydanticRoleModel(ClassicModel):
         from_attributes: bool = True
 
 
-
-
 class PydanticCreateRoleModel(ClassicModel):
-
+    """
+    Pydantic Model for Role. This model is used to create a role.
+    """
     permissions: Optional[List[int]]
 
 

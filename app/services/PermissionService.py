@@ -40,8 +40,4 @@ async def check_permissions(service: AvailableServices,
     if len(permissions) == 0:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
 
-    async def to_dict(self) -> dict:
-        """
-        Converts the PermissionInDB instance into a dictionary.
-        """
-        return {"permission_name": self.permission_name}
+

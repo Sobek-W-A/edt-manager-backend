@@ -9,12 +9,13 @@ from typing import Annotated, Optional, TypeAlias
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
+from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
-from app.models.pydantic.ClassicModel import ClassicModel
-from app.models.pydantic.RoleModel import PydanticRoleResponseModel
+
+from app.models.pydantic.RoleModel import PydanticRoleResponseModel, PydanticSetRoleToAccountModel
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
@@ -166,7 +167,7 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     return account
 
 
-async def getRoleAccountByID(account_id, current_account, academic_year) -> list[PydanticRoleResponseModel]:
+async def getRoleAccountByID(account_id : int , current_account : AuthenticatedAccount, academic_year:int) -> PydanticRoleResponseModel:
     """
     This method returns the list of roles of an user.
     :param account_id: Account ID.
@@ -175,26 +176,17 @@ async def getRoleAccountByID(account_id, current_account, academic_year) -> list
                             AvailableOperations.GET,
                             current_account)
 
-    account_metadata = await AccountMetadataInDB.filter(account_id=account_id, academic_year=academic_year).prefetch_related("role")
+    metadata: AccountMetadataInDB = await AccountMetadataInDB.filter(account_id=account_id, academic_year=academic_year).prefetch_related("role")
 
-    if not account_metadata:
+    if not metadata:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    roles_list = []
+    role: PydanticRoleResponseModel = await RoleInDB.get_or_none(name=metadata.role.name)
 
-    for metadata in account_metadata:
-
-        role_id = metadata.role.name
-
-        role = await RoleInDB.get_or_none(name=role_id)
-        if role:
-            role_model = PydanticRoleResponseModel(name=role.name, description=role.description)
-            roles_list.append(role_model)
-
-    return roles_list
+    return role
 
 
-async def setRoleAccountByName(account_id, current_account, body):
+async def setRoleAccountByName(account_id: int, current_account : AuthenticatedAccount, body : PydanticSetRoleToAccountModel) -> None:
     """
     This method set the role of an account.
     :param account_id: Account ID, role_name : name of the given role.
@@ -204,12 +196,12 @@ async def setRoleAccountByName(account_id, current_account, body):
                             AvailableOperations.UPDATE,
                             current_account)
 
-    account = await AccountInDB.get_or_none(id=account_id)
+    account: AccountInDB = await AccountInDB.get_or_none(id=account_id)
 
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    role = await RoleInDB.get_or_none(name=body.name)
+    role: RoleInDB = await RoleInDB.get_or_none(name=body.name)
 
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")

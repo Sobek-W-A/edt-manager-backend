@@ -10,6 +10,9 @@ from app.utils.enums.http_errors import CommonErrorMessages
 
 
 class PydanticFolderModel(AcademicYearPydanticModel):
+    """
+    This module provides a model for a Folder.
+    """
     name: str
     children: Optional[List["PydanticFolderModel"]] = None
     ue: Optional[PydanticUEModel] = None
@@ -25,7 +28,8 @@ class PydanticFolderModel(AcademicYearPydanticModel):
 
     class Config:
         #allow to use self reference in type
-        arbitrary_types_allowed = True
+        arbitrary_types_allowed : bool = True
 
 
-PydanticFolderModel.update_forward_refs()
+
+

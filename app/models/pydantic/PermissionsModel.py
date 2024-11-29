@@ -8,13 +8,15 @@ from app.models.pydantic.ClassicModel import ClassicModel
 
 
 class PydanticPermissionsModel(BaseModel):
-
+    """
+    Pydantic model for permissions used to send Permissions to the Frontend.
+    """
     id: int
     service_name: ClassicModel
     operation_name: ClassicModel
 
     class Config:
-        from_attributes = True
+        from_attributes : bool = True
 
 class PydanticPermissionModelFromJSON(BaseModel):
     """

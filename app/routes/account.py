@@ -65,10 +65,8 @@ async def delete_account(account_id: int, current_account: AuthenticatedAccount)
     await AccountService.delete_account(account_id, current_account)
 
 
-@accountRouter.get("/{account_id}/role/{academic_year}", status_code=200,
-                   response_model=list[PydanticRoleResponseModel])
-async def get_role_account_by_ID(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> list[
-    PydanticRoleResponseModel]:
+@accountRouter.get("/{account_id}/role/{academic_year}", status_code=200,response_model=PydanticRoleResponseModel)
+async def get_role_account_by_ID(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
     This method get an account's roles with the account ID.
     """

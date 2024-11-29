@@ -17,22 +17,27 @@ class PydanticUEModelFromJSON(BaseModel):
     academic_year  : int
     parent_id      : int | None
 
-
-class PydanticUEModel(AcademicYearPydanticModel):
-
-    ue_id: int
-    name: str
-    courses: list[PydanticCourseModel]
-
-class PydanticCreateUEModel(AcademicYearPydanticModel):
-
-    name: str
-    courses: Optional[list[PydanticCourseModel]]
-
-
-
     class Config:
         """
         Pydantic configuration.
         """
         from_attributes: bool = True
+
+
+class PydanticUEModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for UE to send to the Frontend.
+    """
+    ue_id: int
+    name: str
+    courses: list[PydanticCourseModel]
+
+
+
+class PydanticCreateUEModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for UE to create an UE.
+    """
+    name: str
+    courses: Optional[list[PydanticCourseModel]]
+

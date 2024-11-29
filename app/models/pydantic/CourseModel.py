@@ -22,7 +22,9 @@ class PydanticCourseModelFromJSON(BaseModel):
         from_attributes: bool = True
 
 class PydanticCourseModel(AcademicYearPydanticModel):
-
+    """
+    This model is meant to be used when we need to return a Course to the frontend.
+    """
     course_id: int
     duration : int
     courses_types : list[PydanticCourseTypeModel]

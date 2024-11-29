@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.ClassicModel import ClassicModel
-from app.models.pydantic.RoleModel import PydanticCreateRoleModel
+from app.models.pydantic.RoleModel import PydanticCreateRoleModel, PydanticRoleResponseModel
 from app.routes.tags import Tag
 from app.services import RoleService
 
@@ -23,8 +23,8 @@ async def get_all_roles(current_account: AuthenticatedAccount) -> list[ClassicMo
     return await RoleService.get_all_roles(current_account)
 
 
-@roleRouter.get("/{role_name}", status_code=200, response_model=ClassicModel)
-async def get_role_by_id(role_name: str,current_account: AuthenticatedAccount) -> ClassicModel:
+@roleRouter.get("/{role_name}", status_code=200, response_model=PydanticRoleResponseModel)
+async def get_role_by_id(role_name: str,current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
     This method returns the role of the given role name.
     """

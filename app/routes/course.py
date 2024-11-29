@@ -1,3 +1,10 @@
+"""
+Courses routes.
+Used to manage course operations.
+"""
+
+# TODO
+
 from fastapi import APIRouter
 
 from app.routes.tags import Tag

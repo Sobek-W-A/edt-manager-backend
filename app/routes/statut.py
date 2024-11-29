@@ -1,3 +1,11 @@
+"""
+Statut routes.
+Used to manage statut operations.
+"""
+
+# TODO
+
+
 from fastapi import APIRouter
 
 from app.routes.tags import Tag
