@@ -20,9 +20,13 @@ async def check_permissions(service: AvailableServices,
     This method checks if the provided user has the permission to perform the provided 
     operation on the provided service.
     """
+
+    print(service,operation,current_account,academic_year)
     # We fetch the user's role.
     meta : AccountMetadata | None = await AccountMetadata.get_or_none(account_id=current_account.id,
                                                                       academic_year=academic_year[0]).prefetch_related("role")
+
+    print(meta)
     if meta is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
 

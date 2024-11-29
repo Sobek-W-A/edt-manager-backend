@@ -67,10 +67,17 @@ async def add_role(role: PydanticCreateRoleModel) -> None:
 
 
 
-async def modify_role(role_id, body) -> None :
+async def modify_role(role_name, body) -> None :
     """
         This method modify a role with given name.
     """
+    role: RoleInDB | None = await RoleInDB.get_or_none(name=role_name)
+
+    if role is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
+
+
+
 
     return None
 
