@@ -58,7 +58,7 @@ async def delete_account(account_id: int, current_account: AuthenticatedAccount)
     await AccountService.delete_account(account_id, current_account)
 
 @accountRouter.get("/{account_id}/role/", status_code=200, response_model=list[ClassicModel])
-async def getRoleAccountByID(account_id: int, current_account: AuthenticatedAccount) -> list[ClassicModel]:
+async def get_role_account_by_ID(account_id: int, current_account: AuthenticatedAccount) -> list[ClassicModel]:
     """
         This method get an account's roles with the account ID.
     """

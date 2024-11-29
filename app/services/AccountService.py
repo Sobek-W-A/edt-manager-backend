@@ -161,27 +161,25 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     return account
 
 
-async def getRoleAccountByID(account_id, current_account) -> list[ClassicModel] :
+async def getRoleAccountByID(account_id,current_account) -> list[ClassicModel] :
     """
     This method returns the list of roles of an user.
     :param account_id: Account ID.
     """
+
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.DELETE,
+                            AvailableOperations.GET,
                             current_account)
 
-    account: AccountMetadata | None = await AccountMetadata.get_or_none(account=account_id)
+    account_metadata = await AccountMetadata.filter(account_id=account_id).prefetch_related("role")
 
-    if account is None:
+    if not account_metadata:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    roles_names = await account.role.all().values_list("account", flat=True)
 
     roles_list = []
-
-
-    for role_name in roles_names:
-        role: RoleInDB | None = await RoleInDB.get_or_none(name=role_name)
+    for metadata in account_metadata:
+        role = metadata.role
         role_dict = ClassicModel(
             name=role.name,
             description=role.description
