@@ -9,7 +9,7 @@ from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.role import RoleInDB
 
 
-class AccountMetadata(AcademicYear):
+class AccountMetadataInDB(AcademicYear):
     """
     This class is a M2M relation that links accounts and permissions by Academic years.
     """
@@ -21,3 +21,5 @@ class AccountMetadata(AcademicYear):
         This class is used to indicate the name of the Table to create inside the database.
         """
         table : str = "AccountMetadata"
+        abstract: bool = False
+

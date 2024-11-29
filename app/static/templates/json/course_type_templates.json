@@ -18,5 +18,10 @@
         "name": "EI",
         "description": "Dunno",
         "academic_year": 2024
+    },
+    {
+        "name": "TPL",
+        "description": "Dunno",
+        "academic_year": 2024
     }
 ]
