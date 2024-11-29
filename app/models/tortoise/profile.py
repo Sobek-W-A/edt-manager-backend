@@ -23,7 +23,7 @@ class ProfileInDB(AcademicYear):
     firstname     : Field[str] = CharField(max_length=128)
     lastname      : Field[str] = CharField(max_length=128)
     mail          : Field[str] = CharField(unique=True, required=True, max_length=128)
-    hours_to_work : Field[int] = IntField(min_value=0)
+    hours_to_work : Field[int] = IntField(min_value=0, default=0)
 
     account : ForeignKeyNullableRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="profile", null=True)
     status  : ForeignKeyRelation[StatusInDB]          = ForeignKeyField("models.StatusInDB", related_name="profile")

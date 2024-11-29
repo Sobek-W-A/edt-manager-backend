@@ -53,6 +53,7 @@ class PydanticProfileModelFromJSON(BaseModel):
     mail         : str
     academic_year: int
     account_id   : Optional[int] = None
+    status_id    : int
 
     class Config:
         """
