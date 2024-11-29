@@ -14,23 +14,27 @@ from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
 from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON
 from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModelFromJSON
+from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
 from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
 from app.models.pydantic.PermissionModel import PydanticPermissionModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
 from app.models.pydantic.PydanticRole import PydanticRoleModelFromJSON
 from app.models.pydantic.ServiceModel import PydanticServiceModelFromJSON
 from app.models.pydantic.StatusModel import PydanticStatusModelFromJSON
+from app.models.pydantic.UEModel import PydanticUEModelFromJSON
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.coefficient import CoefficientInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
+from app.models.tortoise.node import NodeInDB
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.status import StatusInDB
+from app.models.tortoise.ue import UEInDB
 from app.services import SecurityService
 
 JSON_FILE_PATH : str = "./app/static/templates/json/"
@@ -79,6 +83,14 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(CourseInDB,
                                             PydanticCourseModelFromJSON,
                                             JSON_FILE_PATH + "course_templates.json")
+
+
+    await load_json_into_model_via_pydantic(NodeInDB,
+                                            PydanticNodeModelFromJSON,
+                                            JSON_FILE_PATH + "node_templates.json")
+    await load_json_into_model_via_pydantic(UEInDB,
+                                            PydanticUEModelFromJSON,
+                                            JSON_FILE_PATH + "ue_templates.json")
 
 
 async def load_json_into_model_via_pydantic(

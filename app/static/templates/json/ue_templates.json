@@ -1,3 +1,44 @@
 [
-    
+    {
+        "name": "UE 1",
+        "courses_id_m2m": [1, 2, 3, 4, 5],
+        "academic_year": 2024,
+        "parent_id": 5
+    },
+    {
+        "name": "UE 2",
+        "courses_id_m2m": [6, 7, 8, 9, 10],
+        "academic_year": 2025,
+        "parent_id": 5
+    },
+    {
+        "name": "UE 3",
+        "courses_id_m2m": [11, 12, 13, 14, 15],
+        "academic_year": 2024,
+        "parent_id": 6
+    },
+    {
+        "name": "UE 4",
+        "courses_id_m2m": [16, 17, 18, 19, 20],
+        "academic_year": 2025,
+        "parent_id": 7
+    },
+    {
+        "name": "UE 5",
+        "courses_id_m2m": [21, 22, 23, 24, 25],
+        "academic_year": 2024,
+        "parent_id": 7
+    },
+    {
+        "name": "UE 6",
+        "courses_id_m2m": [26, 27, 28, 29, 30],
+        "academic_year": 2025,
+        "parent_id": 7
+    },
+    {
+        "name": "UE 7",
+        "courses_id_m2m": [31],
+        "academic_year": 2024,
+        "parent_id": 8
+    }
 ]
