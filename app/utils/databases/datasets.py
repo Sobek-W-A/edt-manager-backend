@@ -45,22 +45,22 @@ async def load_persistent_datasets() -> None:
     """
     await load_json_into_model_via_pydantic(OperationInDB,
                                             PydanticOperationModelFromJSON,
-                                            JSON_FILE_PATH + "operation_templates.json")
+                                            "operation_templates.json")
     await load_json_into_model_via_pydantic(ServiceInDB,
                                             PydanticServiceModelFromJSON,
-                                            JSON_FILE_PATH + "service_templates.json")
+                                            "service_templates.json")
     await load_json_into_model_via_pydantic(PermissionInDB,
                                             PydanticPermissionModelFromJSON,
-                                            JSON_FILE_PATH + "permission_templates.json")
+                                            "permission_templates.json")
     await load_json_into_model_via_pydantic(RoleInDB,
                                             PydanticRoleModelFromJSON,
-                                            JSON_FILE_PATH + "role_templates.json")
+                                            "role_templates.json")
     await load_json_into_model_via_pydantic(StatusInDB,
                                             PydanticStatusModelFromJSON,
-                                            JSON_FILE_PATH + "status_templates.json")
+                                            "status_templates.json")
     await load_json_into_model_via_pydantic(CourseTypeInDB,
                                             PydanticCourseTypeModelFromJSON,
-                                            JSON_FILE_PATH + "course_type_templates.json")
+                                            "course_type_templates.json")
 
 async def load_dummy_datasets() -> None:
     """
@@ -70,27 +70,27 @@ async def load_dummy_datasets() -> None:
 
     await load_json_into_model_via_pydantic(AccountInDB,
                                             PydanticAccountModelFromJSON,
-                                            JSON_FILE_PATH + "account_templates.json")
+                                            "account_templates.json")
     await load_json_into_model_via_pydantic(AccountMetadataInDB,
                                             PydanticAccountMetaModelFromJSON,
-                                            JSON_FILE_PATH + "account_metadata_templates.json")
+                                            "account_metadata_templates.json")
     await load_json_into_model_via_pydantic(ProfileInDB,
                                             PydanticProfileModelFromJSON,
-                                            JSON_FILE_PATH + "profile_templates.json")
+                                            "profile_templates.json")
     await load_json_into_model_via_pydantic(CoefficientInDB,
                                             PydanticCoefficientModelFromJSON,
-                                            JSON_FILE_PATH + "coefficient_templates.json")
+                                            "coefficient_templates.json")
     await load_json_into_model_via_pydantic(CourseInDB,
                                             PydanticCourseModelFromJSON,
-                                            JSON_FILE_PATH + "course_templates.json")
+                                            "course_templates.json")
 
 
     await load_json_into_model_via_pydantic(NodeInDB,
                                             PydanticNodeModelFromJSON,
-                                            JSON_FILE_PATH + "node_templates.json")
+                                            "node_templates.json")
     await load_json_into_model_via_pydantic(UEInDB,
                                             PydanticUEModelFromJSON,
-                                            JSON_FILE_PATH + "ue_templates.json")
+                                            "ue_templates.json")
 
 
 async def load_json_into_model_via_pydantic(
@@ -115,7 +115,7 @@ async def load_json_into_model_via_pydantic(
 
     try:
         # Charger les données JSON
-        with open(file_path, "r", encoding="utf-8") as file:
+        with open(f"{JSON_FILE_PATH}{file_path}", "r", encoding="utf-8") as file:
             raw_data = json.load(file)
         
         if isinstance(raw_data, dict):  # Si le fichier contient un seul objet
