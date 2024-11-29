@@ -27,10 +27,4 @@ async def modify_ue(ue_id, body):
 async def delete_ue(ue_id) -> None:
 
 
-    ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
-
-
-    if ue is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
-
-    await ue.delete()
+    return None

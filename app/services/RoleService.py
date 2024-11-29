@@ -64,9 +64,6 @@ async def add_role(role: PydanticCreateRoleModel) -> None:
 
 
 
-
-
-
 async def modify_role(role_name, body) -> None :
     """
         This method modify a role with given name.
