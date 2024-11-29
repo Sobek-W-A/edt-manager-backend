@@ -17,8 +17,7 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
 from app.models.pydantic.ClassicModel import ClassicModel
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
-from app.models.tortoise.account_metadata import AccountMetadata
-from app.models.tortoise.role import RoleInDB
+from app.models.tortoise.account_metadata import  AccountMetadataInDB
 
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
@@ -166,16 +165,16 @@ async def getRoleAccountByID(account_id,current_account) -> list[ClassicModel] :
     This method returns the list of roles of an user.
     :param account_id: Account ID.
     """
-
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
 
-    account_metadata = await AccountMetadata.filter(account_id=account_id).prefetch_related("role")
+    account_metadata = await AccountMetadataInDB.filter(account_id=account_id).prefetch_related("role")
 
     if not account_metadata:
         raise HTTPException(status_code=404, detail="Account not found")
 
+    print(account_metadata)
 
     roles_list = []
     for metadata in account_metadata:

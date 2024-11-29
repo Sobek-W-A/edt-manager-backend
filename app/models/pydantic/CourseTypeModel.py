@@ -1,5 +1,12 @@
 from pydantic import BaseModel
 
+from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
+
+
+class PydanticCourseTypeModel(AcademicYearPydanticModel):
+
+    name:str
+    description : str
 
 class PydanticCourseTypeModelFromJSON(BaseModel):
     """
