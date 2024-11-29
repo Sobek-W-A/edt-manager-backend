@@ -1,6 +1,7 @@
 """
-This module provides the PermissionsPydanticModel class.
+Pydantic Permission Models.
 """
+
 from pydantic import BaseModel
 
 from app.models.pydantic.ClassicModel import ClassicModel
@@ -26,4 +27,4 @@ class PydanticPermissionModelFromJSON(BaseModel):
         """
         Pydantic configuration for the model.
         """
-        from_attributes = True
+        from_attributes : bool = True

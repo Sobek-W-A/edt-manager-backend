@@ -14,4 +14,4 @@ class PydanticOperationModelFromJSON(BaseModel):
         """
         Pydantic configuration.
         """
-        from_attributes = True
+        from_attributes : bool = True

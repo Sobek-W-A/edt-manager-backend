@@ -1,15 +1,29 @@
 """
-This module provides the CoursePydanticModel class.
+Pydantic models for Course.
 """
-from typing import List
 
+from pydantic import BaseModel
 from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 
+
+class PydanticCourseModelFromJSON(BaseModel):
+    """
+    Course model for loading data from a JSON file.
+    """
+    duration        : int
+    academic_year   : int
+    course_type_id  : int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True
 
 class PydanticCourseModel(AcademicYearPydanticModel):
 
     course_id: int
     duration : int
-    courses_types : List[PydanticCourseTypeModel]
-    
+    courses_types : list[PydanticCourseTypeModel]
+

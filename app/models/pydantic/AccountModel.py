@@ -57,7 +57,7 @@ class PydanticAccountModel(BaseModel):
         """
         Pydantic configuration.
         """
-        from_attributes = True
+        from_attributes : bool = True
 
 class PydanticAccountPasswordResponse(BaseModel):
     """
@@ -77,4 +77,4 @@ class PydanticAccountModelFromJSON(BaseModel):
         """
         Pydantic configuration.
         """
-        from_attributes = True
+        from_attributes : bool = True
