@@ -27,7 +27,7 @@ class PydanticProfileCreate(AcademicYearPydanticModel):
     mail:           Mail
     account_id:     Optional[int] = None
 
-class PydanticProfileResponse(AcademicYearPydanticModel):
+class PydanticProfileResponse(BaseModel):
     """
     This model is meant to be used when we need to return a Profile to the frontend.
     """
@@ -35,6 +35,7 @@ class PydanticProfileResponse(AcademicYearPydanticModel):
     firstname:  Name
     lastname:   Name
     mail:       Mail
+    academic_year: int
     account_id: Optional[int] = None
 
     class Config:

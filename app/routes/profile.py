@@ -2,11 +2,13 @@
 This module provieds a router for the /Profile endpoint.
 """
 from fastapi import APIRouter, Response
+from tortoise.expressions import Q
 
 from app.models.pydantic.ProfileModel import (PydanticProfileModify,
                                            PydanticProfileCreate,
                                            PydanticProfileResponse)
 from app.models.aliases import AuthenticatedAccount
+from app.models.tortoise.profile import ProfileInDB
 from app.routes.tags import Tag
 from app.services import ProfileService
 
@@ -55,6 +57,23 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
     Retrieves data from the currently connected Profile.
     """
     return await ProfileService.get_current_profile(current_account)
+
+@profileRouter.get("/search/{keywords}", response_model=list[PydanticProfileResponse], status_code=200)
+async def search_profile(keywords: str) -> list[PydanticProfileResponse]:
+    query: Q = Q()
+    for keyword in keywords.split(" "):
+        query &= (
+            Q(lastname__icontains=keyword) |
+            Q(firstname__icontains=keyword)
+        )
+
+    return list(
+        map(
+            PydanticProfileResponse.model_validate, 
+            await ProfileInDB.filter(query).all()
+        )
+    )
+        
 
 @profileRouter.delete("/{profile_id}", status_code=204)
 async def delete_profile(profile_id: int, current_account: AuthenticatedAccount) -> None:
