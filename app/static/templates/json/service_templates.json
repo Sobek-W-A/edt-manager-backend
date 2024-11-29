@@ -1,12 +1,10 @@
-{
-    "services": [
-        {
-            "name": "Profile Service",
-            "description": "Service that manages users."
-        },
-        {
-            "name": "Account Service",
-            "description": "Service that manages accounts and logging."
-        }
-    ]
-}
+[
+    {
+        "name": "Profile Service",
+        "description": "Service that manages users."
+    },
+    {
+        "name": "Account Service",
+        "description": "Service that manages accounts and logging."
+    }
+]

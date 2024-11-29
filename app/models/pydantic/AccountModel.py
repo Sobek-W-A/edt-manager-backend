@@ -64,3 +64,17 @@ class PydanticAccountPasswordResponse(BaseModel):
     This model is meant to be used when we need to return the password of the user.
     """
     password: Password
+
+
+class PydanticAccountModelFromJSON(BaseModel):
+    """
+    Pydantic model for account creation, when imported from JSON.
+    """
+    login : str
+    hash  : str
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes = True
