@@ -5,13 +5,12 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
+from app.models.pydantic.ClassicModel import ClassicModel
 from app.models.pydantic.PermissionsModel import PydanticPermissionsModel
 
 
-class PydanticRoleModel(BaseModel):
+class PydanticRoleModel(ClassicModel):
 
-    role_name: str
-    role_description: str
     permissions: List[PydanticPermissionsModel]
 
     class Config:
@@ -22,10 +21,13 @@ class PydanticRoleModel(BaseModel):
 
 
 
-class PydanticCreateRoleModel(BaseModel):
-    role_name: str
-    role_description: str
+
+class PydanticCreateRoleModel(ClassicModel):
+
     permissions: Optional[List[int]]
+
+
+
 
 
 

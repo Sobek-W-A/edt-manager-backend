@@ -3,6 +3,7 @@ This module provieds a router for the /role endpoint.
 """
 from fastapi import APIRouter
 
+from app.models.pydantic.ClassicModel import ClassicModel
 from app.models.pydantic.RoleModel import PydanticRoleModel,PydanticCreateRoleModel
 from app.routes.tags import Tag
 from app.services import RoleService
@@ -13,27 +14,27 @@ tag: Tag = {
     "description": "Role-related operations."
 }
 
-@roleRouter.get("/", status_code=200, response_model=list[PydanticRoleModel])
-async def get_all_roles() -> list[PydanticRoleModel]:
+@roleRouter.get("/", status_code=200, response_model=list[ClassicModel])
+async def get_all_roles() -> list[ClassicModel]:
     """
     This method returns all the roles.
     """
     return await RoleService.get_all_roles()
 
 
-@roleRouter.get("/{role_name}", status_code=200, response_model=PydanticRoleModel)
-async def get_role_by_id(role_name: str) -> PydanticRoleModel:
+@roleRouter.get("/{role_name}", status_code=200, response_model=ClassicModel)
+async def get_role_by_id(role_name: str) -> ClassicModel:
     """
     This method returns the role of the given role name.
     """
     return await RoleService.get_role_by_id(role_name)
 
-@roleRouter.post("/", status_code=201, response_model=PydanticRoleModel)
-async def add_role( body: PydanticCreateRoleModel ) -> PydanticRoleModel:
+@roleRouter.post("/", status_code=201)
+async def add_role( body: PydanticCreateRoleModel ) -> None:
     """
     This method creates a new role.
     """
-    return await RoleService.add_role(body)
+    await RoleService.add_role(body)
 
 @roleRouter.patch("/{role_id}", status_code=205)
 async def modify_role(body : PydanticCreateRoleModel, role_id: int) -> None :

@@ -34,4 +34,5 @@ class CommonErrorMessages(enum.StrEnum):
     UE_NOT_FOUND             = "UE was not found"
     # Role Errors
     ROLE_NOT_FOUND           = "Role was not found"
+    ROLE_ALREADY_EXIST       = "Role already exists"
 

@@ -14,8 +14,12 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
+from app.models.pydantic.ClassicModel import ClassicModel
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.account_metadata import AccountMetadata
+from app.models.tortoise.role import RoleInDB
+
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
@@ -155,3 +159,33 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
 
     # Otherwise, we successfully identified as the user in the database!
     return account
+
+
+async def getRoleAccountByID(account_id, current_account) -> list[ClassicModel] :
+    """
+    This method returns the list of roles of an user.
+    :param account_id: Account ID.
+    """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.DELETE,
+                            current_account)
+
+    account: AccountMetadata | None = await AccountMetadata.get_or_none(account=account_id)
+
+    if account is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    roles_names = await account.role.all().values_list("account", flat=True)
+
+    roles_list = []
+
+
+    for role_name in roles_names:
+        role: RoleInDB | None = await RoleInDB.get_or_none(name=role_name)
+        role_dict = ClassicModel(
+            name=role.name,
+            description=role.description
+        )
+        roles_list.append(role_dict)
+
+    return roles_list

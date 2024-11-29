@@ -1,12 +1,16 @@
 """
 Account Endpoints.
 """
+from idlelib.autocomplete import AutoComplete
+
 from fastapi import APIRouter
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
+from app.models.pydantic.ClassicModel import ClassicModel
+from app.models.pydantic.RoleModel import PydanticRoleModel
 from app.routes.tags import Tag
 from app.services import AccountService
 
@@ -52,3 +56,11 @@ async def delete_account(account_id: int, current_account: AuthenticatedAccount)
     This method deletes an account.
     """
     await AccountService.delete_account(account_id, current_account)
+
+@accountRouter.get("/{account_id}/role/", status_code=200, response_model=list[ClassicModel])
+async def getRoleAccountByID(account_id: int, current_account: AuthenticatedAccount) -> list[ClassicModel]:
+    """
+        This method get an account's roles with the account ID.
+    """
+
+    await AccountService.getRoleAccountByID(account_id, current_account)
