@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import account, auth, profile, role, ue
+from app.routes import account, auth, profile, role, ue, course, course_type, statut
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
@@ -21,7 +21,10 @@ tags_metadata: list[Tag] = [
     auth.tag,
     profile.tag,
     role.tag,
-    ue.tag
+    ue.tag,
+    course.tag,
+    course_type.tag,
+    statut.tag
 ]
 
 @asynccontextmanager
@@ -65,6 +68,9 @@ app.include_router(auth.authRouter,       tags=[auth.tag["name"]])
 app.include_router(profile.profileRouter, tags=[profile.tag["name"]])
 app.include_router(role.roleRouter, tags=[role.tag["name"]])
 app.include_router(ue.ueRouter, tags=[ue.tag["name"]])
+app.include_router(course.courseRouter, tags=[course.tag["name"]])
+app.include_router(course_type.coursetypeRouter, tags=[course_type.tag["name"]])
+app.include_router(statut.statutRouter, tags=[statut.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

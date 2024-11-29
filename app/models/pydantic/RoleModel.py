@@ -27,6 +27,18 @@ class PydanticCreateRoleModel(ClassicModel):
     permissions: Optional[List[int]]
 
 
+class PydanticRoleResponseModel(ClassicModel):
+
+    """
+    Pydantic Model for Role. This model is used to get a role.
+    """
+
+class PydanticSetRoleToAccountModel(BaseModel):
+    """
+    Pydantic Model for Role. This model is used to set a role to an account.
+    """
+    name:str
+    academic_year: int
 
 
 
