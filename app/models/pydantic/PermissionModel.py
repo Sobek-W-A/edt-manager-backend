@@ -16,4 +16,4 @@ class PydanticPermissionModelFromJSON(BaseModel):
         """
         Pydantic configuration for the model.
         """
-        from_attributes = True
+        from_attributes : bool = True

@@ -116,10 +116,7 @@ async def load_json_into_model_via_pydantic(
     try:
         # Charger les données JSON
         with open(f"{JSON_FILE_PATH}{file_path}", "r", encoding="utf-8") as file:
-            raw_data = json.load(file)
-        
-        if isinstance(raw_data, dict):  # Si le fichier contient un seul objet
-            raw_data: list[dict[str, Any]] = [raw_data]
+            raw_data: list[dict[str, Any]] = json.load(file)
 
         # Trying to use pydantic to conform JSON data :
         data: list[BaseModel] = [schema(**item) for item in raw_data]
@@ -129,7 +126,7 @@ async def load_json_into_model_via_pydantic(
             element: dict[str, Any] = item.model_dump(exclude_unset=True)
 
             # Identify and extract m2m fields based on `_m2m` suffix
-            m2m_relations = {
+            m2m_relations: dict[str, Any] = {
                 field_name[:-4]: field_value  # Strip `_m2m` to get the actual field name
                 for field_name, field_value in element.items()
                 if field_name.endswith("_m2m")

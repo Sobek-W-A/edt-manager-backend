@@ -14,6 +14,7 @@ class StatusInDB(AcademicYear):
     id          : Field[int] = IntField(pk=True)
     name        : Field[str] = CharField(max_length=128)
     description : Field[str] = TextField()
+    quota       : Field[int] = IntField(min_size=0, default=0)
 
     class Meta(AcademicYear.Meta):
         """

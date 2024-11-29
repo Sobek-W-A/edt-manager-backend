@@ -17,4 +17,4 @@ class PydanticRoleModelFromJSON(BaseModel):
         """
         Pydantic configuration for Role.
         """
-        from_attributes = True
+        from_attributes : bool = True
