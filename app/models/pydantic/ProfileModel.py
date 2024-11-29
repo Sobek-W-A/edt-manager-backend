@@ -3,6 +3,8 @@ This module provides the Profile's DTO using pydantic.
 """
 from typing import Optional
 
+from pydantic import BaseModel
+
 from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.validator import Mail, Name
 
@@ -34,6 +36,24 @@ class PydanticProfileResponse(AcademicYearPydanticModel):
     lastname:   Name
     mail:       Mail
     account_id: Optional[int] = None
+
+    class Config:
+        """
+        Config class used to allow the model to be created from a dictionary.
+        """
+        from_attributes : bool = True
+
+
+class PydanticProfileModelFromJSON(BaseModel):
+    """
+    Pydantic Model for Profile. This model is used to validate and transform JSON data.
+    """
+    firstname    : str
+    lastname     : str
+    mail         : str
+    academic_year: int
+    account_id   : Optional[int] = None
+    status_id    : int
 
     class Config:
         """

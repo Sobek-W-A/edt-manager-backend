@@ -5,7 +5,7 @@ a certain operation on a certain service.
 
 from fastapi import HTTPException
 from app.models.tortoise.account import AccountInDB
-from app.models.tortoise.account_metadata import AccountMetadata
+from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -21,7 +21,7 @@ async def check_permissions(service: AvailableServices,
     operation on the provided service.
     """
     # We fetch the user's role.
-    meta : AccountMetadata | None = await AccountMetadata.get_or_none(account_id=current_account.id,
+    meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,
                                                                       academic_year=academic_year[0]).prefetch_related("role")
     if meta is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)

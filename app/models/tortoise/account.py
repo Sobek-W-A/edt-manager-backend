@@ -12,9 +12,9 @@ class AccountInDB(Model):
     This class is the tortoise model for authentication.
     Will probably be removed in the future when UL auth will be used.
     """
-    id:     Field[int] = IntField(primary_key=True)
-    login:  Field[str] = CharField(unique=True, required=True, max_length=128)
-    hash:   Field[str] = TextField(required=True)
+    id:    Field[int] = IntField(primary_key=True)
+    login: Field[str] = CharField(unique=True, required=True, max_length=128)
+    hash:  Field[str] = TextField(required=True)
 
     def __str__(self) -> str:
         """

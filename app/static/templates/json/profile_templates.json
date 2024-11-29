@@ -1,27 +1,148 @@
-{
-  "profiles": [
-    {
+[
+  {
       "account_id": 1,
-      "firstname": "Maxime",
-      "lastname": "Marcelin",
-      "mail": "maisonmarc7@gmail.com"
-    },
-    {
+      "firstname": "Alice",
+      "lastname": "Johnson",
+      "mail": "alice.johnson@example.com",
+      "academic_year": 2024,
+      "status_id": 1
+  },
+  {
       "account_id": 2,
-      "firstname": "Leo",
-      "lastname": "De Sa",
-      "mail": "test@test.com"
-    },
-    {
+      "firstname": "John",
+      "lastname": "Doe",
+      "mail": "john.doe@example.com",
+      "academic_year": 2024,
+      "status_id": 3
+  },
+  {
       "account_id": 3,
-      "firstname": "test",
-      "lastname": "user",
-      "mail": "test@user.test"
-    },
-    {
-      "firstname": "test",
-      "lastname": "user",
-      "mail": "test@testfafa.test"
-    }
-  ]
-}
+      "firstname": "Sophia",
+      "lastname": "Smith",
+      "mail": "sophia.smith@example.com",
+      "academic_year": 2024,
+      "status_id": 3
+  },
+  {
+      "account_id": 4,
+      "firstname": "Michael",
+      "lastname": "Brown",
+      "mail": "michael.brown@example.com",
+      "academic_year": 2024,
+      "status_id": 2
+  },
+  {
+      "firstname": "Isabella",
+      "lastname": "Williams",
+      "mail": "isabella.williams@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "James",
+      "lastname": "Davis",
+      "mail": "james.davis@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Emily",
+      "lastname": "Garcia",
+      "mail": "emily.garcia@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Oliver",
+      "lastname": "Martinez",
+      "mail": "oliver.martinez@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "account_id": 5,
+      "firstname": "Charlotte",
+      "lastname": "Hernandez",
+      "mail": "charlotte.hernandez@example.com",
+      "academic_year": 2024,
+      "status_id": 3
+  },
+  {
+      "account_id": 6,
+      "firstname": "Liam",
+      "lastname": "Lee",
+      "mail": "liam.lee@example.com",
+      "academic_year": 2024,
+      "status_id": 1
+  },
+  {
+      "firstname": "Noah",
+      "lastname": "Anderson",
+      "mail": "noah.anderson@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Ava",
+      "lastname": "Moore",
+      "mail": "ava.moore@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Elijah",
+      "lastname": "Taylor",
+      "mail": "elijah.taylor@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Amelia",
+      "lastname": "Thomas",
+      "mail": "amelia.thomas@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Lucas",
+      "lastname": "Jackson",
+      "mail": "lucas.jackson@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Mia",
+      "lastname": "White",
+      "mail": "mia.white@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Ethan",
+      "lastname": "Harris",
+      "mail": "ethan.harris@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Harper",
+      "lastname": "Martin",
+      "mail": "harper.martin@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "William",
+      "lastname": "Thompson",
+      "mail": "william.thompson@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  },
+  {
+      "firstname": "Sophia",
+      "lastname": "Garcia",
+      "mail": "sophia.garcia@example.com",
+      "academic_year": 2024,
+      "status_id": 4
+  }
+]
