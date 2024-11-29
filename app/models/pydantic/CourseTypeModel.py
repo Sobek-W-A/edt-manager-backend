@@ -4,7 +4,7 @@ Pydantic models for CourseType.
 
 from pydantic import BaseModel
 
-from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
+from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
 class PydanticCourseTypeModel(AcademicYearPydanticModel):

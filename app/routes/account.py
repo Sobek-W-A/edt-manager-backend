@@ -2,7 +2,7 @@
 Account Endpoints.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
@@ -67,20 +67,20 @@ async def delete_account(account_id: int, current_account: AuthenticatedAccount)
 
 
 @accountRouter.get("/{account_id}/role/{academic_year}", status_code=200,response_model=PydanticRoleResponseModel)
-async def get_role_account_by_ID(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
+async def get_role_account_by_id(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
     This method get an account's roles with the account ID.
     """
 
-    return await AccountService.getRoleAccountByID(account_id, current_account, academic_year)
+    return await AccountService.get_role_account_by_id(account_id, current_account, academic_year)
 
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)
 async def set_role_account_by_id(account_id: int, current_account: AuthenticatedAccount,
-                                 body: PydanticSetRoleToAccountModel) -> None:
+                                 body: PydanticSetRoleToAccountModel) -> Response:
     """
     This method set an account's roles with the account ID and a body.
     """
+    await AccountService.set_role_account_by_name(account_id, current_account, body)
 
-    await AccountService.setRoleAccountByName(account_id, current_account, body)
-
+    return Response(status_code=205)

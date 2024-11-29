@@ -3,7 +3,7 @@ This module provides pydantic models for the Status.
 """
 
 from pydantic import BaseModel
-from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
+from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
 class PydanticStatusResponseModel(AcademicYearPydanticModel):

@@ -44,6 +44,3 @@ async def delete_ue(ue_id: int) -> None:
     This method deletes the UE of the given UE id.
     """
     return await UEService.delete_ue(ue_id)
-
-
-

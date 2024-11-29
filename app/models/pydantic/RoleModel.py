@@ -5,7 +5,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from app.models.pydantic.ClassicModel import ClassicModel
+from app.models.pydantic.abstract.ClassicModel import ClassicModel
 from app.models.pydantic.PermissionsModel import PydanticPermissionsModel
 
 class PydanticRoleModel(ClassicModel):
@@ -27,6 +27,11 @@ class PydanticCreateRoleModel(ClassicModel):
     """
     permissions: Optional[List[int]]
 
+class PydanticUpdateRoleModel(ClassicModel):
+    """
+    Pydantic Model for Role. This model is used to update a role.
+    """
+    permissions: Optional[List[int]]
 
 class PydanticRoleResponseModel(ClassicModel):
 
@@ -38,9 +43,5 @@ class PydanticSetRoleToAccountModel(BaseModel):
     """
     Pydantic Model for Role. This model is used to set a role to an account.
     """
-    name:str
-    academic_year: int
-
-
-
-
+    name          : str
+    academic_year : int

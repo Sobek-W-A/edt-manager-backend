@@ -5,8 +5,10 @@ Provides the methods to use when interacting with a role.
 from fastapi import HTTPException
 
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.ClassicModel import ClassicModel
-from app.models.pydantic.RoleModel import PydanticCreateRoleModel, PydanticRoleModel, PydanticRoleResponseModel
+from app.models.pydantic.RoleModel import (PydanticCreateRoleModel,
+                                           PydanticRoleResponseModel,
+                                           PydanticUpdateRoleModel)
+from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -49,11 +51,10 @@ async def get_role_by_id(name: str, current_account: AuthenticatedAccount) -> Py
     if role is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
 
-    role_dict = ClassicModel(
+    return PydanticRoleResponseModel(
         name=role.name,
         description=role.description
     )
-    return role_dict
 
 
 async def add_role(role: PydanticCreateRoleModel, current_account: AuthenticatedAccount) -> None:
@@ -73,13 +74,16 @@ async def add_role(role: PydanticCreateRoleModel, current_account: Authenticated
     await role_to_create.save()
 
     if role.permissions:
-        permissions = await RoleInDB.filter(id__in=role.permissions)
-        await role_to_create.permissions.add(*permissions)
+        for permission in role.permissions:
+            perm: PermissionInDB | None = await PermissionInDB.get_or_none(id=permission)
+            if not perm:
+                raise HTTPException(status_code=404, detail=CommonErrorMessages.PERMISSION_NOT_FOUND.value)
+            await role_to_create.permissions.add(perm)
 
 
-async def modify_role(role_name : str, body: PydanticRoleModel , current_account: AuthenticatedAccount) -> None:
+async def modify_role(role_name : str, body: PydanticUpdateRoleModel , current_account: AuthenticatedAccount) -> None:
     """
-        This method modify a role with given name.
+    This method modify a role with given name.
     """
 
     #TODO
@@ -93,14 +97,12 @@ async def modify_role(role_name : str, body: PydanticRoleModel , current_account
     if role is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
 
-
-
     return None
 
 
 async def delete_role(role_name: str, current_account: AuthenticatedAccount) -> None:
     """
-        This method delete a role with given name.
+    This method delete a role with given name.
     """
 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,

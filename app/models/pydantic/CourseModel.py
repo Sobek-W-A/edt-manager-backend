@@ -3,7 +3,7 @@ Pydantic models for Course.
 """
 
 from pydantic import BaseModel
-from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
+from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 
 

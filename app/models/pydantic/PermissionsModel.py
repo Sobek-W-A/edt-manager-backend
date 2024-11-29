@@ -4,7 +4,7 @@ Pydantic Permission Models.
 
 from pydantic import BaseModel
 
-from app.models.pydantic.ClassicModel import ClassicModel
+from app.models.pydantic.abstract.ClassicModel import ClassicModel
 
 
 class PydanticPermissionsModel(BaseModel):

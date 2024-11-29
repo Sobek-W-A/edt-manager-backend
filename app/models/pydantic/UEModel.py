@@ -4,7 +4,7 @@ Pydantic UE models.
 from typing import Optional
 
 from pydantic import BaseModel
-from app.models.pydantic.AcademicYearModel import AcademicYearPydanticModel
+from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.CourseModel import PydanticCourseModel
 
 

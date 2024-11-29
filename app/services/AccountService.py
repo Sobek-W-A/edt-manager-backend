@@ -166,7 +166,7 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     return account
 
 
-async def getRoleAccountByID(account_id : int , current_account : AccountInDB, academic_year:int) -> PydanticRoleResponseModel:
+async def get_role_account_by_id(account_id : int , current_account : AccountInDB, academic_year:int) -> PydanticRoleResponseModel:
     """
     This method returns the list of roles of an user.
     :param account_id: Account ID.
@@ -175,17 +175,23 @@ async def getRoleAccountByID(account_id : int , current_account : AccountInDB, a
                             AvailableOperations.GET,
                             current_account)
 
-    metadata: AccountMetadataInDB = await AccountMetadataInDB.get_or_none(account_id=account_id, academic_year=academic_year).prefetch_related("role")
+    metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=account_id, academic_year=academic_year).prefetch_related("role")
 
     if not metadata:
-        raise HTTPException(status_code=404, detail="Account not found")
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
-    role: PydanticRoleResponseModel = await RoleInDB.get_or_none(name=metadata.role.name)
+    role: RoleInDB | None = await RoleInDB.get_or_none(name=metadata.role.name)
 
-    return role
+    if not role:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
+
+    return PydanticRoleResponseModel(name=role.name,
+                                     description=role.description)
 
 
-async def setRoleAccountByName(account_id: int, current_account : AccountInDB, body : PydanticSetRoleToAccountModel) -> None:
+async def set_role_account_by_name(account_id: int, current_account : AccountInDB, body : PydanticSetRoleToAccountModel) -> None:
     """
     This method set the role of an account.
     :param account_id: Account ID, role_name : name of the given role.
@@ -195,15 +201,17 @@ async def setRoleAccountByName(account_id: int, current_account : AccountInDB, b
                             AvailableOperations.UPDATE,
                             current_account)
 
-    account: AccountInDB = await AccountInDB.get_or_none(id=account_id)
+    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
     if not account:
-        raise HTTPException(status_code=404, detail="Account not found")
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
-    role: RoleInDB = await RoleInDB.get_or_none(name=body.name)
+    role: RoleInDB | None = await RoleInDB.get_or_none(name=body.name)
 
     if not role:
-        raise HTTPException(status_code=404, detail="Role not found")
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
 
-    await AccountMetadataInDB.filter(account_id=account_id, academic_year=body.academic_year).update(role_id=role.name)
-
+    await AccountMetadataInDB.filter(account_id=account_id,
+                                     academic_year=body.academic_year).update(role_id=role.name)
