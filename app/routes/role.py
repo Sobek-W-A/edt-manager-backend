@@ -24,7 +24,7 @@ async def get_all_roles(current_account: AuthenticatedAccount) -> list[ClassicMo
 
 
 @roleRouter.get("/{role_name}", status_code=200, response_model=PydanticRoleResponseModel)
-async def get_role_by_id(role_name: str,current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
+async def get_role_by_name(role_name: str,current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
     This method returns the role of the given role name.
     """

@@ -4,7 +4,7 @@ Account Endpoints.
 
 from fastapi import APIRouter
 
-
+from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
@@ -14,7 +14,8 @@ from app.models.pydantic.RoleModel import PydanticRoleResponseModel, PydanticSet
 from app.routes.tags import Tag
 from app.services import AccountService
 
-from app.models.aliases import AuthenticatedAccount
+
+
 
 accountRouter: APIRouter = APIRouter(prefix="/account")
 tag: Tag = {
