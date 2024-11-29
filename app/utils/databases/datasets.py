@@ -9,7 +9,10 @@ from typing import Any, Type
 from pydantic import BaseModel
 from tortoise.models import Model
 
+from app.models.pydantic.AccountMetadataModel import PydanticAccountMetaModelFromJSON
 from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
+from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON
+from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModelFromJSON
 from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
 from app.models.pydantic.PermissionModel import PydanticPermissionModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
@@ -17,6 +20,9 @@ from app.models.pydantic.PydanticRole import PydanticRoleModelFromJSON
 from app.models.pydantic.ServiceModel import PydanticServiceModelFromJSON
 from app.models.pydantic.StatusModel import PydanticStatusModelFromJSON
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.account_metadata import AccountMetadataInDB
+from app.models.tortoise.coefficient import CoefficientInDB
+from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.profile import ProfileInDB
@@ -46,6 +52,9 @@ async def load_persistent_datasets() -> None:
     await load_json_into_model_via_pydantic(StatusInDB,
                                             PydanticStatusModelFromJSON,
                                             JSON_FILE_PATH + "status_templates.json")
+    await load_json_into_model_via_pydantic(CourseTypeInDB,
+                                            PydanticCourseTypeModelFromJSON,
+                                            JSON_FILE_PATH + "course_type_templates.json")
 
 async def load_dummy_datasets() -> None:
     """
@@ -56,9 +65,15 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(AccountInDB,
                                             PydanticAccountModelFromJSON,
                                             JSON_FILE_PATH + "account_templates.json")
+    await load_json_into_model_via_pydantic(AccountMetadataInDB,
+                                            PydanticAccountMetaModelFromJSON,
+                                            JSON_FILE_PATH + "account_metadata_templates.json")
     await load_json_into_model_via_pydantic(ProfileInDB,
                                             PydanticProfileModelFromJSON,
                                             JSON_FILE_PATH + "profile_templates.json")
+    await load_json_into_model_via_pydantic(CoefficientInDB,
+                                            PydanticCoefficientModelFromJSON,
+                                            JSON_FILE_PATH + "coefficient_templates.json")
 
 async def load_json_into_model_via_pydantic(
     model       : Type[Model],
