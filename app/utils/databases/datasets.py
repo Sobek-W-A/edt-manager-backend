@@ -16,7 +16,7 @@ from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModelFromJSON
 from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
 from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
-from app.models.pydantic.PermissionModel import PydanticPermissionModelFromJSON
+from app.models.pydantic.PermissionsModel import PydanticPermissionModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
 from app.models.pydantic.PydanticRole import PydanticRoleModelFromJSON
 from app.models.pydantic.ServiceModel import PydanticServiceModelFromJSON
