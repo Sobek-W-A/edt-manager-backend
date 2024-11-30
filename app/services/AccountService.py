@@ -8,24 +8,25 @@ from typing import Annotated, Optional, TypeAlias
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from tortoise.expressions import Q
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
-
-from app.models.pydantic.RoleModel import PydanticRoleResponseModel, PydanticSetRoleToAccountModel
+from app.models.pydantic.RoleModel import (PydanticRoleResponseModel,
+                                           PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.role import RoleInDB
-
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
 from app.utils.enums.http_errors import CommonErrorMessages
-from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
+from app.utils.enums.permission_enums import (AvailableOperations,
+                                              AvailableServices)
 
 
 async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
@@ -51,8 +52,30 @@ async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccount
                             AvailableOperations.GET,
                             current_account)
 
-    accounts: list[AccountInDB] = await AccountInDB.all()
-    return [PydanticAccountModel.model_validate(account) for account in accounts]
+    accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
+    return [PydanticAccountModel(login=account.login,
+                                 id=account.id,
+                                 profile=account.profile[0] if account.profile else None) # type: ignore
+                                 for account in accounts]
+
+async def search_account_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+    """
+    This method retrieves accounts that matches the login provided.
+    """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    query: Q = Q()
+    for keyword in keywords.split(" "):
+        query &= Q(login__icontains=keyword)
+
+    return list(
+        map(
+            PydanticAccountModel.model_validate, 
+            await AccountInDB.filter(query).all()
+        )
+    )
 
 
 async def create_account(account: PydanticCreateAccountModel,

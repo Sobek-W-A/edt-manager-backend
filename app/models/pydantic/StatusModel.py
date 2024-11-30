@@ -12,6 +12,14 @@ class PydanticStatusResponseModel(AcademicYearPydanticModel):
     """
     name        : str
     description : str
+    academic_year : int
+    quota         : int
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True
 
 class PydanticStatusModelFromJSON(BaseModel):
     """

@@ -83,7 +83,7 @@ async def add_role(role: PydanticCreateRoleModel, current_account: Authenticated
 
 async def modify_role(role_name : str, body: PydanticUpdateRoleModel , current_account: AuthenticatedAccount) -> None:
     """
-    This method modify a role with given name.
+    This method modifies a role with given name.
     """
 
     #TODO

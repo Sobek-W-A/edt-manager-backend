@@ -3,7 +3,12 @@ This module contains the AffectationInDB model which is used to represent the af
 """
 
 from datetime import datetime
-from tortoise.fields import ForeignKeyField, ForeignKeyRelation, IntField, Field, CharField, DatetimeField
+from tortoise.fields import (ForeignKeyField,
+                             ForeignKeyRelation,
+                             IntField,
+                             Field,
+                             CharField,
+                             DatetimeField)
 
 from app.models.tortoise.abstract.academic_year import AcademicYear
 from app.models.tortoise.course import CourseInDB
