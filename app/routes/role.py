@@ -4,9 +4,9 @@ This module provieds a router for the /role endpoint.
 from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.RoleModel import (PydanticCreateRoleModel,
-                                           PydanticRoleResponseModel,
-                                           PydanticUpdateRoleModel)
+from app.models.pydantic.PydanticRole import (PydanticCreateRoleModel,
+                                              PydanticUpdateRoleModel,
+                                              PydanticRoleResponseModel)
 from app.routes.tags import Tag
 from app.services import RoleService
 

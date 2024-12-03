@@ -10,7 +10,8 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
 
-from app.models.pydantic.RoleModel import PydanticRoleResponseModel, PydanticSetRoleToAccountModel
+from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
+                                              PydanticSetRoleToAccountModel)
 from app.routes.tags import Tag
 from app.services import AccountService
 

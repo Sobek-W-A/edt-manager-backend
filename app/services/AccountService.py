@@ -14,8 +14,8 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
-from app.models.pydantic.RoleModel import (PydanticRoleResponseModel,
-                                           PydanticSetRoleToAccountModel)
+from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
+                                             PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB

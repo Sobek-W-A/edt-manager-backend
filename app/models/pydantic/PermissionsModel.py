@@ -12,10 +12,13 @@ class PydanticPermissionsModel(BaseModel):
     Pydantic model for permissions used to send Permissions to the Frontend.
     """
     id: int
-    service_name: ClassicModel
-    operation_name: ClassicModel
+    service_name: ClassicModel      # TODO : Change to ServiceModel
+    operation_name: ClassicModel    # TODO : Change to OperationModel
 
     class Config:
+        """
+        Pydantic configuration for the model.
+        """
         from_attributes : bool = True
 
 class PydanticPermissionModelFromJSON(BaseModel):
