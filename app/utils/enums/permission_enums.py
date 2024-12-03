@@ -57,11 +57,10 @@ class AvailableOperations(enum.Enum):
     """
     Enumeration to provide the available CRUD operations on the available services.
     """
-    CREATE = Operation("Create", "Operations that correspond to creation of a resource")
-    GET    = Operation("Get",    "Operations that correspond to retrieval of a resource")
+    CREATE = Operation("Create", "Operations that correspond to the creation of a resource")
+    GET    = Operation("Get",    "Operations that correspond to the retrieval of a resource")
     UPDATE = Operation("Update", "Operations that correspond to an update of a resource")
-    DELETE = Operation("Delete", "Operations that correspond to deletion of a resource")
-
+    DELETE = Operation("Delete", "Operations that correspond to the deletion of a resource")
 
 class AvailableServices(enum.Enum):
     """
@@ -70,18 +69,5 @@ class AvailableServices(enum.Enum):
     PROFILE_SERVICE = Service("Profile Service", "Service that manages profiles.")
     ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
     STATUS_SERVICE  = Service("Status Service", "Service that manages statuses.")
-
-
-class AvailablePermissions(enum.Enum):
-    """
-    Class that provides the available permissions.
-    """
-    CRUD_PROFILE = Permission(AvailableServices.PROFILE_SERVICE.value,
-                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
-                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
-    CRUD_SERVICE = Permission(AvailableServices.ACCOUNT_SERVICE.value,
-                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
-                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
-    CRUD_STATUS  = Permission(AvailableServices.STATUS_SERVICE.value,
-                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
-                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
+    UE_SERVICE      = Service("UE Service", "Service that manages Learning Units.")
+    ROLE_SERVICE    = Service("Role Service", "Service that manages roles.")

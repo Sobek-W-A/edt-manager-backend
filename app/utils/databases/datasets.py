@@ -125,7 +125,7 @@ async def load_json_into_model_via_pydantic(
 
         # Trying to use pydantic to conform JSON data :
         data: list[BaseModel] = [schema(**item) for item in raw_data]
-        
+
         # Insert data into the database
         for item in data:
             element: dict[str, Any] = item.model_dump(exclude_unset=True)
