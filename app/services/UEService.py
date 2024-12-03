@@ -10,7 +10,7 @@ async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
     """
 
     #TODO
-    return PydanticUEModel(academic_year=[2024, 2025],
+    return PydanticUEModel(academic_year=2024,
                            courses=[],
                            name="UE",
                            ue_id=1)
@@ -21,7 +21,7 @@ async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
     This method creates a new UE.
     """
     #TODO
-    return PydanticUEModel(academic_year=[2024, 2025],
+    return PydanticUEModel(academic_year=2024,
                            courses=[],
                            name="UE",
                            ue_id=1)

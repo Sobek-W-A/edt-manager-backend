@@ -30,5 +30,21 @@
     {
         "service_name_id": "Account Service",
         "operation_name_id": "Update"
+    },
+    {
+        "service_name_id": "Status Service",
+        "operation_name_id": "Create"
+    },
+    {
+        "service_name_id": "Status Service",
+        "operation_name_id": "Delete"
+    },
+    {
+        "service_name_id": "Status Service",
+        "operation_name_id": "Get"
+    },
+    {
+        "service_name_id": "Status Service",
+        "operation_name_id": "Update"
     }
 ]

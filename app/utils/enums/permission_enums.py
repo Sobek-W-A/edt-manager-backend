@@ -67,8 +67,9 @@ class AvailableServices(enum.Enum):
     """
     Enumeration to provide the available services.
     """
-    PROFILE_SERVICE    = Service("Profile Service", "Service that manages profiles.")
+    PROFILE_SERVICE = Service("Profile Service", "Service that manages profiles.")
     ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
+    STATUS_SERVICE  = Service("Status Service", "Service that manages statuses.")
 
 
 class AvailablePermissions(enum.Enum):
@@ -81,8 +82,6 @@ class AvailablePermissions(enum.Enum):
     CRUD_SERVICE = Permission(AvailableServices.ACCOUNT_SERVICE.value,
                            [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
                             AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])
-class AvailableRoles(enum.Enum):
-    """
-    Class that provides the available roles.
-    """
-    ADMIN = Role("Administrator", "Role that corresponds to the administrator of the system.", [AvailablePermissions.CRUD_PROFILE.value])
+    CRUD_STATUS  = Permission(AvailableServices.STATUS_SERVICE.value,
+                           [AvailableOperations.CREATE.value, AvailableOperations.GET.value,
+                            AvailableOperations.UPDATE.value, AvailableOperations.DELETE.value])

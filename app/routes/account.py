@@ -16,8 +16,6 @@ from app.routes.tags import Tag
 from app.services import AccountService
 
 
-
-
 accountRouter: APIRouter = APIRouter(prefix="/account")
 tag: Tag = {
     "name": "Account",

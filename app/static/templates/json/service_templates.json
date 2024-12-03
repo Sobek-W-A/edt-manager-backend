@@ -6,5 +6,9 @@
     {
         "name": "Account Service",
         "description": "Service that manages accounts and logging."
+    },
+    {
+        "name": "Status Service",
+        "description": "Service that manages statuses of profiles."
     }
 ]
