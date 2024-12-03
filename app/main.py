@@ -14,6 +14,7 @@ from app.routes import account, auth, profile, role, ue, course, course_type, st
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
+from app.utils.printers import print_info
 
 # Array for the routes descriptions and names.
 tags_metadata: list[Tag] = [
@@ -33,6 +34,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
     This method indicates what the method needs to do at startup.
     """
     # Démarrage des bases de données
+    print_info("Starting databases...")
     await startup_databases(app=application)
     yield
     # Code pour fermer les bases de données (si nécessaire)

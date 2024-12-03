@@ -36,6 +36,7 @@ from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.status import StatusInDB
 from app.models.tortoise.ue import UEInDB
 from app.services import SecurityService
+from app.utils.printers import print_error, print_info
 
 JSON_FILE_PATH : str = "./app/static/templates/json/"
 
@@ -43,6 +44,8 @@ async def load_persistent_datasets() -> None:
     """
     This method loads all datasets needed for production purposes.
     """
+    print_info("Loading Production datasets...")
+
     await load_json_into_model_via_pydantic(OperationInDB,
                                             PydanticOperationModelFromJSON,
                                             "operation_templates.json")
@@ -66,6 +69,8 @@ async def load_dummy_datasets() -> None:
     """
     This method loads all datasets needed for development purposes.
     """
+    print_info("Loading Dummy datasets...")
+    
     await load_persistent_datasets()
 
     await load_json_into_model_via_pydantic(AccountInDB,
@@ -155,8 +160,7 @@ async def load_json_into_model_via_pydantic(
                     m2m_manager = getattr(instance, field)
                     await m2m_manager.add(*related_instances)
 
+        print_info(f"{len(data)} instances loaded into model {model.__name__}")
 
-        print(f"INFO:     {len(data)} instances added init {model.__name__}")
-
-    except Exception as e:
-        print(f"ERROR:    Failed loading data for model {model.__name__} : {e}")
+    except Exception as e:              # TODO : Handle specific exceptions
+        print_error(f"Error while loading {model.__name__}'s data: {e}")
