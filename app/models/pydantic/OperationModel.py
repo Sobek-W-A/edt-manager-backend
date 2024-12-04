@@ -1,17 +1,26 @@
 """
 Pydantic models for Operations.
 """
-from pydantic import BaseModel
+from app.models.pydantic.abstract.ClassicModel import ClassicModel
 
-class PydanticOperationModelFromJSON(BaseModel):
+class PydanticOperationModelFromJSON(ClassicModel):
     """
     This model is used to import JSON Operations into the database.
     """
-    name        : str
-    description : str
 
     class Config:
         """
         Pydantic configuration.
+        """
+        from_attributes : bool = True
+
+class PydanticOperationModel(ClassicModel):
+    """
+    Pydantic model for Operations.
+    """
+
+    class Config:
+        """
+        Pydantic configuration for the model.
         """
         from_attributes : bool = True

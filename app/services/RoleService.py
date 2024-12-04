@@ -5,9 +5,9 @@ Provides the methods to use when interacting with a role.
 from fastapi import HTTPException
 
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.RoleModel import (PydanticCreateRoleModel,
-                                           PydanticRoleResponseModel,
-                                           PydanticUpdateRoleModel)
+from app.models.pydantic.PydanticRole import (PydanticCreateRoleModel,
+                                              PydanticUpdateRoleModel,
+                                              PydanticRoleResponseModel)
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
 from app.services.PermissionService import check_permissions

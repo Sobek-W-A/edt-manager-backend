@@ -2,15 +2,24 @@
 Pydantic models for services.
 """
 
-from pydantic import BaseModel
+from app.models.pydantic.abstract.ClassicModel import ClassicModel
 
 
-class PydanticServiceModelFromJSON(BaseModel):
+class PydanticServiceModelFromJSON(ClassicModel):
     """
     Pydantic model for services. Used to load data from JSON files.
     """
-    name : str
-    description : str
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True
+
+class PydanticServiceModel(ClassicModel):
+    """
+    Pydantic model for services.
+    """
 
     class Config:
         """

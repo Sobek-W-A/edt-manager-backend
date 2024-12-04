@@ -11,9 +11,9 @@ class PermissionInDB(Model):
     """
     This model represents a permission that can be granted to a user.
     """
-    id             : Field[int]                        = IntField(pk=True)
-    service_name   : ForeignKeyRelation[ServiceInDB]   = ForeignKeyField("models.ServiceInDB",   related_name="service")
-    operation_name : ForeignKeyRelation[OperationInDB] = ForeignKeyField("models.OperationInDB", related_name="operation")
+    id        : Field[int]                        = IntField(pk=True)
+    service   : ForeignKeyRelation[ServiceInDB]   = ForeignKeyField("models.ServiceInDB",   related_name="service")
+    operation : ForeignKeyRelation[OperationInDB] = ForeignKeyField("models.OperationInDB", related_name="operation")
 
 
     class Meta(Model.Meta):

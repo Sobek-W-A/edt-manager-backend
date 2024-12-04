@@ -15,13 +15,13 @@ from app.utils.enums.permission_enums import AvailableOperations, AvailableServi
 async def check_permissions(service: AvailableServices,
                             operation: AvailableOperations,
                             current_account: AccountInDB,
-                            academic_year: tuple[int, int] = (2024,2025)) -> None:
+                            academic_year: int = 2024) -> None:
     """
     This method checks if the provided user has the permission to perform the provided 
     operation on the provided service.
     """
     # We fetch the user's role.
-    meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,academic_year=academic_year[0]).prefetch_related("role")
+    meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,academic_year=academic_year).prefetch_related("role")
 
     if meta is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
@@ -39,5 +39,3 @@ async def check_permissions(service: AvailableServices,
     # Otherwise, the user has the permission to do the operation on the service.
     if len(permissions) == 0:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
-
-

@@ -4,17 +4,17 @@ Used to manage ue operations.
 """
 from fastapi import APIRouter
 
-
-
 from app.models.pydantic.UEModel import PydanticUEModel, PydanticCreateUEModel
 from app.routes.tags import Tag
 from app.services import UEService
+
 
 ueRouter: APIRouter = APIRouter(prefix="/ue")
 tag: Tag = {
     "name": "UE",
     "description": "UE-related operations."
 }
+
 
 @ueRouter.get("/{ue_id}",status_code=200, response_model=PydanticUEModel)
 async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
@@ -36,7 +36,6 @@ async def modify_ue(ue_id: int, body: PydanticCreateUEModel) -> None:
     This method modifies the UE of the given UE id.
     """
     return await UEService.modify_ue(ue_id,body)
-
 
 @ueRouter.delete("/{ue_id}", status_code=204)
 async def delete_ue(ue_id: int) -> None:
