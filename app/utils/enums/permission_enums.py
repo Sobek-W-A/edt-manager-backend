@@ -4,23 +4,13 @@ These are basically static data that needs to be stored in database at creation.
 They are used to check if a user has the permission to perform a certain operation 
 on a certain service.
 """
-from abc import ABC, ABCMeta, abstractmethod
 import enum
 
 from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
-
-class LoadableData(ABC):
-    """
-    This class is used to provide a method to load the data to the database.
-    """
-    @abstractmethod
-    async def load_to_db(self) -> None:
-        """
-        This method is used to load the data to the database.
-        """
+from app.utils.enums.enum_loaders import AbstractEnumLoader, LoadableData
 
 class Operation(LoadableData):
     """
@@ -76,8 +66,10 @@ class Permission(LoadableData):
         operations  : dict[str, OperationInDB] = {}
         services    : dict[str, ServiceInDB]   = {}
 
-        map(lambda op: operations.update({op.name: op}), await OperationInDB.all())
-        map(lambda serv: services.update({serv.name: serv}), await ServiceInDB.all())
+        for op in await OperationInDB.all():
+            operations.update({op.name: op})
+        for serv in await ServiceInDB.all(): 
+            services.update({serv.name: serv})
 
         for operation in self.operations:
             await PermissionInDB.create(service=services[self.service.service_name],
@@ -118,24 +110,6 @@ class Role(LoadableData):
                     await role.permissions.add(*perms)
 
 # Enums
-class EnumABCMeta(enum.EnumMeta, ABCMeta):
-    """
-    This class is used to make pylint happy.
-    """
-
-class AbstractEnumLoader(ABC, enum.Enum, metaclass=EnumABCMeta):
-    """
-    This class is meant to be inherited by the different Enum classes.
-    It provides a method to load the enum to the database.
-    """
-    @classmethod
-    async def load_enum_to_db(cls):
-        """
-        This method loads all instances of the enum to the database.
-        """
-        for element in cls:
-            await element.value.load_to_db()
-
 class AvailableOperations(AbstractEnumLoader):
     """
     Enumeration to provide the available CRUD operations on the available services.
@@ -151,9 +125,9 @@ class AvailableServices(AbstractEnumLoader):
     """
     PROFILE_SERVICE = Service("Profile Service", "Service that manages profiles.")
     ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
-    STATUS_SERVICE  = Service("Status Service", "Service that manages statuses.")
-    UE_SERVICE      = Service("UE Service", "Service that manages Learning Units.")
-    ROLE_SERVICE    = Service("Role Service", "Service that manages roles.")
+    STATUS_SERVICE  = Service("Status Service",  "Service that manages statuses.")
+    UE_SERVICE      = Service("UE Service",      "Service that manages Learning Units.")
+    ROLE_SERVICE    = Service("Role Service",    "Service that manages roles.")
 
 class AvailablePermissions(AbstractEnumLoader):
     """
@@ -215,14 +189,14 @@ class AvailableRoles(AbstractEnumLoader):
     This is static data. It should be stored in the database at 
     startup if not already present.
     """
-    ADMIN           = Role("Administrator", "Role that has all permissions",
+    ADMIN           = Role("Administrateur", "Rôle administrateur. Dispose de toutes les permissions.",
                            None, True)
-    DPT_MANAGER     = Role("Department Manager", "Role that manages a department",
+    DPT_MANAGER     = Role("Responsable de département", "Rôle pour gèrer un département.",
                            None, False)
-    FMT_MANAGER     = Role("Formation Manager", "Role that manages a formation",
+    FMT_MANAGER     = Role("Responsable de formation", "Rôle pour gèrer une formation.",
                            None, False)
-    ED_SECRETARIAT  = Role("Educational Secretariat", "Role that manages the educational secretariat",
+    ED_SECRETARIAT  = Role("Secrétariat", "Rôle pour le secrétariat.",
                            None, False)
-    TEACHER         = Role("Teacher", "Teacher Role",
+    TEACHER         = Role("Professeur", "Professeur.",
                            None, False)
     # TODO : Add proper Ensemble permissions to roles.
