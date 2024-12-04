@@ -15,3 +15,14 @@ class PydanticServiceModelFromJSON(ClassicModel):
         Pydantic configuration for the model.
         """
         from_attributes : bool = True
+
+class PydanticServiceModel(ClassicModel):
+    """
+    Pydantic model for services.
+    """
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True

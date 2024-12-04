@@ -4,16 +4,17 @@ Pydantic Permission Models.
 
 from pydantic import BaseModel
 
-from app.models.pydantic.abstract.ClassicModel import ClassicModel
+from app.models.pydantic.OperationModel import PydanticOperationModel
+from app.models.pydantic.ServiceModel import PydanticServiceModel
 
 
 class PydanticPermissionsModel(BaseModel):
     """
     Pydantic model for permissions used to send Permissions to the Frontend.
     """
-    id: int
-    service_name: ClassicModel      # TODO : Change to ServiceModel
-    operation_name: ClassicModel    # TODO : Change to OperationModel
+    id          : int
+    service     : PydanticServiceModel   | int
+    operation   : PydanticOperationModel | int
 
     class Config:
         """

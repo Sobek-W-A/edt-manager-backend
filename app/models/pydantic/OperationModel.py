@@ -13,3 +13,14 @@ class PydanticOperationModelFromJSON(ClassicModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticOperationModel(ClassicModel):
+    """
+    Pydantic model for Operations.
+    """
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True
