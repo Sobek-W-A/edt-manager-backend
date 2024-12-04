@@ -117,14 +117,13 @@ class Role(LoadableData):
                                                                                     operation__in=[op.operation_name for op in permission.operations])
                     await role.permissions.add(*perms)
 
-
 # Enums
 class EnumABCMeta(enum.EnumMeta, ABCMeta):
     """
     This class is used to make pylint happy.
     """
 
-class AbstractEnumLoader(enum.Enum, ABC, metaclass=EnumABCMeta):
+class AbstractEnumLoader(ABC, enum.Enum, metaclass=EnumABCMeta):
     """
     This class is meant to be inherited by the different Enum classes.
     It provides a method to load the enum to the database.
