@@ -22,7 +22,6 @@ class LoadableData(ABC):
         This method is used to load the data to the database.
         """
 
-
 class Operation(LoadableData):
     """
     Describes what an Operation is.
@@ -118,6 +117,7 @@ class Role(LoadableData):
                                                                                     operation__in=[op.operation_name for op in permission.operations])
                     await role.permissions.add(*perms)
 
+
 # Enums
 class EnumABCMeta(enum.EnumMeta, ABCMeta):
     """
@@ -145,7 +145,6 @@ class AvailableOperations(AbstractEnumLoader):
     GET    = Operation("Get",    "Operations that correspond to the retrieval of a resource")
     UPDATE = Operation("Update", "Operations that correspond to an update of a resource")
     DELETE = Operation("Delete", "Operations that correspond to the deletion of a resource")
-
 
 class AvailableServices(AbstractEnumLoader):
     """
@@ -191,9 +190,25 @@ class AvailableEnsemblesPermissions(enum.Enum):
     """
     This class regroups the different kind of permissions for the services.
     """
-    GET    = None
-    MANAGE = None
-    # TODO : Add proper permissions to ensembles.
+    GET_PROFILE     = Permission(AvailableServices.PROFILE_SERVICE.value,
+                                [AvailableOperations.GET.value])
+    MANAGE_PROFILE  = AvailablePermissions.CRUD_ROLE.value
+
+    GET_ACCOUNT     = Permission(AvailableServices.ACCOUNT_SERVICE.value,
+                                [AvailableOperations.GET.value])
+    MANAGE_ACCOUNT  = AvailablePermissions.CRUD_ACCOUNT.value
+
+    GET_STATUS      = Permission(AvailableServices.STATUS_SERVICE.value,
+                                [AvailableOperations.GET.value])
+    MANAGE_STATUS   = AvailablePermissions.CRUD_STATUS.value
+
+    GET_UE          = Permission(AvailableServices.UE_SERVICE.value,
+                                 [AvailableOperations.GET.value])
+    MANAGE_UE       = AvailablePermissions.CRUD_UE.value
+
+    GET_ROLE        = Permission(AvailableServices.ROLE_SERVICE.value,
+                                    [AvailableOperations.GET.value])
+    MANAGE_ROLE     = AvailablePermissions.CRUD_ROLE.value
 
 class AvailableRoles(AbstractEnumLoader):
     """
@@ -201,9 +216,14 @@ class AvailableRoles(AbstractEnumLoader):
     This is static data. It should be stored in the database at 
     startup if not already present.
     """
-    ADMIN           = Role("Administrator", "Role that has all permissions", None, True)
-    DPT_MANAGER     = Role("Department Manager", "Role that manages a department", None, False)
-    FMT_MANAGER     = Role("Formation Manager", "Role that manages a formation", None, False)
-    ED_SECRETARIAT  = Role("Educational Secretariat", "Role that manages the educational secretariat", None, False)
-    TEACHER         = Role("Teacher", "Teacher Role", None, False)
+    ADMIN           = Role("Administrator", "Role that has all permissions",
+                           None, True)
+    DPT_MANAGER     = Role("Department Manager", "Role that manages a department",
+                           None, False)
+    FMT_MANAGER     = Role("Formation Manager", "Role that manages a formation",
+                           None, False)
+    ED_SECRETARIAT  = Role("Educational Secretariat", "Role that manages the educational secretariat",
+                           None, False)
+    TEACHER         = Role("Teacher", "Teacher Role",
+                           None, False)
     # TODO : Add proper Ensemble permissions to roles.
