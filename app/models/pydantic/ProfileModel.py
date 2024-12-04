@@ -6,7 +6,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
-from app.models.pydantic.validators.validator import Mail, Name
+from app.models.pydantic.tools.validator import Mail, Name
 
 class PydanticProfileModify(AcademicYearPydanticModel):
     """
