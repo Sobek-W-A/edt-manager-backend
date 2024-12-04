@@ -4,6 +4,7 @@ These are basically static data that needs to be stored in database at creation.
 They are used to check if a user has the permission to perform a certain operation 
 on a certain service.
 """
+from abc import ABC, ABCMeta, abstractmethod
 import enum
 
 from app.models.tortoise.operation import OperationInDB
@@ -11,7 +12,18 @@ from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
 
-class Operation:
+class LoadableData(ABC):
+    """
+    This class is used to provide a method to load the data to the database.
+    """
+    @abstractmethod
+    async def load_to_db(self) -> None:
+        """
+        This method is used to load the data to the database.
+        """
+
+
+class Operation(LoadableData):
     """
     Describes what an Operation is.
     """
@@ -22,14 +34,14 @@ class Operation:
         self.operation_name = operation_name
         self.operation_description = operation_description
 
-    async def load_operation_to_db(self):
+    async def load_to_db(self) -> None:
         """
         This method is used to load the operation to the database.
         """
         await OperationInDB.create(name=self.operation_name,
                                    description=self.operation_description)
 
-class Service:
+class Service(LoadableData):
     """
     Describes what a Service is.
     """
@@ -40,14 +52,14 @@ class Service:
         self.service_name = service_name
         self.service_description = service_description
 
-    async def load_service_to_db(self):
+    async def load_to_db(self) -> None:
         """
         This method is used to load the service to the database.
         """
         await ServiceInDB.create(name=self.service_name,
                                  description=self.service_description)
 
-class Permission:
+class Permission(LoadableData):
     """
     Describes what a permission is.
     """
@@ -58,14 +70,10 @@ class Permission:
         self.service = service
         self.operations = operations
 
-    async def load_permission_to_db(self):
+    async def load_to_db(self) -> None:
         """
         This method is used to load the permission to the database.
         """
-        for operation in self.operations:
-            await operation.load_operation_to_db()
-        await self.service.load_service_to_db()
-
         operations  : dict[str, OperationInDB] = {}
         services    : dict[str, ServiceInDB]   = {}
 
@@ -76,7 +84,7 @@ class Permission:
             await PermissionInDB.create(service=services[self.service.service_name],
                                         operation=operations[operation.operation_name])
 
-class Role:
+class Role(LoadableData):
     """
     Describes what a role is.
     """
@@ -92,7 +100,7 @@ class Role:
         self.permissions = permissions
         self.admin = admin
 
-    async def load_role_to_db(self):
+    async def load_to_db(self) -> None:
         """
         This method is used to load the role to the database.
         """
@@ -111,7 +119,25 @@ class Role:
                     await role.permissions.add(*perms)
 
 # Enums
-class AvailableOperations(enum.Enum):
+class EnumABCMeta(enum.EnumMeta, ABCMeta):
+    """
+    This class is used to make pylint happy.
+    """
+
+class AbstractEnumLoader(enum.Enum, ABC, metaclass=EnumABCMeta):
+    """
+    This class is meant to be inherited by the different Enum classes.
+    It provides a method to load the enum to the database.
+    """
+    @classmethod
+    async def load_enum_to_db(cls):
+        """
+        This method loads all instances of the enum to the database.
+        """
+        for element in cls:
+            await element.value.load_to_db()
+
+class AvailableOperations(AbstractEnumLoader):
     """
     Enumeration to provide the available CRUD operations on the available services.
     """
@@ -120,7 +146,8 @@ class AvailableOperations(enum.Enum):
     UPDATE = Operation("Update", "Operations that correspond to an update of a resource")
     DELETE = Operation("Delete", "Operations that correspond to the deletion of a resource")
 
-class AvailableServices(enum.Enum):
+
+class AvailableServices(AbstractEnumLoader):
     """
     Enumeration to provide the available services.
     """
@@ -130,7 +157,7 @@ class AvailableServices(enum.Enum):
     UE_SERVICE      = Service("UE Service", "Service that manages Learning Units.")
     ROLE_SERVICE    = Service("Role Service", "Service that manages roles.")
 
-class AvailablePermissions(enum.Enum):
+class AvailablePermissions(AbstractEnumLoader):
     """
     Enumeration to provide the available permissions.
     """
@@ -164,11 +191,11 @@ class AvailableEnsemblesPermissions(enum.Enum):
     """
     This class regroups the different kind of permissions for the services.
     """
-    GET = None
+    GET    = None
     MANAGE = None
     # TODO : Add proper permissions to ensembles.
 
-class AvailableRoles(enum.Enum):
+class AvailableRoles(AbstractEnumLoader):
     """
     Enumeration to provide the available roles.
     This is static data. It should be stored in the database at 
