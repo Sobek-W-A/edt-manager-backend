@@ -7,6 +7,9 @@ inherited by Enum classes that need to be loaded to the database.
 
 from abc import ABC, ABCMeta, abstractmethod
 import enum
+from typing import Type
+
+from tortoise import Model
 
 from app.utils.printers import print_info
 
@@ -33,11 +36,13 @@ class AbstractEnumLoader(ABC, enum.Enum, metaclass=EnumABCMeta):
     """
 
     @classmethod
-    async def load_enum_to_db(cls, model_name: str) -> None:
+    async def load_enum_to_db(cls, model: Type[Model]) -> None:
         """
         This method loads all instances of the enum to the database.
         """
+        if await model.all().count() > 0:
+            return
         for element in cls:
             await element.value.load_to_db()
 
-        print_info(f"{len(cls)} instances loaded for {model_name}.")
+        print_info(f"{len(cls)} instances loaded into {model.__name__}.")

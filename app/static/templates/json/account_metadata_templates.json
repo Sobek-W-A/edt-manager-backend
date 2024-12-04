@@ -1,12 +1,12 @@
 [
     {
         "account_id": 1,
-        "role_id": "Adminitstrateur",
+        "role_id": "Administrateur",
         "academic_year": 2024
     },
     {
         "account_id": 1,
-        "role_id": "Professeur",
+        "role_id": "Administrateur",
         "academic_year": 2025
     },
     {
@@ -16,57 +16,57 @@
     },
     {
         "account_id": 2,
-        "role_id": "Formation Manager",
+        "role_id": "Responsable de formation",
         "academic_year": 2025
     },
     {
         "account_id": 3,
-        "role_id": "Teacher",
+        "role_id": "Professeur",
         "academic_year": 2024
     },
     {
         "account_id": 3,
-        "role_id": "Formation Manager",
+        "role_id": "Responsable de formation",
         "academic_year": 2025
     },
     {
         "account_id": 4,
-        "role_id": "Teacher",
+        "role_id": "Professeur",
         "academic_year": 2024
     },
     {
         "account_id": 4,
-        "role_id": "Department Manager",
+        "role_id": "Responsable de département",
         "academic_year": 2026
     },
     {
         "account_id": 5,
-        "role_id": "Formation Manager",
+        "role_id": "Responsable de formation",
         "academic_year": 2025
     },
     {
         "account_id": 5,
-        "role_id": "Administrator",
+        "role_id": "Responsable de formation",
         "academic_year": 2026
     },
     {
         "account_id": 6,
-        "role_id": "Department Manager",
+        "role_id": "Responsable de département",
         "academic_year": 2024
     },
     {
         "account_id": 6,
-        "role_id": "Teacher",
+        "role_id": "Professeur",
         "academic_year": 2025
     },
     {
         "account_id": 7,
-        "role_id": "Administrator",
+        "role_id": "Secrétariat",
         "academic_year": 2024
     },
     {
         "account_id": 7,
-        "role_id": "Formation Manager",
+        "role_id": "Responsable de formation",
         "academic_year": 2026
     }
 ]

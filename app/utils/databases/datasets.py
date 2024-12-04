@@ -16,13 +16,21 @@ from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
 from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
 from app.models.pydantic.UEModel import PydanticUEModelFromJSON
+
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.coefficient import CoefficientInDB
 from app.models.tortoise.course import CourseInDB
+from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.node import NodeInDB
+from app.models.tortoise.operation import OperationInDB
+from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.profile import ProfileInDB
+from app.models.tortoise.role import RoleInDB
+from app.models.tortoise.service import ServiceInDB
+from app.models.tortoise.status import StatusInDB
 from app.models.tortoise.ue import UEInDB
+
 from app.services import SecurityService
 from app.utils.enums.courses_enums import AvailableCourseTypes, AvailableStatus
 from app.utils.enums.permission_enums import (AvailableOperations,
@@ -39,20 +47,20 @@ async def load_persistent_datasets() -> None:
     """
     print_info("Loading Production datasets...")
 
-    await AvailableOperations.load_enum_to_db("OperationInDB")
-    await AvailableServices.load_enum_to_db("ServiceInDB")
-    await AvailablePermissions.load_enum_to_db("PermissionInDB")
-    await AvailableRoles.load_enum_to_db("RoleInDB")
+    await AvailableOperations.load_enum_to_db(OperationInDB)
+    await AvailableServices.load_enum_to_db(ServiceInDB)
+    await AvailablePermissions.load_enum_to_db(PermissionInDB)
+    await AvailableRoles.load_enum_to_db(RoleInDB)
 
-    await AvailableCourseTypes.load_enum_to_db("CourseTypeInDB")
-    await AvailableStatus.load_enum_to_db("StatusInDB")
+    await AvailableCourseTypes.load_enum_to_db(CourseTypeInDB)
+    await AvailableStatus.load_enum_to_db(StatusInDB)
 
 async def load_dummy_datasets() -> None:
     """
     This method loads all datasets needed for development purposes.
     """
     print_info("Loading Dummy datasets...")
-    
+
     await load_persistent_datasets()
 
     await load_json_into_model_via_pydantic(AccountInDB,
