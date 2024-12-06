@@ -6,6 +6,7 @@ from typing import Optional, Self
 
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
+from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.pydantic.validator import Login, Password
 from app.utils.enums.http_errors import CommonErrorMessages
 
@@ -50,17 +51,32 @@ class PydanticAccountModel(BaseModel):
     """
     Pydantic model for account retrieval.
     """
-    id    : int
-    login : Login
+    id      : int
+    login   : Login
+    profile : PydanticProfileResponse | None
 
     class Config:
         """
         Pydantic configuration.
         """
-        from_attributes = True
+        from_attributes : bool = True
 
 class PydanticAccountPasswordResponse(BaseModel):
     """
     This model is meant to be used when we need to return the password of the user.
     """
     password: Password
+
+
+class PydanticAccountModelFromJSON(BaseModel):
+    """
+    Pydantic model for account creation, when imported from JSON.
+    """
+    login : str
+    hash  : str
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True

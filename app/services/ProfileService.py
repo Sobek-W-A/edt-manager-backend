@@ -5,6 +5,7 @@ Provides the methods to use when interacting with a profile.
 
 from fastapi import HTTPException
 from pydantic import ValidationError
+from tortoise.expressions import Q
 
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
@@ -91,6 +92,24 @@ async def get_current_profile(current_account: AccountInDB) -> PydanticProfileRe
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
     return PydanticProfileResponse.model_validate(profile)
+
+async def search_profile_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+    """
+    Searches for a profile by keywords.
+    """
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    query: Q = Q()
+    for keyword in keywords.split(" "):
+        query &= (
+            Q(lastname__icontains=keyword) |
+            Q(firstname__icontains=keyword)
+        )
+
+    profiles: list[ProfileInDB] = await ProfileInDB.filter(query).all()
+    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
 
 async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     """

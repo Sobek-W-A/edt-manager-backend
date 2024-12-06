@@ -1,0 +1,152 @@
+[
+    {
+        "duration": 60,
+        "academic_year": 2024,
+        "course_type_id": 1
+    },
+    {
+        "duration": 40,
+        "academic_year": 2025,
+        "course_type_id": 2
+    },
+    {
+        "duration": 22,
+        "academic_year": 2024,
+        "course_type_id": 3
+    },
+    {
+        "duration": 48,
+        "academic_year": 2025,
+        "course_type_id": 4
+    },
+    {
+        "duration": 36,
+        "academic_year": 2024,
+        "course_type_id": 5
+    },
+    {
+        "duration": 28,
+        "academic_year": 2025,
+        "course_type_id": 1
+    },
+    {
+        "duration": 60,
+        "academic_year": 2024,
+        "course_type_id": 2
+    },
+    {
+        "duration": 30,
+        "academic_year": 2025,
+        "course_type_id": 3
+    },
+    {
+        "duration": 52,
+        "academic_year": 2024,
+        "course_type_id": 4
+    },
+    {
+        "duration": 20,
+        "academic_year": 2025,
+        "course_type_id": 5
+    },
+    {
+        "duration": 44,
+        "academic_year": 2024,
+        "course_type_id": 1
+    },
+    {
+        "duration": 50,
+        "academic_year": 2025,
+        "course_type_id": 2
+    },
+    {
+        "duration": 24,
+        "academic_year": 2024,
+        "course_type_id": 3
+    },
+    {
+        "duration": 40,
+        "academic_year": 2025,
+        "course_type_id": 4
+    },
+    {
+        "duration": 60,
+        "academic_year": 2024,
+        "course_type_id": 5
+    },
+    {
+        "duration": 34,
+        "academic_year": 2025,
+        "course_type_id": 1
+    },
+    {
+        "duration": 48,
+        "academic_year": 2024,
+        "course_type_id": 2
+    },
+    {
+        "duration": 22,
+        "academic_year": 2025,
+        "course_type_id": 3
+    },
+    {
+        "duration": 36,
+        "academic_year": 2024,
+        "course_type_id": 4
+    },
+    {
+        "duration": 58,
+        "academic_year": 2025,
+        "course_type_id": 5
+    },
+    {
+        "duration": 26,
+        "academic_year": 2024,
+        "course_type_id": 1
+    },
+    {
+        "duration": 60,
+        "academic_year": 2025,
+        "course_type_id": 2
+    },
+    {
+        "duration": 28,
+        "academic_year": 2024,
+        "course_type_id": 3
+    },
+    {
+        "duration": 54,
+        "academic_year": 2025,
+        "course_type_id": 4
+    },
+    {
+        "duration": 32,
+        "academic_year": 2024,
+        "course_type_id": 5
+    },
+    {
+        "duration": 38,
+        "academic_year": 2025,
+        "course_type_id": 1
+    },
+    {
+        "duration": 56,
+        "academic_year": 2024,
+        "course_type_id": 2
+    },
+    {
+        "duration": 42,
+        "academic_year": 2025,
+        "course_type_id": 3
+    },
+    {
+        "duration": 20,
+        "academic_year": 2024,
+        "course_type_id": 4
+    },
+    {
+        "duration": 46,
+        "academic_year": 2025,
+        "course_type_id": 5
+    }
+]

@@ -1,0 +1,49 @@
+[
+    {
+        "name": "2024",
+        "academic_year": 2024,
+        "parent_id": null
+    },
+    {
+        "name": "Informatique",
+        "academic_year": 2024,
+        "parent_id": 1
+    },
+    {
+        "name": "M1 - Informatique",
+        "academic_year": 2024,
+        "parent_id": 2
+    },
+    {
+        "name": "M2 - Informatique",
+        "academic_year": 2024,
+        "parent_id": 2
+    },
+    {
+        "name": "Semestre 1",
+        "academic_year": 2024,
+        "parent_id": 3
+    },
+    {
+        "name": "Semestre 2",
+        "academic_year": 2024,
+        "parent_id": 3
+    },
+
+    {
+        "name": "Semestre 1",
+        "academic_year": 2024,
+        "parent_id": 4
+    },
+    {
+        "name": "Semestre 2",
+        "academic_year": 2024,
+        "parent_id": 4
+    },
+    {
+        "name": "Mathématiques",
+        "academic_year": 2024,
+        "parent_id": 1
+    }
+    
+]

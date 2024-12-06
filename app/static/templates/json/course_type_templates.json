@@ -1,0 +1,27 @@
+[
+    {
+        "name": "CM",
+        "description": "Classes that takes place in hemicicles.",
+        "academic_year": 2024
+    },
+    {
+        "name": "TD",
+        "description": "Practices for the points learned in class.",
+        "academic_year": 2024
+    },
+    {
+        "name": "TP",
+        "description": "Practices with more specialized equipments.",
+        "academic_year": 2024
+    },
+    {
+        "name": "EI",
+        "description": "Dunno",
+        "academic_year": 2024
+    },
+    {
+        "name": "TPL",
+        "description": "Dunno",
+        "academic_year": 2024
+    }
+]

@@ -28,3 +28,12 @@ class CommonErrorMessages(enum.StrEnum):
     TOKEN_EXPIRED            = "The token has expired."
     # Permission Errors
     FORBIDDEN_ACTION         = "You don't have the permission to perform this operation."
+    # Folder Errors
+    FOLDER_AND_UE_NOT_ENABLED= "You can't have a folder with a folder and an UE"
+    # UE Errors
+    UE_NOT_FOUND             = "UE was not found"
+    # Role Errors
+    ROLE_NOT_FOUND           = "Role was not found"
+    ROLE_ALREADY_EXIST       = "Role already exists"
+    # Permission Errors
+    PERMISSION_NOT_FOUND     = "Permission was not found"

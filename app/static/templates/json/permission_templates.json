@@ -1,20 +1,34 @@
-{
-    "permissions": [
-        {
-            "service_name": "User Service",
-            "operation_name": "Create"
-        },
-        {
-            "service_name": "User Service",
-            "operation_name": "Delete"
-        },
-        {
-            "service_name": "User Service",
-            "operation_name": "Get"
-        },
-        {
-            "service_name": "User Service",
-            "operation_name": "Update"
-        }
-    ]
-}
+[
+    {
+        "service_name_id": "Profile Service",
+        "operation_name_id": "Create"
+    },
+    {
+        "service_name_id": "Profile Service",
+        "operation_name_id": "Delete"
+    },
+    {
+        "service_name_id": "Profile Service",
+        "operation_name_id": "Get"
+    },
+    {
+        "service_name_id": "Profile Service",
+        "operation_name_id": "Update"
+    },
+    {
+        "service_name_id": "Account Service",
+        "operation_name_id": "Create"
+    },
+    {
+        "service_name_id": "Account Service",
+        "operation_name_id": "Delete"
+    },
+    {
+        "service_name_id": "Account Service",
+        "operation_name_id": "Get"
+    },
+    {
+        "service_name_id": "Account Service",
+        "operation_name_id": "Update"
+    }
+]
