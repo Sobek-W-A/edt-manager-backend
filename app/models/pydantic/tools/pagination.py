@@ -10,8 +10,8 @@ class PydanticPagination(BaseModel):
     """
     Model that helps with pagination.
     """
-    page: int = 1
-    limit: int = 50
+    page    : int = 1
+    limit   : int = 50
     order_by: str = "id"
 
     def compute_offset(self) -> int:
