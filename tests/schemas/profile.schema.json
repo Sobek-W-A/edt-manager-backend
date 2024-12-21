@@ -1,0 +1,33 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "firstname": {
+            "type": "string"
+        },
+        "lastname": {
+            "type": "string"
+        },
+        "mail": {
+            "type": "string",
+            "format": "email"
+        },
+        "academic_year": {
+            "type": "integer"
+        },
+        "account_id": {
+            "type": "integer"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "id",
+        "firstname",
+        "lastname",
+        "mail",
+        "academic_year",
+        "account_id"
+    ]
+}
