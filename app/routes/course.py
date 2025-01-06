@@ -9,11 +9,13 @@ from fastapi import APIRouter
 
 from app.routes.tags import Tag
 
+
 courseRouter: APIRouter = APIRouter(prefix="/course")
 tag: Tag = {
     "name": "Course",
     "description": "Course-related operations."
 }
+
 
 @courseRouter.get("/{course_id}",status_code=200, response_model=None)
 async def get_course_by_id(course_id: int) -> None:

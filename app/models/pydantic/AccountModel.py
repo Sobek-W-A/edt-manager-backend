@@ -7,7 +7,7 @@ from typing import Optional, Self
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
-from app.models.pydantic.validator import Login, Password
+from app.models.pydantic.tools.validator import Login, Password
 from app.utils.enums.http_errors import CommonErrorMessages
 
 

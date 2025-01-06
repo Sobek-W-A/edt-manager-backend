@@ -9,6 +9,7 @@ from fastapi import APIRouter
 
 from app.routes.tags import Tag
 
+
 coursetypeRouter: APIRouter = APIRouter(prefix="/course_type")
 tag: Tag = {
     "name": "CourseType",

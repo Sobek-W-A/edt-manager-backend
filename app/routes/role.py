@@ -4,17 +4,19 @@ This module provieds a router for the /role endpoint.
 from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.RoleModel import (PydanticCreateRoleModel,
-                                           PydanticRoleResponseModel,
-                                           PydanticUpdateRoleModel)
+from app.models.pydantic.PydanticRole import (PydanticCreateRoleModel,
+                                              PydanticUpdateRoleModel,
+                                              PydanticRoleResponseModel)
 from app.routes.tags import Tag
 from app.services import RoleService
+
 
 roleRouter: APIRouter = APIRouter(prefix="/role")
 tag: Tag = {
     "name": "Role",
     "description": "Role-related operations."
 }
+
 
 @roleRouter.get("/", status_code=200, response_model=list[PydanticRoleResponseModel])
 async def get_all_roles(current_account: AuthenticatedAccount) -> list[PydanticRoleResponseModel]:
@@ -44,7 +46,6 @@ async def modify_role(body : PydanticUpdateRoleModel, role_name: str, current_ac
     This method modifies the role of the given role id.
     """
     await RoleService.modify_role(role_name, body, current_account)
-
 
 @roleRouter.delete("/{role_name}", status_code=204)
 async def delete_role( role_name: str, current_account: AuthenticatedAccount) -> None:

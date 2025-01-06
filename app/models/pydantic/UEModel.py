@@ -33,11 +33,10 @@ class PydanticUEModel(AcademicYearPydanticModel):
     courses: list[PydanticCourseModel]
 
 
-
 class PydanticCreateUEModel(AcademicYearPydanticModel):
     """
     Pydantic model for UE to create an UE.
     """
-    name: str
-    courses: Optional[list[PydanticCourseModel]]
-
+    name      : str
+    parent_id : Optional[int]
+    courses   : Optional[list[PydanticCourseModel]]
