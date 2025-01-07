@@ -8,7 +8,7 @@ Used to manage course operations.
 from fastapi import APIRouter
 
 from app.routes.tags import Tag
-
+from app.services import CourseService
 
 courseRouter: APIRouter = APIRouter(prefix="/course")
 tag: Tag = {
@@ -22,7 +22,9 @@ async def get_course_by_id(course_id: int) -> None:
     """
     This method returns the course of the given course id.
     """
-    return None
+    return CourseService.get_course_by_id(course_id)
+
+
 
 @courseRouter.post("/", status_code=201, response_model=None)
 async def add_course(body : None) -> None:

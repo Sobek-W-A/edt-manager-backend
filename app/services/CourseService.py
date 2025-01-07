@@ -6,16 +6,16 @@ from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
-async def get_courses_from_module(module_id: int) -> list[PydanticCourseModel]:
+async def get_courses_from_id(course_id: int) -> PydanticCourseModel:
     """
-        This method retrieves all courses from a module.
+        This method retrieves course from id.
         """
 
-    courses = await CourseInDB.get_courses_from_module(module_id)
+    course = await CourseInDB.get_or_none(id=course_id)
 
-    return courses
+    return course
 
-    #TODO
+
 
 async def create_course(module_id: int) -> None:
     """
