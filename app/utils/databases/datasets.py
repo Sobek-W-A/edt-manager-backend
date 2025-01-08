@@ -11,6 +11,7 @@ from tortoise.models import Model
 
 from app.models.pydantic.AccountMetadataModel import PydanticAccountMetaModelFromJSON
 from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
+from app.models.pydantic.AffectationModel import PydanticAffectationFromJSON
 from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON
 from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
 from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
@@ -19,6 +20,7 @@ from app.models.pydantic.UEModel import PydanticUEModelFromJSON
 
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
+from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.coefficient import CoefficientInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
@@ -86,6 +88,10 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(UEInDB,
                                             PydanticUEModelFromJSON,
                                             "ue_templates.json")
+    
+    await load_json_into_model_via_pydantic(AffectationInDB,
+                                            PydanticAffectationFromJSON,
+                                            "affectation_templates.json")
 
 
 async def load_json_into_model_via_pydantic(
