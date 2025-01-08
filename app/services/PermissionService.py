@@ -32,8 +32,8 @@ async def check_permissions(service: AvailableServices,
 
     # We fetch the permissions of the role.
     # We also filter the permissions to get only the ones that match the service and the operation.
-    permissions: list[PermissionInDB] = await role.permissions.filter(service_name_id=service.value.service_name,
-                                                                      operation_name_id=operation.value.operation_name)
+    permissions: list[PermissionInDB] = await role.permissions.filter(service_id=service.value.service_name,
+                                                                      operation_id=operation.value.operation_name)
 
     # If the list is empty, the user does not have the permission.
     # Otherwise, the user has the permission to do the operation on the service.
