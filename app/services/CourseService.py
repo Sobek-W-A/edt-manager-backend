@@ -17,20 +17,7 @@ async def get_courses_from_id(course_id: int) -> PydanticCourseModel:
 
 
 
-async def create_course(module_id: int) -> None:
-    """
-        This method retrieves all courses from a module.
-    """
-        #TODO
 
-async def delete_course(module_id: int) -> None:
-
-
-    #TODO
-
-async def modify_course(module_id: int) -> None:
-
-    #TODO
 
 
 

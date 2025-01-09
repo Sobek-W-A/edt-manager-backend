@@ -32,6 +32,7 @@ class CommonErrorMessages(enum.StrEnum):
     FOLDER_AND_UE_NOT_ENABLED= "You can't have a folder with a folder and an UE"
     # UE Errors
     UE_NOT_FOUND             = "UE was not found"
+    UE_ALREADY_EXIST         = "UE already exists"
     # Role Errors
     ROLE_NOT_FOUND           = "Role was not found"
     ROLE_ALREADY_EXIST       = "Role already exists"
