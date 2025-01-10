@@ -23,4 +23,3 @@ class AccountMetadataInDB(AcademicYear):
         """
         table : str = "AccountMetadata"
         abstract: bool = False
-

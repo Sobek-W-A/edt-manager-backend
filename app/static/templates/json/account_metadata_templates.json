@@ -35,6 +35,11 @@
         "academic_year": 2024
     },
     {
+        "account_id": 5,
+        "role_id": "Non assigné",
+        "academic_year": 2024
+    },
+    {
         "account_id": 4,
         "role_id": "Responsable de département",
         "academic_year": 2026
