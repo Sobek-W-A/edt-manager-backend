@@ -42,3 +42,4 @@ class CommonErrorMessages(enum.StrEnum):
     
     AFFECTATION_ACADEMIC_YEAR_MISMATCH   = "The two academic year provided are different. They cannot be linked by the same affectation."
     AFFECTATION_NOT_FOUND                = "Affectation was not found."
+    AFFECTATION_GROUP_INVALID            = "Invalid group number. Must be positive and less than the group count of the course."

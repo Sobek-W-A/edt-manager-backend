@@ -70,6 +70,9 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
 
     if profile.academic_year != course.academic_year:
         raise HTTPException(status_code=400, detail=CommonErrorMessages.AFFECTATION_ACADEMIC_YEAR_MISMATCH)
+    
+    if course.group_count < affectation.group or affectation.group < 1:
+        raise HTTPException(status_code=400, detail=CommonErrorMessages.AFFECTATION_GROUP_INVALID)
 
     affectation_created: AffectationInDB = await AffectationInDB.create(profile_id=profile_id,
                                                                         course_id=course_id,

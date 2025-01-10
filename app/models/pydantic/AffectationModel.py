@@ -13,12 +13,13 @@ class PydanticAffectation(BaseModel):
     """
     Represents a class-teacher affectation.
     """
-    id : int
+    id         : int
     profile_id : int
     course_id  : int
     hours      : Hours
     notes      : str | None
     date       : datetime
+    group      : int
 
     class Config:
         """
@@ -35,6 +36,7 @@ class PydanticAffectationFromJSON(BaseModel):
     hours         : int
     notes         : Optional[str] = None
     date          : datetime
+    group         : int
 
     class Config:
         """
@@ -51,6 +53,7 @@ class PydanticAffectationInCreate(BaseModel):
     hours      : Hours
     notes      : str | None
     date       : datetime
+    group      : int
 
     class Config:
         """
