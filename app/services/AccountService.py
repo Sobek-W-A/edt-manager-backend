@@ -14,11 +14,13 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
+from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                              PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
+from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.role import RoleInDB
 from app.services import SecurityService
 from app.services.PermissionService import check_permissions
@@ -66,16 +68,36 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    query: Q = Q()
+    account_query: Q = Q()
+    profile_query: Q = Q()
     for keyword in keywords.split(" "):
-        query &= Q(login__icontains=keyword)
+        account_query &= Q(login__icontains=keyword)
+        profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword)
 
-    return list(
-        map(
-            PydanticAccountModel.model_validate, 
-            await AccountInDB.filter(query).all()
-        )
-    )
+    accounts : list[AccountInDB] = await AccountInDB.filter(account_query)\
+                                                    .all()\
+                                                    .prefetch_related("profile")
+
+    # TODO : Change Academic year to a dynamic value
+    # Also, sorry for the type ignores, no way of doing what i need without them.
+    profiles : list[ProfileInDB] = await ProfileInDB.filter(profile_query)\
+                                                    .filter(academic_year=2024)\
+                                                    .all()\
+                                                    .prefetch_related("account")
+
+    accounts_to_return : list[PydanticAccountModel] = []
+    for account in accounts:
+        print(account.profile)
+        prof : PydanticProfileResponse | None = PydanticProfileResponse.model_validate(account.profile) if account.profile and account.profile.academic_year==2024 else None  # type: ignore
+        accounts_to_return.append(PydanticAccountModel(id=account.id, login=account.login, profile=prof)) # type: ignore
+
+    for profile in profiles:
+        if profile.account:
+            accounts_to_return.append(PydanticAccountModel(login=profile.account.login,
+                                                          id=profile.account.id,
+                                                          profile=PydanticProfileResponse.model_validate(profile)))
+
+    return accounts_to_return
 
 
 async def create_account(account: PydanticCreateAccountModel,

@@ -6,6 +6,7 @@ It is used to handle auth related operation and separate user information from a
 from tortoise.fields import Field, IntField, TextField, CharField
 from tortoise.models import Model
 
+
 class AccountInDB(Model):
     """
     This class is the tortoise model for authentication.
@@ -22,7 +23,7 @@ class AccountInDB(Model):
         return f"[INFO] - ACCOUNT {self.login} ID : {self.id}"
 
     class Meta(Model.Meta):
-        """a
+        """
         This class is used to indicate the name of the Table to create inside the database.
         """
         table : str = "Account"
