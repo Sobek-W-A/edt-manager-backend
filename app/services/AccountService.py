@@ -230,6 +230,10 @@ async def set_role_account_by_name(account_id: int, current_account : AccountInD
         raise HTTPException(status_code=404,
                             detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
+    if account.id == current_account.id:
+        raise HTTPException(status_code=403,
+                            detail=CommonErrorMessages.CANNOT_SET_YOUR_OWN_ROLE)
+
     role: RoleInDB | None = await RoleInDB.get_or_none(name=body.name)
 
     if not role:

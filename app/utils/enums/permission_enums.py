@@ -209,4 +209,6 @@ class AvailableRoles(AbstractEnumLoader):
                            None, False)
     TEACHER         = Role("Professeur", "Professeur.",
                            None, False)
+    UNASSIGNED      = Role("Non assigné", "Rôle par défaut.",
+                           None, False)
     # TODO : Add proper Ensemble permissions to roles.
