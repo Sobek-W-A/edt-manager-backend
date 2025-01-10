@@ -24,6 +24,7 @@ class AffectationInDB(AcademicYear):
     hours : Field[int]      = IntField(min_value=0)
     notes : Field[str]      = CharField(max_length=512, null=True)
     date  : Field[datetime] = DatetimeField(default=datetime.now)
+    group : Field[int]      = IntField(min_value=1, default=1)
 
     course_id : ForeignKeyRelation[CourseInDB]  = ForeignKeyField("models.CourseInDB", related_name="affectation")
     profile_id: ForeignKeyRelation[ProfileInDB] = ForeignKeyField("models.ProfileInDB", related_name="affectation")
