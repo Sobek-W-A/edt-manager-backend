@@ -39,5 +39,6 @@ class CommonErrorMessages(enum.StrEnum):
     # Role Errors
     ROLE_NOT_FOUND           = "Role was not found"
     ROLE_ALREADY_EXIST       = "Role already exists"
+    CANNOT_SET_YOUR_OWN_ROLE = "You can't set your own role"
     # Permission Errors
     PERMISSION_NOT_FOUND     = "Permission was not found"
