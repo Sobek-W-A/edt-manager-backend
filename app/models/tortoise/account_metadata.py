@@ -14,7 +14,7 @@ class AccountMetadataInDB(AcademicYear):
     This class is a M2M relation that links accounts and permissions by Academic years.
     """
     account : ForeignKeyRelation[AccountInDB] = ForeignKeyField("models.AccountInDB", related_name="metadata")
-    role    : ForeignKeyRelation[RoleInDB]    = ForeignKeyField("models.RoleInDB", related_name="metadata", default=1)
+    role    : ForeignKeyRelation[RoleInDB]    = ForeignKeyField("models.RoleInDB", related_name="metadata", default=6)
 
     class Meta(AcademicYear.Meta):
         """
