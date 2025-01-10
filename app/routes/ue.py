@@ -4,7 +4,7 @@ Used to manage ue operations.
 """
 from fastapi import APIRouter
 
-from app.models.pydantic.UEModel import PydanticUEModel, PydanticCreateUEModel
+from app.models.pydantic.UEModel import PydanticUEModel, PydanticCreateUEModel, PydanticModifyUEModel
 from app.routes.tags import Tag
 from app.services import UEService
 
@@ -31,7 +31,7 @@ async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
     return await UEService.add_ue(body)
 
 @ueRouter.patch("/{ue_id}", status_code=205)
-async def modify_ue(ue_id: int, body: PydanticCreateUEModel) -> None:
+async def modify_ue(ue_id: int, body: PydanticModifyUEModel) -> None:
     """
     This method modifies the UE of the given UE id.
     """
