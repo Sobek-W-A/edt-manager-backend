@@ -14,6 +14,8 @@ async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
     This method returns the UE of the given UE id.
     """
 
+    #TODO
+
     ue : UEInDB= await UEInDB.get_or_none(id=ue_id)
 
     if ue is None:

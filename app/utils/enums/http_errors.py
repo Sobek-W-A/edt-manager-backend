@@ -33,6 +33,9 @@ class CommonErrorMessages(enum.StrEnum):
     # UE Errors
     UE_NOT_FOUND             = "UE was not found"
     UE_ALREADY_EXIST         = "UE already exists"
+    #Course Errors
+    COURSE_NOT_FOUND         = "Course was not found"
+    COURSE_ALREADY_EXIST     = "Course already exists"
     # Role Errors
     ROLE_NOT_FOUND           = "Role was not found"
     ROLE_ALREADY_EXIST       = "Role already exists"
