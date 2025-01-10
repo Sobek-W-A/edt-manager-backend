@@ -15,7 +15,7 @@ from app.utils.enums.permission_enums import AvailableOperations, AvailableServi
 async def check_permissions(service: AvailableServices,
                             operation: AvailableOperations,
                             current_account: AccountInDB,
-                            academic_year: int = 2024) -> None:
+                            academic_year: int = 2024) -> None: # TODO : Add automatic recognition of the current academic year.
     """
     This method checks if the provided user has the permission to perform the provided 
     operation on the provided service.
