@@ -53,3 +53,14 @@ def is_login(string: str) -> str:
     return string
 
 Login = Annotated[str, AfterValidator(is_login)]
+
+def is_hours(val: int) -> int:
+    """
+    Checks if the value provided is a valid amount of hours.
+    Basically, not negative.
+    """
+    if val < 0:
+        raise HTTPException(status_code=422, detail="The amount of hours must be positive.")
+    return val
+
+Hours = Annotated[int, AfterValidator(is_hours)]

@@ -18,6 +18,7 @@ class CommonErrorMessages(enum.StrEnum):
     PROFILE_NOT_FOUND        = "Profile was not found."
     PROFILE_NOT_ENABLED      = "This profile is not enabled."
     ACCOUNT_NOT_FOUND        = "Account was not found."
+    COURSE_NOT_FOUND         = "Course was not found."
     PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
     # Credentials Errors
     INVALID_CREDENTIALS      = "Invalid credentials."
@@ -37,3 +38,6 @@ class CommonErrorMessages(enum.StrEnum):
     ROLE_ALREADY_EXIST       = "Role already exists"
     # Permission Errors
     PERMISSION_NOT_FOUND     = "Permission was not found"
+    
+    AFFECTATION_ACADEMIC_YEAR_MISMATCH   = "The two academic year provided are different. They cannot be linked by the same affectation."
+    AFFECTATION_NOT_FOUND                = "Affectation was not found."

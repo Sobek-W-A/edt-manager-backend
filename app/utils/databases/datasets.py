@@ -88,7 +88,7 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(UEInDB,
                                             PydanticUEModelFromJSON,
                                             "ue_templates.json")
-    
+
     await load_json_into_model_via_pydantic(AffectationInDB,
                                             PydanticAffectationFromJSON,
                                             "affectation_templates.json")
