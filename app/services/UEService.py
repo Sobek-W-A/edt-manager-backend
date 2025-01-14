@@ -13,18 +13,12 @@ async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
     """
     This method returns the UE of the given UE id.
     """
-
-    #TODO
-
-    ue : UEInDB= await UEInDB.get_or_none(id=ue_id)
+    ue : UEInDB | None = await UEInDB.get_or_none(id=ue_id)
 
     if ue is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
-    return PydanticUEModel(academic_year=ue.academic_year,
-                           courses=ue.courses,
-                           name=ue.name,
-                           ue_id=ue.id)
+    return await ue.to_pydantic()
 
 
 
@@ -76,5 +70,5 @@ async def delete_ue(ue_id: int) -> None:
     """
     This method deletes the UE of the given UE id.
     """
-    #TODO
+
     return None

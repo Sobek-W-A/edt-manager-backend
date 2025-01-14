@@ -18,7 +18,6 @@ class CommonErrorMessages(enum.StrEnum):
     PROFILE_NOT_FOUND        = "Profile was not found."
     PROFILE_NOT_ENABLED      = "This profile is not enabled."
     ACCOUNT_NOT_FOUND        = "Account was not found."
-    COURSE_NOT_FOUND         = "Course was not found."
     PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
     # Credentials Errors
     INVALID_CREDENTIALS       = "Invalid credentials."
