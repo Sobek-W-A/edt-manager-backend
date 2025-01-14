@@ -59,10 +59,10 @@ async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccount
                                  id=account.id,
                                  profile=account.profile[0] if account.profile else None) # type: ignore
                                  for account in accounts]
-
 async def search_account_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
-    This method retrieves accounts that matches the login provided.
+    This method retrieves accounts that match the keywords provided.
+    The search applies to the following fields: login, firstname, lastname, and email.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
@@ -72,33 +72,47 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     profile_query: Q = Q()
     for keyword in keywords.split(" "):
         account_query &= Q(login__icontains=keyword)
-        profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword)
+        profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword) | Q(mail__icontains=keyword)
 
-    accounts : list[AccountInDB] = await AccountInDB.filter(account_query)\
-                                                    .all()\
-                                                    .prefetch_related("profile")
+    # Fetch accounts and prefetch profiles
+    accounts: list[AccountInDB] = await AccountInDB.filter(account_query)\
+                                                   .prefetch_related("profile")\
+                                                   .all()
+    # Fetch profiles directly
+    profiles: list[ProfileInDB] = await ProfileInDB.filter(profile_query)\
+                                                   .filter(academic_year=2024)\
+                                                   .prefetch_related("account")\
+                                                   .all()
 
-    # TODO : Change Academic year to a dynamic value
-    # Also, sorry for the type ignores, no way of doing what i need without them.
-    profiles : list[ProfileInDB] = await ProfileInDB.filter(profile_query)\
-                                                    .filter(academic_year=2024)\
-                                                    .all()\
-                                                    .prefetch_related("account")
+    accounts_to_return: list[PydanticAccountModel] = []
+    account_ids: list[int] = []
 
-    accounts_to_return : list[PydanticAccountModel] = []
+    # Process accounts
     for account in accounts:
-        print(account.profile)
-        prof : PydanticProfileResponse | None = PydanticProfileResponse.model_validate(account.profile) if account.profile and account.profile.academic_year==2024 else None  # type: ignore
-        accounts_to_return.append(PydanticAccountModel(id=account.id, login=account.login, profile=prof)) # type: ignore
+        prof = None
+        if account.profile:
+            # We ensure that the profile is from the academic year 2024.
+            # We also retrieve the first one manually since Tortoise is weird. 
+            profile_instance = await account.profile.filter(academic_year=2024).first()
+            if profile_instance is not None:
+                prof = PydanticProfileResponse.model_validate(profile_instance)
 
+        accounts_to_return.append(PydanticAccountModel(id=account.id,
+                                                       login=account.login,
+                                                       profile=prof))
+        account_ids.append(account.id)
+
+    # Process profiles
     for profile in profiles:
-        if profile.account:
-            accounts_to_return.append(PydanticAccountModel(login=profile.account.login,
-                                                          id=profile.account.id,
-                                                          profile=PydanticProfileResponse.model_validate(profile)))
+        if profile.account and profile.account.id not in account_ids:  # Ensure account is not None
+            accounts_to_return.append(PydanticAccountModel(
+                login=profile.account.login,
+                id=profile.account.id,
+                profile=PydanticProfileResponse.model_validate(profile)
+            ))
+            account_ids.append(profile.account.id)
 
     return accounts_to_return
-
 
 async def create_account(account: PydanticCreateAccountModel,
                          current_account: AccountInDB) -> PydanticAccountPasswordResponse:

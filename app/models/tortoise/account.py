@@ -3,9 +3,14 @@ This module provides the Account model to the API.
 It is used to handle auth related operation and separate user information from auth information.
 """
 
-from tortoise.fields import Field, IntField, TextField, CharField
+from typing import TYPE_CHECKING
+
+from tortoise.fields import (CharField, Field, IntField,
+                             ForeignKeyNullableRelation, TextField)
 from tortoise.models import Model
 
+if TYPE_CHECKING:
+    from app.models.tortoise.profile import ProfileInDB
 
 class AccountInDB(Model):
     """
@@ -15,6 +20,8 @@ class AccountInDB(Model):
     id      : Field[int] = IntField(primary_key=True)
     login   : Field[str] = CharField(unique=True, required=True, max_length=128)
     hash    : Field[str] = TextField(required=True)
+
+    profile : ForeignKeyNullableRelation["ProfileInDB"]
 
     def __str__(self) -> str:
         """
