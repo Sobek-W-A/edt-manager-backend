@@ -105,7 +105,8 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
     for keyword in keywords.split(" "):
         query &= (
             Q(lastname__icontains=keyword) |
-            Q(firstname__icontains=keyword)
+            Q(firstname__icontains=keyword) |
+            Q(mail__icontains=keyword)
         )
 
     profiles: list[ProfileInDB] = await ProfileInDB.filter(query).all()
