@@ -73,6 +73,14 @@ async def get_role_account_by_id(account_id: int, academic_year: int, current_ac
 
     return await AccountService.get_role_account_by_id(account_id, current_account, academic_year)
 
+@accountRouter.get("/search/login/{keywords}", status_code=200,response_model=list[PydanticAccountModel])
+async def search_account_by_login(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+    """
+    This method search an account by login.
+    """
+
+    return await AccountService.search_accounts_by_login(keywords, current_account)
+
 @accountRouter.get("/search/{keywords}", status_code=200,response_model=list[PydanticAccountModel])
 async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
     """

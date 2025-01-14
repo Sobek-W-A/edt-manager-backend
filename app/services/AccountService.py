@@ -59,6 +59,42 @@ async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccount
                                  id=account.id,
                                  profile=account.profile[0] if account.profile else None) # type: ignore
                                  for account in accounts]
+
+async def search_accounts_by_login(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+    """
+    This method fetches the accounts which logins matches the query provided.
+    """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    account_query: Q = Q()
+    for keyword in keywords.split(" "):
+        account_query &= Q(login__icontains=keyword)
+
+    # Fetch accounts and prefetch profiles
+    accounts: list[AccountInDB] = await AccountInDB.filter(account_query)\
+                                                   .prefetch_related("profile")\
+                                                   .all()
+
+    accounts_to_return: list[PydanticAccountModel] = []
+
+    # Process accounts
+    for account in accounts:
+        prof = None
+        if account.profile:
+            # We ensure that the profile is from the academic year 2024.
+            # We also retrieve the first one manually since Tortoise is weird. 
+            profile_instance = await account.profile.filter(academic_year=2024).first()
+            if profile_instance is not None:
+                prof = PydanticProfileResponse.model_validate(profile_instance)
+
+        accounts_to_return.append(PydanticAccountModel(id=account.id,
+                                                       login=account.login,
+                                                       profile=prof))
+    
+    return accounts_to_return
+
 async def search_account_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
