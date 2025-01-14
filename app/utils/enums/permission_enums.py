@@ -123,11 +123,12 @@ class AvailableServices(AbstractEnumLoader):
     """
     Enumeration to provide the available services.
     """
-    PROFILE_SERVICE = Service("Profile Service", "Service that manages profiles.")
-    ACCOUNT_SERVICE = Service("Account Service", "Service that manages accounts and logging.")
-    STATUS_SERVICE  = Service("Status Service",  "Service that manages statuses.")
-    UE_SERVICE      = Service("UE Service",      "Service that manages Learning Units.")
-    ROLE_SERVICE    = Service("Role Service",    "Service that manages roles.")
+    PROFILE_SERVICE     = Service("Profile Service", "Service that manages profiles.")
+    ACCOUNT_SERVICE     = Service("Account Service", "Service that manages accounts and logging.")
+    AFFECTATION_SERVICE = Service("Affectation Service", "Service that manages course to teachers affectations.")
+    STATUS_SERVICE      = Service("Status Service",  "Service that manages statuses.")
+    UE_SERVICE          = Service("UE Service",      "Service that manages Learning Units.")
+    ROLE_SERVICE        = Service("Role Service",    "Service that manages roles.")
 
 class AvailablePermissions(AbstractEnumLoader):
     """
@@ -158,6 +159,11 @@ class AvailablePermissions(AbstractEnumLoader):
                                  AvailableOperations.GET.value,
                                  AvailableOperations.UPDATE.value,
                                  AvailableOperations.DELETE.value])
+    CRUD_AFFECTATION = Permission(AvailableServices.AFFECTATION_SERVICE.value,
+                                [AvailableOperations.CREATE.value,
+                                 AvailableOperations.GET.value,
+                                 AvailableOperations.UPDATE.value,
+                                 AvailableOperations.DELETE.value])
 
 class AvailableEnsemblesPermissions(enum.Enum):
     """
@@ -182,6 +188,10 @@ class AvailableEnsemblesPermissions(enum.Enum):
     GET_ROLE        = Permission(AvailableServices.ROLE_SERVICE.value,
                                     [AvailableOperations.GET.value])
     MANAGE_ROLE     = AvailablePermissions.CRUD_ROLE.value
+
+    GET_AFFECTATION = Permission(AvailableServices.AFFECTATION_SERVICE.value,
+                                [AvailableOperations.GET.value])
+    MANAGE_AFFECTATION = AvailablePermissions.CRUD_AFFECTATION.value
 
 class AvailableRoles(AbstractEnumLoader):
     """

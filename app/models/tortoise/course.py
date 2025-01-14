@@ -18,8 +18,10 @@ class CourseInDB(AcademicYear):
     """
     id          : Field[int] = IntField(pk=True)
     duration    : Field[int] = IntField(min_value=0)
+    group_count : Field[int] = IntField(min_value=1, default=1)
 
-    course_type : ForeignKeyRelation[CourseTypeInDB] = ForeignKeyField("models.CourseTypeInDB", related_name="course")
+    course_type : ForeignKeyRelation[CourseTypeInDB] = ForeignKeyField("models.CourseTypeInDB",
+                                                                       related_name="course")
 
     class Meta(AcademicYear.Meta):
         """
