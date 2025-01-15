@@ -24,4 +24,5 @@ class PydanticCourseModel(AcademicYearPydanticModel):
     """
     course_id: int
     duration : int
-    courses_types : list[PydanticCourseTypeModel]
+    group_count : int
+    courses_type : list[PydanticCourseTypeModel]
