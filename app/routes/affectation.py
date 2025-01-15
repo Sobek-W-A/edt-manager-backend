@@ -7,7 +7,7 @@ from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
 
-from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate
+from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.routes.tags import Tag
 from app.services import AffectationService
@@ -39,6 +39,20 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
     This method assigns a course to a teacher.
     """
     return await AffectationService.assign_course_to_profile(affectation, current_account)
+
+@affectationRouter.patch("/{affectation_id}",status_code=205)
+async def modify_affectation_by_affectation_id(affectation_id: int, affectation: PydanticAffectationInModify, current_account: AuthenticatedAccount) -> None:
+    """
+    This method modifies an affectation.
+    """
+    await AffectationService.modify_affectation_by_affectation_id(current_account, affectation, affectation_id)
+
+@affectationRouter.patch("/{profile_id}/{course_id}",status_code=205)
+async def modify_affectation_by_profile_and_course(profile_id: int, course_id: int, affectation: PydanticAffectationInModify, current_account: AuthenticatedAccount) -> None:
+    """
+    This method modifies an affectation.
+    """
+    await AffectationService.modify_affectation_by_profile_and_course(current_account, affectation, profile_id, course_id)
 
 @affectationRouter.delete("/unassign/{affectation_id}",status_code=205)
 async def unassign_course_from_profile_with_affectation_id(affectation_id: int, current_account: AuthenticatedAccount) -> None:

@@ -52,8 +52,23 @@ class PydanticAffectationInCreate(BaseModel):
     course_id  : int
     hours      : Hours
     notes      : str | None
-    date       : datetime
     group      : int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True
+
+class PydanticAffectationInModify(BaseModel):
+    """
+    Pydantic model for creating an affectation.
+    """
+    profile_id : int        | None
+    course_id  : int        | None
+    hours      : Hours      | None
+    notes      : str        | None
+    group      : int        | None
 
     class Config:
         """
