@@ -17,7 +17,7 @@ class PydanticAffectation(BaseModel):
     profile_id : int
     course_id  : int
     hours      : Hours
-    notes      : str | None
+    notes      : Optional[str] = None
     date       : datetime
     group      : int
 
@@ -51,7 +51,7 @@ class PydanticAffectationInCreate(BaseModel):
     profile_id : int
     course_id  : int
     hours      : Hours
-    notes      : str | None
+    notes      : Optional[str] = None
     group      : int
 
     class Config:
@@ -64,11 +64,11 @@ class PydanticAffectationInModify(BaseModel):
     """
     Pydantic model for creating an affectation.
     """
-    profile_id : int        | None
-    course_id  : int        | None
-    hours      : Hours      | None
-    notes      : str        | None
-    group      : int        | None
+    profile_id : Optional[int]   = None
+    course_id  : Optional[int]   = None
+    hours      : Optional[Hours] = None
+    notes      : Optional[str]   = None
+    group      : Optional[int]   = None
 
     class Config:
         """
