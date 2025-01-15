@@ -8,6 +8,7 @@ class PydanticCourseTypeModel(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to return a CourseType to the frontend.
     """
+    course_type_id: int
     name:str
     description : str
 

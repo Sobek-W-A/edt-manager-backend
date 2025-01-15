@@ -5,7 +5,9 @@ Provides the methods to use when interacting with an UE.
 from fastapi import HTTPException
 
 from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
+from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.ue import UEInDB
+from app.utils.enums.courses_enums import Course
 from app.utils.enums.http_errors import CommonErrorMessages
 
 
@@ -18,9 +20,11 @@ async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
     if ue is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
+    courses = await CourseInDB.filter(ue__id=ue.id)
+
+    print(courses)
+
     return await ue.to_pydantic()
-
-
 
 
 async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:

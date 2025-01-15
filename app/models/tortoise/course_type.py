@@ -4,6 +4,7 @@ different types of courses.
 """
 from tortoise.fields import CharField, Field, IntField, TextField
 
+from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 from app.models.tortoise.abstract.academic_year import AcademicYear
 
 
@@ -21,3 +22,14 @@ class CourseTypeInDB(AcademicYear):
         """
         abstract : bool = False
         table    : str  = "CourseType"
+
+    def to_pydantic(self) -> PydanticCourseTypeModel:
+        """
+        Convert this CourseTypeInDB instance to a Pydantic model.
+        """
+        return PydanticCourseTypeModel(
+            course_type_id=self.id,
+            name=self.name,
+            description=self.description,
+            academic_year=self.academic_year,
+        )

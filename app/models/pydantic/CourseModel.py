@@ -22,7 +22,7 @@ class PydanticCourseModel(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to return a Course to the frontend.
     """
-    course_id: int
+    id: int
     duration : int
     group_count : int
-    courses_type : list[PydanticCourseTypeModel]
+    course_type : list[PydanticCourseTypeModel]

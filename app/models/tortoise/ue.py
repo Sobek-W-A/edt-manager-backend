@@ -34,13 +34,26 @@ class UEInDB(NodeInDB):
         Convert this UE instance to a Pydantic model.
         """
         # Charger toutes les courses associées à cette UE
-        related_courses = await self.courses.all()
+        related_courses = await self.courses.all().prefetch_related("course_type")
+        try:
 
-        # Transformer les courses en modèles Pydantic
+            courses = [
+                PydanticCourseModel(
+                    id=course.id,
+                    duration=course.duration,
+                    group_count=course.group_count,
+                    course_type=course.course_type.to_pydantic(),
+                )
+                for course in related_courses
+            ]
+        except Exception as e:
+            raise ValueError(f"Error while converting courses to Pydantic models: {str(e)}")
+
+            # Retourner le modèle UE
         return PydanticUEModel(
             academic_year=self.academic_year,
             ue_id=self.id,
             name=self.name,
-            courses=[PydanticCourseModel(**course.__dict__) for course in related_courses],
+            courses=courses,
         )
 
