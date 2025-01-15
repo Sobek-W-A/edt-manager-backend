@@ -79,7 +79,7 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
                                                                         course_id=course_id,
                                                                         notes=affectation.notes,
                                                                         hours=affectation.hours,
-                                                                        date=<)
+                                                                        date=datetime.now())
     
     return PydanticAffectation.model_validate(affectation_created)
 
