@@ -121,29 +121,37 @@ async def modify_affectation(new_data: PydanticAffectationInModify, affectation:
     This method modifies an affectation.
     CAREFUL : It is not checking the permissions. Not meant to be directly used.
     """
+    has_changed : bool = False
     if new_data.profile_id is not None:
         profile: ProfileInDB | None = await ProfileInDB.get_or_none(id=new_data.profile_id)
         if profile is None:
             raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
         affectation.profile = profile
+        has_changed = True
 
     if new_data.course_id is not None:
         course: CourseInDB | None = await CourseInDB.get_or_none(id=new_data.course_id)
         if course is None:
             raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND)
         affectation.course = course
+        has_changed = True
 
     if new_data.hours is not None:
         affectation.hours = new_data.hours
+        has_changed = True
 
     if new_data.notes is not None:
         affectation.notes = new_data.notes
-        affectation.date  = datetime.now()
+        has_changed = True
 
     if new_data.group is not None:
         if new_data.group < 1 or new_data.group > affectation.course.group_count:
             raise HTTPException(status_code=400, detail=CommonErrorMessages.AFFECTATION_GROUP_INVALID)
         affectation.group = new_data.group
+        has_changed = True
+
+    if has_changed:
+        affectation.date  = datetime.now()
 
     await affectation.save()
 
