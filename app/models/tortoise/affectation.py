@@ -1,5 +1,6 @@
 """
-This module contains the AffectationInDB model which is used to represent the affectation of a course to a teacher.
+This module contains the AffectationInDB model which is used to represent the
+affectation of a course to a teacher.
 """
 
 from datetime import datetime

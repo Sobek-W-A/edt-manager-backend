@@ -3,8 +3,9 @@ Service for affectations.
 Used to assign/unassign classes to teachers and retrieve these informations.
 """
 
+from datetime import datetime
 from fastapi import HTTPException
-from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate
+from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.affectation import AffectationInDB
@@ -78,10 +79,81 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
                                                                         course_id=course_id,
                                                                         notes=affectation.notes,
                                                                         hours=affectation.hours,
-                                                                        date=affectation.date)
+                                                                        date=datetime.now())
     
     return PydanticAffectation.model_validate(affectation_created)
 
+
+async def modify_affectation_by_affectation_id(current_account: AccountInDB, new_data: PydanticAffectationInModify, affectation_id: int) -> None:
+    """
+    This method modifies an affectation.
+    Searches the affectation with the affectation ID and the calls the method that changes info.
+    """
+    await check_permissions(AvailableServices.AFFECTATION_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account)
+    
+    affectation: AffectationInDB | None = await AffectationInDB.get_or_none(id=affectation_id)
+    if affectation is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.AFFECTATION_NOT_FOUND)
+    
+    return await modify_affectation(new_data, affectation)
+
+async def modify_affectation_by_profile_and_course(current_account: AccountInDB, new_data: PydanticAffectationInModify, profile_id: int, course_id: int) -> None:
+    """
+    This method modifies an affectation.
+    Searches the affectation with the profile and course id.
+    Then calls the method to change the informations.
+    """
+    await check_permissions(AvailableServices.AFFECTATION_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account)
+
+    affectation: AffectationInDB | None = await AffectationInDB.get_or_none(profile_id=profile_id,
+                                                                            course_id=course_id)
+    if affectation is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.AFFECTATION_NOT_FOUND)
+    
+    return await modify_affectation(new_data, affectation)
+
+async def modify_affectation(new_data: PydanticAffectationInModify, affectation: AffectationInDB) -> None:
+    """
+    This method modifies an affectation.
+    CAREFUL : It is not checking the permissions. Not meant to be directly used.
+    """
+    has_changed : bool = False
+    if new_data.profile_id is not None:
+        profile: ProfileInDB | None = await ProfileInDB.get_or_none(id=new_data.profile_id)
+        if profile is None:
+            raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
+        affectation.profile = profile
+        has_changed = True
+
+    if new_data.course_id is not None:
+        course: CourseInDB | None = await CourseInDB.get_or_none(id=new_data.course_id)
+        if course is None:
+            raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND)
+        affectation.course = course
+        has_changed = True
+
+    if new_data.hours is not None:
+        affectation.hours = new_data.hours
+        has_changed = True
+
+    if new_data.notes is not None:
+        affectation.notes = new_data.notes
+        has_changed = True
+
+    if new_data.group is not None:
+        if new_data.group < 1 or new_data.group > affectation.course.group_count:
+            raise HTTPException(status_code=400, detail=CommonErrorMessages.AFFECTATION_GROUP_INVALID)
+        affectation.group = new_data.group
+        has_changed = True
+
+    if has_changed:
+        affectation.date  = datetime.now()
+
+    await affectation.save()
 
 async def unassign_course_from_profile_with_profile_and_course(profile_id: int, course_id: int, current_account: AccountInDB) -> None:
     """
