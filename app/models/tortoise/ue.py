@@ -1,7 +1,8 @@
 """
 This module contains the model for the UE.
 """
-from tortoise.fields import ManyToManyField, ManyToManyRelation, ForeignKeyNullableRelation, ForeignKeyField
+from tortoise.fields import (ManyToManyField, ManyToManyRelation,
+                             ForeignKeyNullableRelation, ForeignKeyField)
 
 from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.UEModel import PydanticUEModel
@@ -21,7 +22,7 @@ class UEInDB(NodeInDB):
 
     courses : ManyToManyRelation[CourseInDB] = ManyToManyField("models.CourseInDB",
                                                                related_name="ue",
-                                                               through="ue_courses")
+                                                               through="UE_COURSES_ASSOCIATION")
 
     class Meta(NodeInDB.Meta):
         """
