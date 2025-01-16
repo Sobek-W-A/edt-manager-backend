@@ -7,7 +7,6 @@ from fastapi import HTTPException
 from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.ue import UEInDB
-from app.utils.enums.courses_enums import Course
 from app.utils.enums.http_errors import CommonErrorMessages
 
 
@@ -15,16 +14,17 @@ async def get_ue_by_id(ue_id: int) -> PydanticUEModel:
     """
     This method returns the UE of the given UE id.
     """
-    ue : UEInDB | None = await UEInDB.get_or_none(id=ue_id)
+    ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id).prefetch_related("courses")
 
     if ue is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
-    courses = await CourseInDB.filter(ue__id=ue.id)
+    courses: list[CourseInDB] | None = await ue.courses.all()
 
-    print(courses)
-
-    return await ue.to_pydantic()
+    return PydanticUEModel(academic_year=ue.academic_year,
+                           courses=courses[1],
+                           name=ue.name,
+                           ue_id=ue.id)
 
 
 async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
@@ -35,7 +35,7 @@ async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
     if await UEInDB.filter(name=body.name).exists():
         raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
 
-    ue_to_create : UEInDB = UEInDB(name=body.name, academic_year=body.academic_year)
+    ue_to_create: UEInDB = UEInDB(name=body.name, academic_year=body.academic_year)
 
     await UEInDB.save(ue_to_create)
 
@@ -43,7 +43,6 @@ async def add_ue(body: PydanticCreateUEModel) -> PydanticUEModel:
                            courses=[],
                            name=body.name,
                            ue_id=ue_to_create.id)
-
 
 
 async def modify_ue(ue_id: int, body: PydanticModifyUEModel) -> None:
@@ -65,7 +64,6 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel) -> None:
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
-
 
     return None
 
