@@ -19,7 +19,7 @@ tag: Tag = {
 
 
 @courseRouter.get("/{course_id}",status_code=200, response_model=None)
-async def get_course_by_id(course_id: int) -> None:
+async def get_course_by_id(course_id: int) -> PydanticCourseModel:
     """
     This method returns the course of the given course id.
     """

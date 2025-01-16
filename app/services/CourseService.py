@@ -13,6 +13,10 @@ async def get_course_by_id(course_id: int) -> PydanticCourseModel:
         This method retrieves course from id.
         """
 
+    #TODO
+
+    #PAS FONCTIONNEL ENCORE
+
     course: CourseInDB = await CourseInDB.get_or_none(id=course_id)
 
     if course is None:
