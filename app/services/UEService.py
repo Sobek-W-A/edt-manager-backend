@@ -100,7 +100,7 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
         raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
 
     try:
-        await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True))  # type: ignore
+        await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True))
         await ue_to_modify.save()
 
     except ValueError as e:

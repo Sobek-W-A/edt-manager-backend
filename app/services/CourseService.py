@@ -22,8 +22,6 @@ async def get_course_by_id(course_id: int) -> PydanticCourseModel:
     if course is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND.value)
 
-    print(course.course_type)
-
     course_type = PydanticCourseTypeModel(
         course_type_id=course.course_type.id,
         name=course.course_type.name,
