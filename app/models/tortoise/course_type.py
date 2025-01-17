@@ -21,3 +21,4 @@ class CourseTypeInDB(AcademicYear):
         """
         abstract : bool = False
         table    : str  = "CourseType"
+
