@@ -39,12 +39,37 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
                             AvailableOperations.GET,
                             current_account)
 
-    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
+    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id).prefetch_related("profile")
     if account is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
-
+    
+    account.profile = None
+    
     return PydanticAccountModel.model_validate(account)
 
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountModel]:
+    """
+    This method retrieves all accounts not linked to a profile.
+    """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+    accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
+
+    for account in accounts:
+        if account.profile is not None:
+            for profile in await account.profile.all():
+                print(profile.academic_year)
+                if profile.academic_year == academic_year:
+                    accounts.remove(account)
+
+    print([PydanticAccountModel(login=account.login,
+                                 id=account.id,
+                                 profile=None) for account in accounts])
+
+    return [PydanticAccountModel(login=account.login,
+                                 id=account.id,
+                                 profile=None) for account in accounts]
 
 async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
@@ -57,7 +82,7 @@ async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccount
     accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
     return [PydanticAccountModel(login=account.login,
                                  id=account.id,
-                                 profile=account.profile[0] if account.profile else None) # type: ignore
+                                 profile=None)
                                  for account in accounts]
 
 async def search_accounts_by_login(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
