@@ -7,7 +7,7 @@ Used to manage course operations.
 
 from fastapi import APIRouter
 
-from app.models.pydantic.CourseModel import PydanticCourseModel
+from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCreateCourseModel, PydanticModifyCourseModel
 from app.routes.tags import Tag
 from app.services import CourseService
 
@@ -28,14 +28,14 @@ async def get_course_by_id(course_id: int) -> PydanticCourseModel:
 
 
 @courseRouter.post("/", status_code=201, response_model=None)
-async def add_course(body : PydanticCourseModel) -> None:
+async def add_course(body : PydanticCreateCourseModel) -> PydanticCourseModel:
     """
     This method creates a new course.
     """
-    await CourseService.add_course(body)
+    return await CourseService.add_course(body)
 
 @courseRouter.patch("/{course_id}", status_code=205)
-async def modify_course(course_id: int, body: PydanticCourseModel) -> None:
+async def modify_course(course_id: int, body: PydanticModifyCourseModel) -> None:
     """
     This method modifies the course of the given course id.
     """
@@ -48,5 +48,4 @@ async def delete_course(course_id: int) -> None:
     This method deletes the course of the given course id.
     """
 
-    #TODO
-    return None
+    await CourseService.delete_course(course_id)
