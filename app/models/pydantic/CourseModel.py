@@ -1,6 +1,8 @@
 """
 Pydantic models for Course.
 """
+
+from typing import Optional
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 
@@ -26,3 +28,20 @@ class PydanticCourseModel(AcademicYearPydanticModel):
     duration : int
     group_count : int
     course_type : list[PydanticCourseTypeModel]
+
+class PydanticCreateCourseModel(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to create a Course.
+    """
+    duration : int
+    group_count : int
+    course_type_id : int
+
+class PydanticModifyCourseModel(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to modify a Course.
+    """
+    academic_year: Optional[int] = None
+    duration : Optional[int] = None
+    group_count : Optional[int] = None
+    course_type_id : Optional[int] = None
