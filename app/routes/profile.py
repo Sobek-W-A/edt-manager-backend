@@ -34,20 +34,13 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify, 
     await ProfileService.modify_profile(profile_id, profile_model, current_account)
     return Response(status_code=205)
 
+
 @profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
 async def get_all_profiles(current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
     return await ProfileService.get_all_profiles(current_account)
-
-
-@profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
-async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
-    """
-    Retrieves a Profile by their ID.
-    """
-    return await ProfileService.get_profile_by_id(profile_id, current_account)
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
 async def get_current_profile(current_account: AuthenticatedAccount) -> PydanticProfileResponse:
@@ -56,13 +49,20 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
     """
     return await ProfileService.get_current_profile(current_account)
 
+@profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
+async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
+    """
+    Retrieves a Profile by their ID.
+    """
+    return await ProfileService.get_profile_by_id(profile_id, current_account)
+
 @profileRouter.get("/search/{keywords}", response_model=list[PydanticProfileResponse], status_code=200)
 async def search_profile(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
     """
     This method retrieves profiles that matches the keywords provided.
     """
     return await ProfileService.search_profile_by_keywords(keywords, current_account)
-        
+
 
 @profileRouter.delete("/{profile_id}", status_code=204)
 async def delete_profile(profile_id: int, current_account: AuthenticatedAccount) -> None:

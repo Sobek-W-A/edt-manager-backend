@@ -9,7 +9,8 @@ class PydanticStatusResponseModel(AcademicYearPydanticModel, ClassicModel):
     """
     Simple Pydantic model to represent a status.
     """
-    quota         : int
+    id   : int
+    quota: int
 
     class Config:
         """
