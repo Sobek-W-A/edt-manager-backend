@@ -129,6 +129,7 @@ class AvailableServices(AbstractEnumLoader):
     STATUS_SERVICE      = Service("Status Service",  "Service that manages statuses.")
     UE_SERVICE          = Service("UE Service",      "Service that manages Learning Units.")
     ROLE_SERVICE        = Service("Role Service",    "Service that manages roles.")
+    COURSE_SERVICE      = Service("Course Service", "Service that manages courses.")
 
 class AvailablePermissions(AbstractEnumLoader):
     """
@@ -164,6 +165,11 @@ class AvailablePermissions(AbstractEnumLoader):
                                  AvailableOperations.GET.value,
                                  AvailableOperations.UPDATE.value,
                                  AvailableOperations.DELETE.value])
+    CRUD_COURSE = Permission(AvailableServices.COURSE_SERVICE.value,
+                             [AvailableOperations.CREATE.value,
+                              AvailableOperations.GET.value,
+                              AvailableOperations.UPDATE.value,
+                              AvailableOperations.DELETE.value])
 
 class AvailableEnsemblesPermissions(enum.Enum):
     """
