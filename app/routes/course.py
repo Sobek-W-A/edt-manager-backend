@@ -2,8 +2,6 @@
 Courses routes.
 Used to manage course operations.
 """
-from anyio import current_effective_deadline
-# TODO
 
 from fastapi import APIRouter
 

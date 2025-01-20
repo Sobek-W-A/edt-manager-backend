@@ -40,7 +40,7 @@ class PydanticCreateCourseModel(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to create a Course.
     """
-    duration : int
+    duration : Hours
     group_count : int
     course_type_id : int
 
