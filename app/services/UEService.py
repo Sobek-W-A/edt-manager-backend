@@ -124,5 +124,3 @@ async def delete_ue(ue_id: int,current_account=AuthenticatedAccount) -> None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
     await ue.delete()
-
-    return None
