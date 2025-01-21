@@ -1,5 +1,5 @@
 import json
-from typing import Mapping, TypeAlias, Union
+from typing import Any, Mapping, TypeAlias, Union
 import unittest
 
 import jsonschema
@@ -42,7 +42,7 @@ class AppTestCase(unittest.TestCase):
             self.fail(e)
 
 
-    def call_api(self, method: str, route: str, *, use_auth: bool = False) -> requests.Response:
+    def call_api(self, method: str, route: str, *, use_auth: bool = False, body: dict[str, Any] = {}) -> requests.Response:
         if use_auth:
             header = {
                 "Authorization": f"bearer {self._access_token}"
@@ -50,7 +50,7 @@ class AppTestCase(unittest.TestCase):
         else:
             header = {}
 
-        return requests.request(method, f"{self.BASE_URL}{route}", headers=header)
+        return requests.request(method, f"{self.BASE_URL}{route}", headers=header, json=body)
 
 
 
