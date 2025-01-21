@@ -31,7 +31,7 @@ from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
 
 
-async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountWithoutProfileModel:
+async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
     """
     This method retrieves an account by its ID.
     """
@@ -39,11 +39,23 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
                             AvailableOperations.GET,
                             current_account)
 
-    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id).prefetch_related("profile")
+    academic_year: int = 2024   # TODO : Get the current academic year from the url.
+
+    account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)\
+                                                   .prefetch_related("profile")
     if account is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
 
-    return PydanticAccountWithoutProfileModel.model_validate(account)
+    profile: ProfileInDB | None = None
+    if account.profile is not None:
+        profile = await account.profile.filter(academic_year=academic_year).first()
+
+    # I need to explicitely define the pydantic account here since the model attributes are not compatible.
+    # TLDR : Cannot use model_validate() here.
+    return PydanticAccountModel(login=account.login,
+                                id=account.id,
+                                profile=PydanticProfileResponse.model_validate(profile))
+
 
 async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountWithoutProfileModel]:
     """
@@ -57,24 +69,38 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
 
     for account in accounts:
         if account.profile is not None:
-            profiles: list[ProfileInDB] | None = await account.profile\
-                                                              .filter(academic_year=academic_year)\
-                                                              .all()
-            if not profiles:
+            profile: ProfileInDB | None = await account.profile\
+                                                        .filter(academic_year=academic_year)\
+                                                        .first()
+            if not profile:
                 accounts_to_return.append(account)
 
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
-async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountWithoutProfileModel]:
+async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
+    
+    academic_year: int = 2024   # TODO : Get the current academic year from the url.
+    
+    accounts: list[AccountInDB] = await AccountInDB.all()\
+                                                   .prefetch_related("profile")
+    
+    profiles: dict[int, ProfileInDB | None] = {}
+    for account in accounts:
+        if account.profile is not None:
+            profile = await account.profile.filter(academic_year=academic_year)\
+                                                               .first()
+            profiles[account.id] = profile
 
-    accounts: list[AccountInDB] = await AccountInDB.all()
-    return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts]
+    return [PydanticAccountModel(login=account.login,
+                                 id=account.id,
+                                 profile=PydanticProfileResponse.model_validate(profiles[account.id]) if profiles[account.id] is not None else None)
+                                    for account in accounts]
 
 async def search_accounts_by_login(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
@@ -83,7 +109,7 @@ async def search_accounts_by_login(keywords: str, current_account: AccountInDB) 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-    
+
     academic_year: int = 2024   # TODO : Get the current academic year from the url.
 
     account_query: Q = Q()
@@ -291,7 +317,8 @@ async def get_role_account_by_id(account_id : int , current_account : AccountInD
                             AvailableOperations.GET,
                             current_account)
 
-    metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=account_id, academic_year=academic_year).prefetch_related("role")
+    metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=account_id, academic_year=academic_year)\
+                                                                    .prefetch_related("role")
 
     if not metadata:
         raise HTTPException(status_code=404,
