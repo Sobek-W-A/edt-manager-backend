@@ -53,7 +53,19 @@ class PydanticAccountModel(BaseModel):
     """
     id      : int
     login   : Login
-    profile : PydanticProfileResponse | None
+    profile : Optional[PydanticProfileResponse] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True
+class PydanticAccountWithoutProfileModel(BaseModel):
+    """
+    Pydantic model for account retrieval.
+    """
+    id      : int
+    login   : Login
 
     class Config:
         """

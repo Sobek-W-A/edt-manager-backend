@@ -6,7 +6,7 @@ from fastapi import APIRouter, Response
 
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
-                                              PydanticAccountPasswordResponse,
+                                              PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
 
@@ -23,22 +23,24 @@ tag: Tag = {
 }
 
 
-@accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+@accountRouter.get("/", status_code=200, response_model=list[PydanticAccountWithoutProfileModel])
+async def get_all_accounts(current_account: AuthenticatedAccount) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method returns all the accounts.
     """
     return await AccountService.get_all_accounts(current_account)
 
-@accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200, response_model=list[PydanticAccountModel])
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+@accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200, response_model=list[PydanticAccountWithoutProfileModel])
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method returns all the accounts not linked to a profile.
+    It returns specifically accounts that are not linked to a profile ever,
+    or for the given academic year.
     """
     return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account)
 
-@accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountModel)
-async def get_account(account_id: int, current_account: AuthenticatedAccount) -> PydanticAccountModel:
+@accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountWithoutProfileModel)
+async def get_account(account_id: int, current_account: AuthenticatedAccount) -> PydanticAccountWithoutProfileModel:
     """
     This method returns an account by its ID.
     """
