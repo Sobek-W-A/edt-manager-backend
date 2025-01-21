@@ -25,7 +25,6 @@ async def create_profile(body: PydanticProfileCreate, current_account: Authentic
     await ProfileService.create_profile(body, current_account)
 
 
-
 @profileRouter.patch("/{profile_id}", status_code=205)
 async def modify_profile(profile_id: int, profile_model: PydanticProfileModify, current_account: AuthenticatedAccount) -> Response:
     """

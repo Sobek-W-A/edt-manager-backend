@@ -25,15 +25,34 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
     """
     This method modifies the profile qualified by the id provided.
     """
-    await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.UPDATE, current_account)
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account)
+
+    academic_year: int = 2024 # TODO: Change this to a URL parameter.
 
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
 
     if profile_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
-    if await ProfileInDB.filter(mail=model.mail).exists():
+    if await ProfileInDB.filter(mail=model.mail, academic_year=academic_year).exists():
         raise MailAlreadyUsedException
+
+    if model.account_id is not None:
+        if not await AccountInDB.filter(id=model.account_id).exists():
+            raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
+
+        # Helps ensuring that the account is not already assigned to another profile for the academic year provided.
+        # The custom filters the current account from the query to avoid raising errors when modifying the current profile.
+        q: Q = ~Q(id=profile_to_modify.id)
+        if await ProfileInDB.filter(q,
+                                    account_id=model.account_id,
+                                    academic_year=academic_year).exists():
+            raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
+
+    if not await StatusInDB.filter(id=model.status_id, academic_year=academic_year).exists():
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
         profile_to_modify.update_from_dict(model.model_dump(exclude_none=True))    # type: ignore
@@ -65,8 +84,8 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
             raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
         if not await AccountInDB.filter(id=model.account_id).exists():
             raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
-        
-    if not await StatusInDB.filter(id=model.status_id).exists():
+
+    if not await StatusInDB.filter(id=model.status_id, academic_year=academic_year).exists():
         raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
