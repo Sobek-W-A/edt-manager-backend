@@ -52,16 +52,18 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-    accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
+    accounts:           list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
     accounts_to_return: list[AccountInDB] = []
 
     for account in accounts:
         if account.profile is not None:
-            for profile in await account.profile.all():
-                if profile.academic_year != academic_year and account not in accounts_to_return:
-                    accounts_to_return.append(account)
+            profiles: list[ProfileInDB] | None = await account.profile\
+                                                              .filter(academic_year=academic_year)\
+                                                              .all()
+            if not profiles:
+                accounts_to_return.append(account)
 
-    return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts]
+    return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountWithoutProfileModel]:
     """
