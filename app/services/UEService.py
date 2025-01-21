@@ -109,11 +109,18 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
     return None
 
 
-async def delete_ue(ue_id: int) -> None:
+async def delete_ue(ue_id: int,current_account=AuthenticatedAccount) -> None:
     """
     This method deletes the UE of the given UE id.
     """
 
-    #TODO
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.DELETE,
+                            current_account)
 
-    return None
+    ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
+
+    if ue is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
+
+    await ue.delete()
