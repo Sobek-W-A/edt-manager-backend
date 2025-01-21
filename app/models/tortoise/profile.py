@@ -12,7 +12,6 @@ from tortoise.fields import (Field,
 from app.models.tortoise.abstract.academic_year import AcademicYear
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.status import StatusInDB
-from app.utils.enums.courses_enums import AvailableStatus
 
 
 class ProfileInDB(AcademicYear):
@@ -20,14 +19,14 @@ class ProfileInDB(AcademicYear):
     This class is designed to design the table inside of the database.
     It contains all the columns necessary to store the user.
     """
-    id            : Field[int] = IntField(primary_key=True)
-    firstname     : Field[str] = CharField(max_length=128)
-    lastname      : Field[str] = CharField(max_length=128)
-    mail          : Field[str] = CharField(unique=True, required=True, max_length=128)
-    hours_to_work : Field[int] = IntField(min_value=0, default=0)
+    id       : Field[int] = IntField(primary_key=True)
+    firstname: Field[str] = CharField(max_length=128)
+    lastname : Field[str] = CharField(max_length=128)
+    mail     : Field[str] = CharField(unique=True, required=True, max_length=128)
+    quota    : Field[int] = IntField(min_value=0, default=0)
 
     account : ForeignKeyNullableRelation["AccountInDB"] = ForeignKeyField("models.AccountInDB", related_name="profile", null=True)
-    status  : ForeignKeyRelation[StatusInDB]            = ForeignKeyField("models.StatusInDB", related_name="profile", default=3)
+    status  : ForeignKeyRelation[StatusInDB]            = ForeignKeyField("models.StatusInDB", related_name="profile", default=3)   # TODO : Centralize this default value.
 
     def __str__(self) -> str:
         """
