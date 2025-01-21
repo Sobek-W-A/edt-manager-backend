@@ -12,6 +12,7 @@ from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileResponse)
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
+from app.models.tortoise.status import StatusInDB
 from app.services.PermissionService import check_permissions
 from app.utils.CustomExceptions import (MailAlreadyUsedException,
                                         MailInvalidException)
@@ -24,15 +25,34 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
     """
     This method modifies the profile qualified by the id provided.
     """
-    await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.UPDATE, current_account)
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account)
+
+    academic_year: int = 2024 # TODO: Change this to a URL parameter.
 
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
 
     if profile_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
-    if await ProfileInDB.filter(mail=model.mail).exists():
+    if await ProfileInDB.filter(mail=model.mail, academic_year=academic_year).exists():
         raise MailAlreadyUsedException
+
+    if model.account_id is not None:
+        if not await AccountInDB.filter(id=model.account_id).exists():
+            raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
+
+        # Helps ensuring that the account is not already assigned to another profile for the academic year provided.
+        # The custom filters the current account from the query to avoid raising errors when modifying the current profile.
+        q: Q = ~Q(id=profile_to_modify.id)
+        if await ProfileInDB.filter(q,
+                                    account_id=model.account_id,
+                                    academic_year=academic_year).exists():
+            raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
+
+    if not await StatusInDB.filter(id=model.status_id, academic_year=academic_year).exists():
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
         profile_to_modify.update_from_dict(model.model_dump(exclude_none=True))    # type: ignore
@@ -45,17 +65,38 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
     """
     This method creates a new profile.
     """
-    await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.CREATE, current_account)
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.CREATE,
+                            current_account)
+
+    academic_year: int = 2024
 
     #We check if the login or mail are already used
-    if await ProfileInDB.filter(mail=model.mail).exists():
+    if await ProfileInDB.filter(mail=model.mail, academic_year=academic_year).exists():
         raise MailAlreadyUsedException
+
+    # We check if the account id is provided.
+    # If so, we need to ensure that the account is not already assigned
+    # to another profile for the academic year provided.
+    if model.account_id is not None:
+        if await ProfileInDB.filter(account_id=model.account_id,
+                                    academic_year=academic_year).exists():
+            raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
+        if not await AccountInDB.filter(id=model.account_id).exists():
+            raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
+
+    if not await StatusInDB.filter(id=model.status_id, academic_year=academic_year).exists():
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
         await ProfileInDB.create(
             firstname=model.firstname,
             lastname=model.lastname,
-            mail=model.mail
+            mail=model.mail,
+            academic_year=academic_year,
+            quota=model.quota,
+            account_id=model.account_id,
+            status_id=model.status_id
         )
     except ValidationError as e:
         raise MailInvalidException from e
@@ -81,11 +122,25 @@ async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> Py
 
     return PydanticProfileResponse.model_validate(profile)  # Use model_validate to create the response model
 
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+    """
+    Retrieves all profiles not linked to an account.
+    """
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    profiles: list[ProfileInDB] = await ProfileInDB.filter(account=None,
+                                                           academic_year=academic_year).all()
+    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
+
 async def get_current_profile(current_account: AccountInDB) -> PydanticProfileResponse:
     """
     Retrieves the current profile.
     """
-    await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.GET, current_account)
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
 
     profile : ProfileInDB | None = await ProfileInDB.get_or_none(account=current_account.id)
     if profile is None:

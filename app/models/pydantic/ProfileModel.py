@@ -16,7 +16,9 @@ class PydanticProfileModify(AcademicYearPydanticModel):
     firstname  : Optional[Name] = None
     lastname   : Optional[Name] = None
     mail       : Optional[Mail] = None
-    account_id : Optional[int] = None
+    quota      : Optional[int]  = None
+    account_id : Optional[int]  = None
+    status_id  : Optional[int]  = None
 
 
 class PydanticProfileCreate(AcademicYearPydanticModel):
@@ -26,7 +28,9 @@ class PydanticProfileCreate(AcademicYearPydanticModel):
     firstname  : Name
     lastname   : Name
     mail       : Mail
+    quota      : Optional[int] = None
     account_id : Optional[int] = None
+    status_id  : int           = 3          # TODO : Centralize this.
 
 
 class PydanticProfileResponse(AcademicYearPydanticModel):
@@ -37,7 +41,9 @@ class PydanticProfileResponse(AcademicYearPydanticModel):
     firstname  : Name
     lastname   : Name
     mail       : Mail
+    quota      : Optional[int] = None
     account_id : Optional[int] = None
+    status_id  : int
 
     class Config:
         """
