@@ -81,6 +81,18 @@ async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> Py
 
     return PydanticProfileResponse.model_validate(profile)  # Use model_validate to create the response model
 
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+    """
+    Retrieves all profiles not linked to an account.
+    """
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    profiles: list[ProfileInDB] = await ProfileInDB.filter(account=None,
+                                                           academic_year=academic_year).all()
+    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
+
 async def get_current_profile(current_account: AccountInDB) -> PydanticProfileResponse:
     """
     Retrieves the current profile.

@@ -49,6 +49,13 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
     """
     return await ProfileService.get_current_profile(current_account)
 
+@profileRouter.get("/notlinked/{academic_year}", response_model=list[PydanticProfileResponse], status_code=200)
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+    """
+    Returns all the profiles that are not linked to an account for the given academic year.
+    """
+    return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account)
+
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
 async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
     """
