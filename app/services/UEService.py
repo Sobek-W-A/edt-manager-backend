@@ -14,7 +14,7 @@ from app.models.tortoise.ue import UEInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
-
+#TODO
 
 async def get_ue_by_id(ue_id: int, current_account=AuthenticatedAccount) -> PydanticUEModel:
     """
@@ -34,25 +34,19 @@ async def get_ue_by_id(ue_id: int, current_account=AuthenticatedAccount) -> Pyda
 
     courses: list[CourseInDB] | None = await ue.courses.all()
 
-    coursesPydantic : list[PydanticCourseModel] = []
+    coursesPydantic: list[PydanticCourseModel] = []
 
     for course in courses:
-        course_type : CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
-        course_type_pydantic = PydanticCourseTypeModel(
-            academic_year=course_type.academic_year,
-            course_type_id=course.course_type_id,
-            name=course_type.name.__str__(),
-            description=course_type.description.__str__(),
-        )
+        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
+        course_type_pydantic = PydanticCourseTypeModel.model_validate(course_type)
         course_pydantic = PydanticCourseModel(
             academic_year=course.academic_year,
             id=course.id,
             duration=course.duration,
             group_count=course.group_count,
-            course_type=[course_type_pydantic],
+            course_type=course_type_pydantic,
         )
         coursesPydantic.append(course_pydantic)
-
 
     return PydanticUEModel(academic_year=ue.academic_year,
                            courses=coursesPydantic,
@@ -109,7 +103,7 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
     return None
 
 
-async def delete_ue(ue_id: int,current_account=AuthenticatedAccount) -> None:
+async def delete_ue(ue_id: int, current_account=AuthenticatedAccount) -> None:
     """
     This method deletes the UE of the given UE id.
     """
