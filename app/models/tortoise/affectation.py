@@ -1,8 +1,10 @@
 """
-This module contains the AffectationInDB model which is used to represent the affectation of a course to a teacher.
+This module contains the AffectationInDB model which is used to represent the
+affectation of a course to a teacher.
 """
 
 from datetime import datetime
+from tortoise import Model
 from tortoise.fields import (ForeignKeyField,
                              ForeignKeyRelation,
                              IntField,
@@ -10,12 +12,11 @@ from tortoise.fields import (ForeignKeyField,
                              CharField,
                              DatetimeField)
 
-from app.models.tortoise.abstract.academic_year import AcademicYear
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.profile import ProfileInDB
 
 
-class AffectationInDB(AcademicYear):
+class AffectationInDB(Model):
     """
     This model represents the affectation of a course to a teacher.
     """
@@ -24,11 +25,12 @@ class AffectationInDB(AcademicYear):
     hours : Field[int]      = IntField(min_value=0)
     notes : Field[str]      = CharField(max_length=512, null=True)
     date  : Field[datetime] = DatetimeField(default=datetime.now)
+    group : Field[int]      = IntField(min_value=1, default=1)
 
-    course_id : ForeignKeyRelation[CourseInDB]  = ForeignKeyField("models.CourseInDB", related_name="affectation")
-    profile_id: ForeignKeyRelation[ProfileInDB] = ForeignKeyField("models.ProfileInDB", related_name="affectation")
+    course : ForeignKeyRelation[CourseInDB]  = ForeignKeyField("models.CourseInDB", related_name="affectation")
+    profile: ForeignKeyRelation[ProfileInDB] = ForeignKeyField("models.ProfileInDB", related_name="affectation")
 
-    class Meta(AcademicYear.Meta):
+    class Meta(Model.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """

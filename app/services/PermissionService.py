@@ -15,13 +15,13 @@ from app.utils.enums.permission_enums import AvailableOperations, AvailableServi
 async def check_permissions(service: AvailableServices,
                             operation: AvailableOperations,
                             current_account: AccountInDB,
-                            academic_year: tuple[int, int] = (2024,2025)) -> None:
+                            academic_year: int = 2024) -> None: # TODO : Add automatic recognition of the current academic year.
     """
     This method checks if the provided user has the permission to perform the provided 
     operation on the provided service.
     """
     # We fetch the user's role.
-    meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,academic_year=academic_year[0]).prefetch_related("role")
+    meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,academic_year=academic_year).prefetch_related("role")
 
     if meta is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
@@ -32,12 +32,10 @@ async def check_permissions(service: AvailableServices,
 
     # We fetch the permissions of the role.
     # We also filter the permissions to get only the ones that match the service and the operation.
-    permissions: list[PermissionInDB] = await role.permissions.filter(service_name_id=service.value.service_name,
-                                                                      operation_name_id=operation.value.operation_name)
+    permissions: list[PermissionInDB] = await role.permissions.filter(service_id=service.value.service_name,
+                                                                      operation_id=operation.value.operation_name)
 
     # If the list is empty, the user does not have the permission.
     # Otherwise, the user has the permission to do the operation on the service.
     if len(permissions) == 0:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)
-
-

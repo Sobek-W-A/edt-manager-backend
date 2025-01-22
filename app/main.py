@@ -10,10 +10,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import account, auth, profile, role, ue, course, course_type, statut
+from app.routes import account, auth, profile, role, ue, course, course_type, status, affectation
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
+from app.utils.printers import print_info
 
 # Array for the routes descriptions and names.
 tags_metadata: list[Tag] = [
@@ -24,7 +25,8 @@ tags_metadata: list[Tag] = [
     ue.tag,
     course.tag,
     course_type.tag,
-    statut.tag
+    status.tag,
+    affectation.tag,
 ]
 
 @asynccontextmanager
@@ -33,6 +35,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
     This method indicates what the method needs to do at startup.
     """
     # Démarrage des bases de données
+    print_info("Starting databases...")
     await startup_databases(app=application)
     yield
     # Code pour fermer les bases de données (si nécessaire)
@@ -70,7 +73,8 @@ app.include_router(role.roleRouter, tags=[role.tag["name"]])
 app.include_router(ue.ueRouter, tags=[ue.tag["name"]])
 app.include_router(course.courseRouter, tags=[course.tag["name"]])
 app.include_router(course_type.coursetypeRouter, tags=[course_type.tag["name"]])
-app.include_router(statut.statutRouter, tags=[statut.tag["name"]])
+app.include_router(status.statusRouter, tags=[status.tag["name"]])
+app.include_router(affectation.affectationRouter, tags=[affectation.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

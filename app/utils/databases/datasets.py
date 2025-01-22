@@ -11,19 +11,16 @@ from tortoise.models import Model
 
 from app.models.pydantic.AccountMetadataModel import PydanticAccountMetaModelFromJSON
 from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
+from app.models.pydantic.AffectationModel import PydanticAffectationFromJSON
 from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON
 from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
-from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModelFromJSON
 from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
-from app.models.pydantic.OperationModel import PydanticOperationModelFromJSON
-from app.models.pydantic.PermissionsModel import PydanticPermissionModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
-from app.models.pydantic.PydanticRole import PydanticRoleModelFromJSON
-from app.models.pydantic.ServiceModel import PydanticServiceModelFromJSON
-from app.models.pydantic.StatusModel import PydanticStatusModelFromJSON
 from app.models.pydantic.UEModel import PydanticUEModelFromJSON
+
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
+from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.coefficient import CoefficientInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
@@ -35,7 +32,14 @@ from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.status import StatusInDB
 from app.models.tortoise.ue import UEInDB
+
 from app.services import SecurityService
+from app.utils.enums.courses_enums import AvailableCourseTypes, AvailableStatus
+from app.utils.enums.permission_enums import (AvailableOperations,
+                                              AvailablePermissions,
+                                              AvailableRoles,
+                                              AvailableServices)
+from app.utils.printers import print_error, print_info
 
 JSON_FILE_PATH : str = "./app/static/templates/json/"
 
@@ -43,29 +47,22 @@ async def load_persistent_datasets() -> None:
     """
     This method loads all datasets needed for production purposes.
     """
-    await load_json_into_model_via_pydantic(OperationInDB,
-                                            PydanticOperationModelFromJSON,
-                                            "operation_templates.json")
-    await load_json_into_model_via_pydantic(ServiceInDB,
-                                            PydanticServiceModelFromJSON,
-                                            "service_templates.json")
-    await load_json_into_model_via_pydantic(PermissionInDB,
-                                            PydanticPermissionModelFromJSON,
-                                            "permission_templates.json")
-    await load_json_into_model_via_pydantic(RoleInDB,
-                                            PydanticRoleModelFromJSON,
-                                            "role_templates.json")
-    await load_json_into_model_via_pydantic(StatusInDB,
-                                            PydanticStatusModelFromJSON,
-                                            "status_templates.json")
-    await load_json_into_model_via_pydantic(CourseTypeInDB,
-                                            PydanticCourseTypeModelFromJSON,
-                                            "course_type_templates.json")
+    print_info("Loading Production datasets...")
+
+    await AvailableOperations.load_enum_to_db(OperationInDB)
+    await AvailableServices.load_enum_to_db(ServiceInDB)
+    await AvailablePermissions.load_enum_to_db(PermissionInDB)
+    await AvailableRoles.load_enum_to_db(RoleInDB)
+
+    await AvailableCourseTypes.load_enum_to_db(CourseTypeInDB)
+    await AvailableStatus.load_enum_to_db(StatusInDB)
 
 async def load_dummy_datasets() -> None:
     """
     This method loads all datasets needed for development purposes.
     """
+    print_info("Loading Dummy datasets...")
+
     await load_persistent_datasets()
 
     await load_json_into_model_via_pydantic(AccountInDB,
@@ -91,6 +88,10 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(UEInDB,
                                             PydanticUEModelFromJSON,
                                             "ue_templates.json")
+
+    await load_json_into_model_via_pydantic(AffectationInDB,
+                                            PydanticAffectationFromJSON,
+                                            "affectation_templates.json")
 
 
 async def load_json_into_model_via_pydantic(
@@ -120,7 +121,7 @@ async def load_json_into_model_via_pydantic(
 
         # Trying to use pydantic to conform JSON data :
         data: list[BaseModel] = [schema(**item) for item in raw_data]
-        
+
         # Insert data into the database
         for item in data:
             element: dict[str, Any] = item.model_dump(exclude_unset=True)
@@ -155,8 +156,7 @@ async def load_json_into_model_via_pydantic(
                     m2m_manager = getattr(instance, field)
                     await m2m_manager.add(*related_instances)
 
+        print_info(f"{len(data)} instances loaded into model {model.__name__}")
 
-        print(f"INFO:     {len(data)} instances added init {model.__name__}")
-
-    except Exception as e:
-        print(f"ERROR:    Failed loading data for model {model.__name__} : {e}")
+    except Exception as e:              # TODO : Handle specific exceptions
+        print_error(f"Error while loading {model.__name__}'s data: {e}")

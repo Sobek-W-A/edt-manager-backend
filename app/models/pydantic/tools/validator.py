@@ -54,15 +54,13 @@ def is_login(string: str) -> str:
 
 Login = Annotated[str, AfterValidator(is_login)]
 
-def is_academic_year(years: tuple[int, int]) -> tuple[int, int]:
+def is_hours(val: int) -> int:
     """
-    We check that the tuple contains 2 values and that the second element is 
-    equal to the first one + 1.
+    Checks if the value provided is a valid amount of hours.
+    Basically, not negative.
     """
-    if len(years) != 2:
-        raise HTTPException(status_code=422, detail="Le tuple doit contenir exactement deux éléments.")
-    if years[1] != years[0] + 1:
-        raise HTTPException(status_code=422, detail="Le second élément doit être égal au premier + 1.")
-    return years
+    if val < 0:
+        raise HTTPException(status_code=422, detail="The amount of hours must be positive.")
+    return val
 
-AcademicYear = Annotated[list[int], AfterValidator(is_academic_year)]
+Hours = Annotated[int, AfterValidator(is_hours)]

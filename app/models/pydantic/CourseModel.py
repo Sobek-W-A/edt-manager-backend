@@ -2,17 +2,17 @@
 Pydantic models for Course.
 """
 
-from pydantic import BaseModel
+from typing import Optional
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
+from app.models.pydantic.tools.validator import Hours
 
 
-class PydanticCourseModelFromJSON(BaseModel):
+class PydanticCourseModelFromJSON(AcademicYearPydanticModel):
     """
     Course model for loading data from a JSON file.
     """
     duration        : int
-    academic_year   : int
     course_type_id  : int
 
     class Config:
@@ -25,7 +25,30 @@ class PydanticCourseModel(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to return a Course to the frontend.
     """
-    course_id: int
+    id: int
     duration : int
-    courses_types : list[PydanticCourseTypeModel]
+    group_count : int
+    course_type : PydanticCourseTypeModel
 
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True
+
+class PydanticCreateCourseModel(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to create a Course.
+    """
+    duration : Hours
+    group_count : int
+    course_type_id : int
+
+class PydanticModifyCourseModel(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to modify a Course.
+    """
+    academic_year: Optional[int] = None
+    duration : Optional[Hours] = None
+    group_count : Optional[int] = None
+    course_type_id : Optional[int] = None

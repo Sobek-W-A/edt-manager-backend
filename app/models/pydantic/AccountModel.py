@@ -7,7 +7,7 @@ from typing import Optional, Self
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
-from app.models.pydantic.validator import Login, Password
+from app.models.pydantic.tools.validator import Login, Password
 from app.utils.enums.http_errors import CommonErrorMessages
 
 
@@ -53,7 +53,19 @@ class PydanticAccountModel(BaseModel):
     """
     id      : int
     login   : Login
-    profile : PydanticProfileResponse | None
+    profile : Optional[PydanticProfileResponse] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True
+class PydanticAccountWithoutProfileModel(BaseModel):
+    """
+    Pydantic model for account retrieval.
+    """
+    id      : int
+    login   : Login
 
     class Config:
         """

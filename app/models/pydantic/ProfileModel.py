@@ -6,37 +6,44 @@ from typing import Optional
 from pydantic import BaseModel
 
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
-from app.models.pydantic.validator import Mail, Name
+from app.models.pydantic.tools.validator import Mail, Name
 
 class PydanticProfileModify(AcademicYearPydanticModel):
     """
     This model is meant to be used as model-check for Profile-modification
     related requests.
     """
-    firstname   : Optional[Name] = None
-    lastname    : Optional[Name] = None
-    mail        : Optional[Mail] = None
-    account_id  : Optional[int]  = None
+    firstname  : Optional[Name] = None
+    lastname   : Optional[Name] = None
+    mail       : Optional[Mail] = None
+    quota      : Optional[int]  = None
+    account_id : Optional[int]  = None
+    status_id  : Optional[int]  = None
+
 
 class PydanticProfileCreate(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to create a new Profile.
     """
-    firstname:      Name
-    lastname:       Name
-    mail:           Mail
-    account_id:     Optional[int] = None
+    firstname  : Name
+    lastname   : Name
+    mail       : Mail
+    quota      : Optional[int] = None
+    account_id : Optional[int] = None
+    status_id  : int           = 3          # TODO : Centralize this.
 
-class PydanticProfileResponse(BaseModel):
+
+class PydanticProfileResponse(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to return a Profile to the frontend.
     """
-    id:         int
-    firstname:  Name
-    lastname:   Name
-    mail:       Mail
-    academic_year: int
-    account_id: Optional[int] = None
+    id         : int
+    firstname  : Name
+    lastname   : Name
+    mail       : Mail
+    quota      : Optional[int] = None
+    account_id : Optional[int] = None
+    status_id  : int
 
     class Config:
         """

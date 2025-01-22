@@ -13,7 +13,7 @@ class PydanticUEModelFromJSON(BaseModel):
     Pydantic model for loading data from a JSON file.
     """
     name           : str
-    courses_id_m2m : list[int]
+    courses_m2m : list[int]
     academic_year  : int
     parent_id      : int | None
 
@@ -33,11 +33,17 @@ class PydanticUEModel(AcademicYearPydanticModel):
     courses: list[PydanticCourseModel]
 
 
-
 class PydanticCreateUEModel(AcademicYearPydanticModel):
     """
     Pydantic model for UE to create an UE.
     """
-    name: str
-    courses: Optional[list[PydanticCourseModel]]
+    name      : str
+    parent_id : Optional[int]
+    courses   : Optional[list[PydanticCourseModel]]
 
+class PydanticModifyUEModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for UE to create an UE.
+    """
+    academic_year : Optional[int]
+    name      : str
