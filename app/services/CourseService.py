@@ -11,6 +11,8 @@ from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
+#TODO
+
 
 async def get_course_by_id(course_id: int, current_account: AuthenticatedAccount) -> PydanticCourseModel:
     """
@@ -25,7 +27,6 @@ async def get_course_by_id(course_id: int, current_account: AuthenticatedAccount
 
     if course is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND.value)
-
 
     course_type = PydanticCourseTypeModel.model_validate(course.course_type)
 
@@ -48,15 +49,15 @@ async def add_course(body: PydanticCreateCourseModel, current_account: Authentic
     if body.group_count < 0:
         raise HTTPException(status_code=422, detail=CommonErrorMessages.GROUP_VALUE_INCORRECT.value)
 
-    course_type : CourseTypeInDB = await CourseTypeInDB.get_or_none(id=body.course_type_id)
+    course_type: CourseTypeInDB = await CourseTypeInDB.get_or_none(id=body.course_type_id)
 
     if course_type is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_TYPE_NOT_FOUND.value)
 
-
     course_type_pydantic = PydanticCourseTypeModel.model_validate(course_type)
 
-    course_to_create: CourseInDB = CourseInDB(academic_year=body.academic_year, duration=body.duration,group_count=body.group_count, course_type_id=body.course_type_id)
+    course_to_create: CourseInDB = CourseInDB(academic_year=body.academic_year, duration=body.duration,
+                                              group_count=body.group_count, course_type_id=body.course_type_id)
 
     await CourseInDB.save(course_to_create)
 
@@ -65,7 +66,6 @@ async def add_course(body: PydanticCreateCourseModel, current_account: Authentic
                                duration=course_to_create.duration,
                                group_count=course_to_create.group_count,
                                course_type=course_type_pydantic)
-
 
 
 async def modify_course(course_id: int, body: PydanticModifyCourseModel, current_account: AuthenticatedAccount) -> None:
@@ -77,15 +77,15 @@ async def modify_course(course_id: int, body: PydanticModifyCourseModel, current
                             AvailableOperations.UPDATE,
                             current_account)
 
-    if body.duration is not None :
-        if body.duration < 0 :
+    if body.duration is not None:
+        if body.duration < 0:
             raise HTTPException(status_code=422, detail=CommonErrorMessages.DURATION_VALUE_INCORRECT.value)
 
-    if body.group_count is not None :
-        if body.group_count < 0 :
+    if body.group_count is not None:
+        if body.group_count < 0:
             raise HTTPException(status_code=422, detail=CommonErrorMessages.GROUP_VALUE_INCORRECT.value)
 
-    course_to_modify: CourseInDB | None= await CourseInDB.get_or_none(id=course_id)
+    course_to_modify: CourseInDB | None = await CourseInDB.get_or_none(id=course_id)
 
     if course_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND.value)
@@ -96,7 +96,6 @@ async def modify_course(course_id: int, body: PydanticModifyCourseModel, current
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
-
 
 
 async def delete_course(course_id: int, current_account: AuthenticatedAccount) -> None:
@@ -113,4 +112,3 @@ async def delete_course(course_id: int, current_account: AuthenticatedAccount) -
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
     await course.delete()
-

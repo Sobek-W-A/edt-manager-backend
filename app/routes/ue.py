@@ -15,7 +15,7 @@ tag: Tag = {
     "name": "UE",
     "description": "UE-related operations."
 }
-
+#TODO
 
 @ueRouter.get("/{ue_id}",status_code=200, response_model=PydanticUEModel)
 async def get_ue_by_id(ue_id: int,current_account: AuthenticatedAccount) -> PydanticUEModel:
