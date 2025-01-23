@@ -8,10 +8,11 @@ from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
-                                              PydanticModifyAccountModel, PydanticNumberOfAccount)
+                                              PydanticModifyAccountModel)
 
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.routes.tags import Tag
 from app.services import AccountService
 
@@ -116,8 +117,8 @@ async def set_role_account_by_id(account_id: int, current_account: Authenticated
     return Response(status_code=205)
 
 
-@accountRouter.get("/nb/", status_code=200, response_model=PydanticNumberOfAccount)
-async def get_nb_accounts(current_account: AuthenticatedAccount) -> PydanticNumberOfAccount:
+@accountRouter.get("/nb/", status_code=200, response_model=NumberOfElement)
+async def get_nb_accounts(current_account: AuthenticatedAccount) -> NumberOfElement:
     """
     This method get the number of account in the database.
     """

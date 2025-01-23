@@ -9,7 +9,8 @@ from tortoise.expressions import Q
 
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
-                                              PydanticProfileResponse, PydanticNumberOfProfile)
+                                              PydanticProfileResponse)
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
@@ -182,7 +183,7 @@ async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     await profile.delete()
 
 
-async def get_number_of_profile(current_account) -> PydanticNumberOfProfile:
+async def get_number_of_profile(current_account) -> NumberOfElement:
     """
     This method get the number of profile.
     """
@@ -192,6 +193,6 @@ async def get_number_of_profile(current_account) -> PydanticNumberOfProfile:
 
     number_profile: int = await ProfileInDB.all().count()
 
-    return PydanticNumberOfProfile(
-        number_of_profiles=number_profile
+    return NumberOfElement(
+        number_of_elements=number_profile
     )

@@ -69,10 +69,3 @@ class PydanticProfileModelFromJSON(BaseModel):
         Config class used to allow the model to be created from a dictionary.
         """
         from_attributes: bool = True
-
-
-class PydanticNumberOfProfile(BaseModel):
-    """
-    Pydantic model used to get the number of profile in the database.
-    """
-    number_of_profiles: int

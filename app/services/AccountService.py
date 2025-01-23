@@ -13,11 +13,12 @@ from tortoise.expressions import Q
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
-                                              PydanticModifyAccountModel, PydanticNumberOfAccount)
+                                              PydanticModifyAccountModel)
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.profile import ProfileInDB
@@ -373,7 +374,7 @@ async def set_role_account_by_name(account_id: int, current_account: AccountInDB
                                      academic_year=body.academic_year).update(role_id=role.name)
 
 
-async def get_number_of_account(current_account: AccountInDB) -> PydanticNumberOfAccount:
+async def get_number_of_account(current_account: AccountInDB) -> NumberOfElement:
     """
     This method get the number of account.
     """
@@ -384,6 +385,6 @@ async def get_number_of_account(current_account: AccountInDB) -> PydanticNumberO
 
     number_account: int = await AccountInDB.all().count()
 
-    return PydanticNumberOfAccount(
-        number_of_accounts=number_account
+    return NumberOfElement(
+        number_of_elements=number_account
     )

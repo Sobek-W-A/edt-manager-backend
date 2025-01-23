@@ -5,8 +5,9 @@ from fastapi import APIRouter, Response
 
 from app.models.pydantic.ProfileModel import (PydanticProfileModify,
                                               PydanticProfileCreate,
-                                              PydanticProfileResponse, PydanticNumberOfProfile)
+                                              PydanticProfileResponse)
 from app.models.aliases import AuthenticatedAccount
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.routes.tags import Tag
 from app.services import ProfileService
 
@@ -85,8 +86,8 @@ async def delete_profile(profile_id: int, current_account: AuthenticatedAccount)
     await ProfileService.delete_profile(profile_id, current_account)
 
 
-@profileRouter.get("/nb/", status_code=200, response_model=PydanticNumberOfProfile)
-async def get_nb_profile(current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:
+@profileRouter.get("/nb/", status_code=200, response_model=NumberOfElement)
+async def get_nb_profile(current_account: AuthenticatedAccount) -> NumberOfElement:
     """
     This method get the number of profile in the database.
     """
