@@ -16,6 +16,7 @@ tag: Tag = {
     "description": "Profile-related operations."
 }
 
+
 @profileRouter.post("/", status_code=201)
 async def create_profile(body: PydanticProfileCreate, current_account: AuthenticatedAccount) -> None:
     """
@@ -26,7 +27,8 @@ async def create_profile(body: PydanticProfileCreate, current_account: Authentic
 
 
 @profileRouter.patch("/{profile_id}", status_code=205)
-async def modify_profile(profile_id: int, profile_model: PydanticProfileModify, current_account: AuthenticatedAccount) -> Response:
+async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
+                         current_account: AuthenticatedAccount) -> Response:
     """
     This controllers is used when modifying Profile informations.
     """
@@ -41,6 +43,7 @@ async def get_all_profiles(current_account: AuthenticatedAccount) -> list[Pydant
     """
     return await ProfileService.get_all_profiles(current_account)
 
+
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
 async def get_current_profile(current_account: AuthenticatedAccount) -> PydanticProfileResponse:
     """
@@ -48,12 +51,15 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
     """
     return await ProfileService.get_current_profile(current_account)
 
+
 @profileRouter.get("/notlinked/{academic_year}", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount) -> list[
+    PydanticProfileResponse]:
     """
     Returns all the profiles that are not linked to an account for the given academic year.
     """
     return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account)
+
 
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
 async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
@@ -61,6 +67,7 @@ async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccou
     Retrieves a Profile by their ID.
     """
     return await ProfileService.get_profile_by_id(profile_id, current_account)
+
 
 @profileRouter.get("/search/{keywords}", response_model=list[PydanticProfileResponse], status_code=200)
 async def search_profile(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
@@ -77,7 +84,8 @@ async def delete_profile(profile_id: int, current_account: AuthenticatedAccount)
     """
     await ProfileService.delete_profile(profile_id, current_account)
 
-@profileRouter.get("/nb/", status_code=200,response_model=PydanticNumberOfProfile)
+
+@profileRouter.get("/nb/", status_code=200, response_model=PydanticNumberOfProfile)
 async def get_nb_profile(current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:
     """
     This method get the number of profile in the database.
