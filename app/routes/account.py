@@ -106,3 +106,10 @@ async def set_role_account_by_id(account_id: int, current_account: Authenticated
     await AccountService.set_role_account_by_name(account_id, current_account, body)
 
     return Response(status_code=205)
+
+@accountRouter.get("/nb", status_code=201)
+async def get_nb_accounts(current_account: AuthenticatedAccount) -> None:
+    """
+    This method get the number of account in the database.
+    """
+    await AccountService.get_number_of_account(current_account)
