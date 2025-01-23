@@ -4,8 +4,8 @@ This module provieds a router for the /Profile endpoint.
 from fastapi import APIRouter, Response
 
 from app.models.pydantic.ProfileModel import (PydanticProfileModify,
-                                           PydanticProfileCreate,
-                                           PydanticProfileResponse)
+                                              PydanticProfileCreate,
+                                              PydanticProfileResponse, PydanticNumberOfProfile)
 from app.models.aliases import AuthenticatedAccount
 from app.routes.tags import Tag
 from app.services import ProfileService
@@ -76,3 +76,10 @@ async def delete_profile(profile_id: int, current_account: AuthenticatedAccount)
     This route is used for deleting a Profile
     """
     await ProfileService.delete_profile(profile_id, current_account)
+
+@profileRouter.get("/nb/", status_code=200,response_model=PydanticNumberOfProfile)
+async def get_nb_profile(current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:
+    """
+    This method get the number of profile in the database.
+    """
+    return await ProfileService.get_number_of_profile(current_account)

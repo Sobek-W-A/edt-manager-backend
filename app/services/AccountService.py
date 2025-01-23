@@ -13,7 +13,7 @@ from tortoise.expressions import Q
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
-                                              PydanticModifyAccountModel)
+                                              PydanticModifyAccountModel, PydanticNumberOfAccount)
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
@@ -373,7 +373,17 @@ async def set_role_account_by_name(account_id: int, current_account: AccountInDB
                                      academic_year=body.academic_year).update(role_id=role.name)
 
 
-async def get_number_of_account(current_account: AccountInDB) -> None:
+async def get_number_of_account(current_account: AccountInDB) -> PydanticNumberOfAccount:
+    """
+    This method get the number of account.
+    """
+
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
+
+    number_account : int = await AccountInDB.all().count()
+
+    return PydanticNumberOfAccount(
+        number_of_accounts=number_account
+    )

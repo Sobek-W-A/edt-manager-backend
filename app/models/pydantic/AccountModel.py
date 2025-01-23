@@ -92,3 +92,10 @@ class PydanticAccountModelFromJSON(BaseModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+
+class PydanticNumberOfAccount(BaseModel):
+    """
+        Pydantic model used to get the number of account in the database.
+    """
+    number_of_accounts : int

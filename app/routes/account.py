@@ -8,7 +8,7 @@ from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
-                                              PydanticModifyAccountModel)
+                                              PydanticModifyAccountModel, PydanticNumberOfAccount)
 
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
@@ -107,9 +107,9 @@ async def set_role_account_by_id(account_id: int, current_account: Authenticated
 
     return Response(status_code=205)
 
-@accountRouter.get("/nb", status_code=201)
-async def get_nb_accounts(current_account: AuthenticatedAccount) -> None:
+@accountRouter.get("/nb/", status_code=200,response_model=PydanticNumberOfAccount)
+async def get_nb_accounts(current_account: AuthenticatedAccount) -> PydanticNumberOfAccount:
     """
     This method get the number of account in the database.
     """
-    await AccountService.get_number_of_account(current_account)
+    return await AccountService.get_number_of_account(current_account)
