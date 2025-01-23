@@ -382,7 +382,7 @@ async def get_number_of_account(current_account: AccountInDB) -> PydanticNumberO
                             AvailableOperations.GET,
                             current_account)
 
-    number_account : int = await AccountInDB.all().count()
+    number_account: int = await AccountInDB.all().count()
 
     return PydanticNumberOfAccount(
         number_of_accounts=number_account
