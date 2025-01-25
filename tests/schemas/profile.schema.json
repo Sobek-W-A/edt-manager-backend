@@ -14,10 +14,18 @@
             "type": "string",
             "format": "email"
         },
-        "academic_year": {
+        "quota": {
             "type": "integer"
         },
+        "academic_year": {
+            "type": "integer",
+            "minLength": 4,
+            "maxLength": 4
+        },
         "account_id": {
+            "type": "integer"
+        },
+        "status_id": {
             "type": "integer"
         }
     },
@@ -28,6 +36,7 @@
         "lastname",
         "mail",
         "academic_year",
-        "account_id"
+        "account_id",
+        "status_id"
     ]
 }
