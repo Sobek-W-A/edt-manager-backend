@@ -23,7 +23,10 @@
             "maxLength": 4
         },
         "account_id": {
-            "type": "integer"
+            "type": [
+                "integer",
+                "null"
+            ]
         },
         "status_id": {
             "type": "integer"
