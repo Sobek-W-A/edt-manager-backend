@@ -11,7 +11,7 @@ from utils.appTestCase import AppTestCase
 
 class TestPerformance(AppTestCase):
 
-    MAX_RESPONSE_TIME = 2100
+    MAX_RESPONSE_TIME = 50
 
     def measure_response_time(
         self, method: str, url: str, *, use_auth: bool, body: dict[str, Any] = {}):
@@ -20,7 +20,7 @@ class TestPerformance(AppTestCase):
         end_time = time.time()
 
         response_time = (end_time - start_time) * 1000
-        
+
         self.assertLessEqual(
             response_time,
             self.MAX_RESPONSE_TIME,
@@ -61,10 +61,20 @@ class TestPerformance(AppTestCase):
         self.measure_response_time("GET", "/profile/me", use_auth=True)
 
     def test_post_profile(self):
-        data = {"name": "New Profile"}
+        data: dict[str, str | int] = {
+            "academic_year": 2021,
+            "firstname": "jhon",
+            "lastname": "doe",
+            "mail": "example@mail.com",
+            "quota": 0,
+            "account_id": 42,
+            "status_id": 42
+        }
         self.measure_response_time("POST", "/profile", use_auth=True, body=data)
 
     def test_patch_profile(self):
-        data = {"name": "Updated Profile"}
+        data = {
+            "firstname": "new name"
+        }
         self.measure_response_time("PATCH", "/profile/1", use_auth=True, body=data)
 

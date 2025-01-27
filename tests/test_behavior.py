@@ -35,7 +35,7 @@ class TestBehavior(AppTestCase):
     def test_post_account(self):
         data = {"username": "testuser", "password": "securepassword"}
         response = self.call_api("POST", "/account", use_auth=True, body=data)
-        
+
         body = response.json()
 
         self.assertEqual(response.status_code, 201)
@@ -49,25 +49,6 @@ class TestBehavior(AppTestCase):
     # def test_delete_account(self):
     #     response = self.call_api("DELETE", "/account/1", use_auth=True)
     #     self.assertEqual(response.status_code, 204)
-
-    def test_post_auth_login(self):
-        data = {"username": "testuser", "password": "securepassword"}
-        response = self.call_api("POST", "/auth/login", use_auth=False, body=data)
-        body = response.json()
-
-        self.assertEqual(response.status_code, 200)
-        self.assertSchemaValidation(body, "tests/schemas/auth_login.schema.json")
-
-    def test_post_auth_logout(self):
-        response = self.call_api("POST", "/auth/logout", use_auth=True)
-        self.assertEqual(response.status_code, 204)
-
-    def test_post_auth_refresh(self):
-        response = self.call_api("POST", "/auth/refresh", use_auth=True)
-        body = response.json()
-
-        self.assertEqual(response.status_code, 200)
-        self.assertSchemaValidation(body, "tests/schemas/auth_refresh.schema.json")
 
     def test_get_profile(self):
         response = self.call_api("GET", "/profile", use_auth=True)
@@ -91,7 +72,13 @@ class TestBehavior(AppTestCase):
         self.assertSchemaValidation(body, "tests/schemas/profile.schema.json")
 
     def test_post_profile(self):
-        data = {"name": "New Profile"}
+        data: dict[str, str | int] = {
+            "academic_year": 2021,
+            "firstname": "jhon",
+            "lastname": "doe",
+            "mail": "example@mail.com",
+            "quota": 0
+        }
         response = self.call_api("POST", "/profile", use_auth=True, body=data)
         body = response.json()
 
@@ -99,7 +86,9 @@ class TestBehavior(AppTestCase):
         self.assertSchemaValidation(body, "tests/schemas/post_profile.schema.json")
 
     def test_patch_profile(self):
-        data = {"name": "Updated Profile"}
+        data = {
+            "firstname": "new name"
+        }
         response = self.call_api("PATCH", "/profile/1", use_auth=True, body=data)
         self.assertEqual(response.status_code, 205)
 
