@@ -58,11 +58,13 @@ async def create_account(account: PydanticCreateAccountModel,
 
 @accountRouter.patch("/{account_id}", status_code=205)
 async def modify_account(account_id: int, account: PydanticModifyAccountModel,
-                         current_account: AuthenticatedAccount) -> None:
+                         current_account: AuthenticatedAccount) -> Response:
     """
     This method modifies an account.
     """
     await AccountService.modify_account(account_id, account, current_account)
+
+    return Response(status_code=205)
 
 
 @accountRouter.delete("/{account_id}", status_code=204)
