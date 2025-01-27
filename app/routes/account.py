@@ -6,7 +6,7 @@ from fastapi import APIRouter, Response
 
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
-                                              PydanticAccountPasswordResponse,
+                                              PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
 
@@ -30,6 +30,14 @@ async def get_all_accounts(current_account: AuthenticatedAccount) -> list[Pydant
     """
     return await AccountService.get_all_accounts(current_account)
 
+@accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200, response_model=list[PydanticAccountWithoutProfileModel])
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAccountWithoutProfileModel]:
+    """
+    This method returns all the accounts not linked to a profile.
+    It returns specifically accounts that are not linked to a profile ever,
+    or for the given academic year.
+    """
+    return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account)
 
 @accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountModel)
 async def get_account(account_id: int, current_account: AuthenticatedAccount) -> PydanticAccountModel:
@@ -50,11 +58,13 @@ async def create_account(account: PydanticCreateAccountModel,
 
 @accountRouter.patch("/{account_id}", status_code=205)
 async def modify_account(account_id: int, account: PydanticModifyAccountModel,
-                         current_account: AuthenticatedAccount) -> None:
+                         current_account: AuthenticatedAccount) -> Response:
     """
     This method modifies an account.
     """
     await AccountService.modify_account(account_id, account, current_account)
+
+    return Response(status_code=205)
 
 
 @accountRouter.delete("/{account_id}", status_code=204)

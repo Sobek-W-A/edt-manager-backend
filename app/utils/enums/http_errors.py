@@ -18,6 +18,7 @@ class CommonErrorMessages(enum.StrEnum):
     PROFILE_NOT_FOUND        = "Profile was not found."
     PROFILE_NOT_ENABLED      = "This profile is not enabled."
     ACCOUNT_NOT_FOUND        = "Account was not found."
+    ACCOUNT_ALREADY_LINKED   = "This account is already linked to a profile for the academic year provided."
     PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
     # Credentials Errors
     INVALID_CREDENTIALS       = "Invalid credentials."
@@ -31,11 +32,14 @@ class CommonErrorMessages(enum.StrEnum):
     # Folder Errors
     FOLDER_AND_UE_NOT_ENABLED = "You can't have a folder with a folder and an UE"
     # UE Errors
-    UE_NOT_FOUND             = "UE was not found"
-    UE_ALREADY_EXIST         = "UE already exists"
+    UE_NOT_FOUND              = "UE was not found"
+    UE_ALREADY_EXIST          = "UE already exists"
     #Course Errors
-    COURSE_NOT_FOUND         = "Course was not found"
-    COURSE_ALREADY_EXIST     = "Course already exists"
+    COURSE_NOT_FOUND          = "Course was not found"
+    COURSE_ALREADY_EXIST      = "Course already exists"
+    COURSE_TYPE_NOT_FOUND     = "Course type was not found"
+    DURATION_VALUE_INCORRECT  = "The duration can't be negative"
+    GROUP_VALUE_INCORRECT     = "The Group count value is invalid"
     # Role Errors
     ROLE_NOT_FOUND            = "Role was not found"
     ROLE_ALREADY_EXIST        = "Role already exists"
@@ -46,3 +50,5 @@ class CommonErrorMessages(enum.StrEnum):
     AFFECTATION_ACADEMIC_YEAR_MISMATCH   = "The two academic year provided are different. They cannot be linked by the same affectation."
     AFFECTATION_NOT_FOUND                = "Affectation was not found."
     AFFECTATION_GROUP_INVALID            = "Invalid group number. Must be positive and less than the group count of the course."
+    # Status Errors 
+    STATUS_NOT_FOUND          = "Status was not found"

@@ -15,7 +15,7 @@ tag: Tag = {
     "name": "UE",
     "description": "UE-related operations."
 }
-
+#TODO
 
 @ueRouter.get("/{ue_id}",status_code=200, response_model=PydanticUEModel)
 async def get_ue_by_id(ue_id: int,current_account: AuthenticatedAccount) -> PydanticUEModel:
@@ -43,4 +43,4 @@ async def delete_ue(ue_id: int,current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the UE of the given UE id.
     """
-    return await UEService.delete_ue(ue_id)
+    return await UEService.delete_ue(ue_id,current_account)
