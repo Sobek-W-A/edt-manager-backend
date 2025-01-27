@@ -10,7 +10,7 @@
         "profile": {
             "oneOf": [
                 {"type": "null"},
-                {"$ref": "file:///C:/Users/leo_85/Documents/GitHub/edt-manager-backend/tests/schemas/profile.schema.json"}
+                {"$ref": "file:///tests/schemas/profile.schema.json"}
             ]
         }
     },

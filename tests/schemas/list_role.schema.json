@@ -1,6 +1,6 @@
 {
     "type": "array",
     "items": {
-        "$ref": "file:///C:/Users/leo_85/Documents/GitHub/edt-manager-backend/tests/schemas/role.schema.json"
+        "$ref": "file:///tests/schemas/role.schema.json"
     }
 }
