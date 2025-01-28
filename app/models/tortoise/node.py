@@ -4,8 +4,9 @@ This module contains the definition of the Composite model.
 """
 
 from tortoise.fields import (CharField,
-                             Field,
+                             BooleanField,
                              IntField,
+                             Field,
                              ForeignKeyField,
                              ForeignKeyNullableRelation)
 
@@ -17,12 +18,14 @@ class NodeInDB(AcademicYear):
     This model represents a composite pattern.
     """
 
-    id     : Field[int] = IntField(pk=True)
-    name   : Field[str] = CharField(max_length=128)
+    id     : Field[int]  = IntField(pk=True)
+    name   : Field[str]  = CharField(max_length=128)
+    is_root: Field[bool] = BooleanField(default=False)
 
     parent : ForeignKeyNullableRelation["NodeInDB"] = ForeignKeyField("models.NodeInDB",
                                                                       related_name="child_nodes",
                                                                       null=True)
+    child_nodes: ForeignKeyNullableRelation["NodeInDB"]
 
     class Meta(AcademicYear.Meta):
         """

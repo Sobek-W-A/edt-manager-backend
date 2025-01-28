@@ -28,14 +28,15 @@ class PydanticNodeModel(AcademicYearPydanticModel):
     """
     id       : int
     name     : str
-    children : Optional[Union[list["PydanticNodeModel"], list[int]]] = None
+    is_root  : bool
+    children : Optional[Union[list[int], list["PydanticNodeModel"]]] = None
 
     class Config:
         """
         Pydantic configuration.
         """
         arbitrary_types_allowed : bool = True
-
+        from_attributes: bool = True
 
 class PydanticUEInNodeModel(AcademicYearPydanticModel):
     """
@@ -57,6 +58,7 @@ class PydanticNodeFrontModel(AcademicYearPydanticModel):
     id       : int
     type     : str
     name     : str
+    is_root  : bool
     children : Optional[Union[list["PydanticNodeFrontModel"], list["PydanticUEInNodeModel"]]] = None
 
     class Config:

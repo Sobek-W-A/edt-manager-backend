@@ -11,12 +11,13 @@ class UEInDB(NodeInDB):
     """
     This model represents a UE.
     """
-    # Override `parent` to remove backward relation duplication
+    # Override `parent` and chil_nodes to remove backward relation duplication
     parent: ForeignKeyNullableRelation["NodeInDB"] = ForeignKeyField(
         "models.NodeInDB",
         related_name=None,  # Disable backward relation for this subclass
         null=True,
     )
+    child_nodes: ForeignKeyNullableRelation["NodeInDB"] = None
 
     courses : ManyToManyRelation[CourseInDB] = ManyToManyField("models.CourseInDB",
                                                                related_name="ue",

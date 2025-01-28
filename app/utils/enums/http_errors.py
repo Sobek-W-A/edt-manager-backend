@@ -30,6 +30,8 @@ class CommonErrorMessages(enum.StrEnum):
     # Permission Errors
     FORBIDDEN_ACTION          = "You don't have the permission to perform this operation."
     # Folder Errors
+    NODE_NOT_FOUND            = "Node was not found"
+    ROOT_NODE_NOT_FOUND       = "Root node was not found"
     FOLDER_AND_UE_NOT_ENABLED = "You can't have a folder with a folder and an UE"
     # UE Errors
     UE_NOT_FOUND              = "UE was not found"

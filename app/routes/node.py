@@ -3,8 +3,12 @@ This module provides operations related to nodes.
 Those are the "folders" before an UE.
 """
 from fastapi import APIRouter
-from app.models.pydantic.NodeModel import PydanticNodeFrontModel
+
+from app.models.aliases import AuthenticatedAccount
+
+from app.models.pydantic.NodeModel import PydanticNodeFrontModel, PydanticNodeModel
 from app.routes.tags import Tag
+from app.services import NodeService
 
 nodeRouter: APIRouter = APIRouter(prefix="/node")
 tag: Tag = {
@@ -12,68 +16,49 @@ tag: Tag = {
     "description": "Node-related operations."
 }
 
-
-@nodeRouter.get("/{academic_year}", status_code=200, response_model=None)
-async def get_nodes_by_academic_year(academic_year: int) -> None:
-    """
-    This method returns the nodes of the given academic year.
-    """
-    # TODO
-    return None
-
-
-
-
-
-
-
-
-
-
-@nodeRouter.get("/{node_id}", status_code=200, response_model=None)
-async def get_node_by_id(node_id: int) -> None:
+@nodeRouter.get("/id/{node_id}", status_code=200, response_model=PydanticNodeModel)
+async def get_node_by_id(node_id: int, current_account: AuthenticatedAccount) ->  PydanticNodeModel:
     """
     This method returns the node of the given node id.
     Also returns the contents of the sub-nodes.
     """
-    # TODO
-    return None
+    return await NodeService.get_node_by_id(node_id, current_account)
 
 
+@nodeRouter.get("/root/{academic_year}", status_code=200, response_model=PydanticNodeModel)
+async def get_root_node(academic_year: int, current_account: AuthenticatedAccount) -> PydanticNodeModel:
+    """
+    This method returns the root node of the given academic year.
+    Also returns the sub-nodes ids.
+    """
+    return await NodeService.get_root_node(academic_year, current_account)
 
-
+@nodeRouter.get("/{academic_year}", status_code=200, response_model=PydanticNodeModel)
+async def get_nodes_by_academic_year(academic_year: int, current_account: AuthenticatedAccount) -> PydanticNodeModel:
+    """
+    This method returns the nodes of the given academic year.
+    """
+    return await NodeService.get_all_nodes(academic_year, current_account)
 
 
 @nodeRouter.post("/", status_code=201, response_model=None)
-async def add_node() -> None:
+async def add_node(current_account: AuthenticatedAccount) -> None:
     """
     This method creates a new node.
     """
     # TODO
     return None
 
-
-
-
-
-
 @nodeRouter.post("/{academic_year}", status_code=205)
-async def add_or_modify_arborescence(academic_year: int, body: PydanticNodeFrontModel) -> None:
+async def add_or_modify_arborescence(academic_year: int, body: PydanticNodeFrontModel, current_account: AuthenticatedAccount) -> None:
     """
     This method adds or modifies the arborescence of the given academic year.
     """
     # TODO
     return None
 
-
-
-
-
-
-
-
 @nodeRouter.patch("/{node_id}", status_code=205)
-async def modify_node(node_id: int, body: None) -> None:
+async def modify_node(node_id: int, body: None, current_account: AuthenticatedAccount) -> None:
     """
     This method modifies the node of the given node id.
     """
@@ -81,7 +66,7 @@ async def modify_node(node_id: int, body: None) -> None:
     return None
 
 @nodeRouter.delete("/{node_id}", status_code=204)
-async def delete_node(node_id: int) -> None:
+async def delete_node(node_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the node of the given node id.
     """
