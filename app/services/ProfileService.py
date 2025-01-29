@@ -10,6 +10,7 @@ from tortoise.expressions import Q
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
                                               PydanticProfileResponse)
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
@@ -180,3 +181,18 @@ async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
     await profile.delete()
+
+
+async def get_number_of_profile(academic_year: int, current_account: AccountInDB) -> NumberOfElement:
+    """
+    This method get the number of profile.
+    """
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    number_profile: int = await ProfileInDB.filter(academic_year=academic_year).count()
+
+    return NumberOfElement(
+        number_of_elements=number_profile
+    )
