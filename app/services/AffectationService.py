@@ -98,7 +98,16 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
                                                                         hours=affectation.hours,
                                                                         date=datetime.now())
     
-    return PydanticAffectation.model_validate(affectation_created)
+    await affectation_created.fetch_related("profile", "course")
+
+    PydanticAffectation(
+                id=affectation_created.id,
+                profile=PydanticProfileResponse.model_validate(affectation_created.profile),
+                course_id=affectation_created.course.id,
+                hours=affectation_created.hours,
+                notes=affectation_created.notes,
+                date=affectation_created.date,
+                group=affectation_created.group)
 
 
 async def modify_affectation_by_affectation_id(current_account: AccountInDB, new_data: PydanticAffectationInModify, affectation_id: int) -> None:
