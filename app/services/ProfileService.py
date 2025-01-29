@@ -183,7 +183,7 @@ async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     await profile.delete()
 
 
-async def get_number_of_profile(current_account) -> NumberOfElement:
+async def get_number_of_profile(academic_year: int, current_account: AccountInDB) -> NumberOfElement:
     """
     This method get the number of profile.
     """
@@ -191,7 +191,7 @@ async def get_number_of_profile(current_account) -> NumberOfElement:
                             AvailableOperations.GET,
                             current_account)
 
-    number_profile: int = await ProfileInDB.all().count()
+    number_profile: int = await ProfileInDB.filter(academic_year=academic_year).count()
 
     return NumberOfElement(
         number_of_elements=number_profile

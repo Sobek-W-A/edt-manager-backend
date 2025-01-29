@@ -86,9 +86,9 @@ async def delete_profile(profile_id: int, current_account: AuthenticatedAccount)
     await ProfileService.delete_profile(profile_id, current_account)
 
 
-@profileRouter.get("/nb/", status_code=200, response_model=NumberOfElement)
-async def get_nb_profile(current_account: AuthenticatedAccount) -> NumberOfElement:
+@profileRouter.get("/nb/{academic_year}", status_code=200, response_model=NumberOfElement)
+async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccount) -> NumberOfElement:
     """
     This method get the number of profile in the database.
     """
-    return await ProfileService.get_number_of_profile(current_account)
+    return await ProfileService.get_number_of_profile(academic_year, current_account)
