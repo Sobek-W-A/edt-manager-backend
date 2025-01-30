@@ -12,7 +12,7 @@ class PydanticNodeModelFromJSON(BaseModel):
     Model for Nodes loaded from JSON files.
     """
     name          : str
-    parent_id     : int | None
+    parent_id     : int  | None
     academic_year : int
 
     class Config:
@@ -26,10 +26,9 @@ class PydanticNodeModel(AcademicYearPydanticModel):
     """
     This module provides a model for a Folder.
     """
-    id       : int
-    name     : str
-    is_root  : bool
-    children : Optional[Union[list[int], list["PydanticNodeModel"]]] = None
+    id         : int
+    name       : str
+    child_nodes: Optional[Union[list[int], list["PydanticNodeModel"]]] = None
 
     class Config:
         """
@@ -55,11 +54,10 @@ class PydanticNodeFrontModel(AcademicYearPydanticModel):
     """
     Pydantic model for a Node with its UEs.
     """
-    id       : int
-    type     : str
-    name     : str
-    is_root  : bool
-    children : Optional[Union[list["PydanticNodeFrontModel"], list["PydanticUEInNodeModel"]]] = None
+    id         : int
+    type       : str
+    name       : str
+    child_nodes: Optional[Union[list["PydanticNodeFrontModel"], list["PydanticUEInNodeModel"]]] = None
 
     class Config:
         """
