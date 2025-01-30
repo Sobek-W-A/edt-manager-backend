@@ -7,8 +7,9 @@ from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
 
-from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify
-from app.models.pydantic.ProfileModel import PydanticProfileResponse
+from app.models.pydantic.AffectationModel import (PydanticAffectation,
+                                                  PydanticAffectationInCreate,
+                                                  PydanticAffectationInModify)
 from app.routes.tags import Tag
 from app.services import AffectationService
 
@@ -26,8 +27,8 @@ async def get_teacher_affectations(profile_id: int, current_account: Authenticat
     """
     return await AffectationService.get_teacher_affectations(profile_id, current_account)
 
-@affectationRouter.get("/course/{course_id}",status_code=200, response_model=list[PydanticProfileResponse])
-async def get_course_affectations(course_id: int, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+@affectationRouter.get("/course/{course_id}",status_code=200, response_model=list[PydanticAffectation])
+async def get_course_affectations(course_id: int, current_account: AuthenticatedAccount) -> list[PydanticAffectation]:
     """
     This method returns all teachers assigned to a class.
     """
