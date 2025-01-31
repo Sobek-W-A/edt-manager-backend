@@ -28,7 +28,7 @@ class PydanticNodeModelWithChildIds(AcademicYearPydanticModel):
     """
     id         : int
     name       : str
-    child_nodes: Optional[list[int]] = None
+    child_nodes: Optional[list[Union[int, "PydanticUEInNodeModel"]]] = None
 
     class Config:
         """
