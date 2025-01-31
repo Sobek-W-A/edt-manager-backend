@@ -28,6 +28,7 @@ class PydanticNodeModelWithChildIds(AcademicYearPydanticModel):
     """
     id         : int
     name       : str
+    type       : str = "node"
     child_nodes: Optional[list[Union[int, "PydanticUEInNodeModel"]]] = None
 
     class Config:
@@ -44,6 +45,7 @@ class PydanticNodeModel(AcademicYearPydanticModel):
     """
     id         : int
     name       : str
+    type       : str = "node"
     child_nodes: Optional[Union[list["PydanticUEInNodeModel"], list["PydanticNodeModel"]]] = None
 
     class Config:
@@ -59,6 +61,7 @@ class PydanticUEInNodeModel(PydanticNodeModel):
     """
     id  : int
     name: str
+    type: str = "ue"
 
 
 class PydanticNodeCreateModel(BaseModel):

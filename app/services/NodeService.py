@@ -70,7 +70,7 @@ async def build_tree_recursive(current_node: NodeInDB, node_map: dict[int, NodeI
             child: NodeInDB | None = node_map.get(c.id)
             if child is not None :
                 children.append(await build_tree_recursive(child, node_map))
-
+    
     pydantic_node: PydanticNodeModel = PydanticNodeModel(
         id=current_node.id,
         academic_year=current_node.academic_year,
@@ -78,7 +78,7 @@ async def build_tree_recursive(current_node: NodeInDB, node_map: dict[int, NodeI
         child_nodes=children
     )
 
-    return cast(PydanticNodeModel, add_ues_to_node_model(pydantic_node, current_node.academic_year))
+    return cast(PydanticNodeModel, await add_ues_to_node_model(pydantic_node, current_node.academic_year))
 
 async def build_node_with_child_id(node: NodeInDB, children: Optional[list[NodeInDB]] = None) -> PydanticNodeModelWithChildIds:
     """
