@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
 
-from app.models.pydantic.NodeModel import PydanticNodeCreateModel, PydanticNodeFrontModel, PydanticNodeModel, PydanticNodeUpdateModel
+from app.models.pydantic.NodeModel import PydanticNodeCreateModel, PydanticNodeModel, PydanticNodeUpdateModel
 from app.routes.tags import Tag
 from app.services import NodeService
 
