@@ -3,10 +3,16 @@ This module provides methods to manage nodes.
 Nodes are the "folders" before an UE.
 """
 
+from typing import Union
 from fastapi import HTTPException
-from app.models.pydantic.NodeModel import PydanticNodeCreateModel, PydanticNodeModel, PydanticNodeUpdateModel
+from app.models.pydantic.NodeModel import (PydanticNodeCreateModel,
+                                           PydanticNodeModel,
+                                           PydanticNodeModelWithChildIds,
+                                           PydanticNodeUpdateModel,
+                                           PydanticUEInNodeModel)
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.node import NodeInDB
+from app.models.tortoise.ue import UEInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
@@ -46,12 +52,19 @@ async def build_tree_recursive(current_node: NodeInDB, node_map: dict[int, NodeI
     Returns:
         PydanticNodeModel : A tree-like structure, completed with he children relationships.
     """
-    children: list[PydanticNodeModel] = []
+    children: Union[list[PydanticNodeModel], list[PydanticUEInNodeModel]] = []
     if current_node.child_nodes is not None:
         for c in await current_node.child_nodes.all():
             child: NodeInDB | None = node_map.get(c.id)
             if child is not None :
                 children.append(await build_tree_recursive(child, node_map))
+
+    # We check if the current Node has Ues
+    children_ues = await UEInDB.filter(parent_id=current_node.id,
+                                    academic_year=current_node.academic_year).all()
+    for ue in children_ues:
+        children.append(PydanticUEInNodeModel.model_validate(ue)) 
+
 
     return PydanticNodeModel(
         id=current_node.id,
@@ -60,20 +73,19 @@ async def build_tree_recursive(current_node: NodeInDB, node_map: dict[int, NodeI
         child_nodes=children
     )
 
-async def build_node_with_child_id(node: NodeInDB, children: list[NodeInDB]) -> PydanticNodeModel:
+async def build_node_with_child_id(node: NodeInDB, children: list[NodeInDB]) -> PydanticNodeModelWithChildIds:
     """
     This method builds a node with its children ids.
     Does not build sub-nodes.
     """
-    return PydanticNodeModel(
+    return PydanticNodeModelWithChildIds(
         id=node.id,
         academic_year=node.academic_year,
         name=node.name,
         child_nodes=[c.id for c in children]
     )
 
-
-async def get_node_by_id(node_id: int, current_account: AccountInDB) -> PydanticNodeModel:
+async def get_node_by_id(node_id: int, current_account: AccountInDB) -> PydanticNodeModelWithChildIds:
     """
     This method returns the Node of the given node id.
     Also returns the contents of the sub-nodes.
@@ -90,9 +102,9 @@ async def get_node_by_id(node_id: int, current_account: AccountInDB) -> Pydantic
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
     if node.child_nodes is not None:
         return await build_node_with_child_id(node, await node.child_nodes.all())
-    return PydanticNodeModel.model_validate(node)
+    return PydanticNodeModelWithChildIds.model_validate(node)
 
-async def get_root_node(academic_year: int, current_account: AccountInDB) -> PydanticNodeModel:
+async def get_root_node(academic_year: int, current_account: AccountInDB) -> PydanticNodeModelWithChildIds:
     """
     This method returns the root Node of the given academic year.
     Also returns the sub-nodes ids.
@@ -106,7 +118,7 @@ async def get_root_node(academic_year: int, current_account: AccountInDB) -> Pyd
     if root.child_nodes is not None:
         return await build_node_with_child_id(root, await root.child_nodes.all())
 
-    return PydanticNodeModel.model_validate(root)
+    return PydanticNodeModelWithChildIds.model_validate(root)
 
 async def get_root_arborescence(academic_year: int, current_account: AccountInDB) -> PydanticNodeModel:
     """
@@ -149,13 +161,10 @@ async def get_all_child_nodes(node: int | NodeInDB, academic_year: int, current_
                                                .prefetch_related("child_nodes")
 
     node_map: dict[int, NodeInDB] = {node.id: node for node in all_nodes}
-
-    print(node_map)
-
     return await build_tree_recursive(node, node_map)
 
 
-async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, current_account: AccountInDB) -> PydanticNodeModel:
+async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, current_account: AccountInDB) -> PydanticNodeModelWithChildIds:
     """
     This method creates a new Node.
     """
@@ -175,7 +184,7 @@ async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, 
     )
 
     await node.save()
-    return PydanticNodeModel.model_validate(node)
+    return PydanticNodeModelWithChildIds.model_validate(node)
 
 async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AccountInDB) -> None:
     """
