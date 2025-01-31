@@ -1,10 +1,9 @@
 """
 Pydantic models for Nodes.
 """
-from typing import List, Optional
+from typing import Optional, Union
 from pydantic import BaseModel
 
-from app.models.pydantic.UEModel import PydanticUEModel
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
@@ -13,7 +12,7 @@ class PydanticNodeModelFromJSON(BaseModel):
     Model for Nodes loaded from JSON files.
     """
     name          : str
-    parent_id     : int | None
+    parent_id     : int  | None
     academic_year : int
 
     class Config:
@@ -27,9 +26,63 @@ class PydanticNodeModel(AcademicYearPydanticModel):
     """
     This module provides a model for a Folder.
     """
-    name     : str
-    children : Optional[List["PydanticNodeModel"]] = None
-    ue       : Optional[PydanticUEModel] = None
+    id         : int
+    name       : str
+    child_nodes: Optional[Union[list[int], list["PydanticNodeModel"]]] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+        from_attributes: bool = True
+
+class PydanticUEInNodeModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for a Node with its UEs.
+    """
+    id       : int
+    type     : str
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+
+class PydanticNodeCreateModel(BaseModel):
+    """
+    Pydantic model for creating a Node.
+    """
+    name         : str
+    parent_id    : Optional[int] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+
+class PydanticNodeUpdateModel(BaseModel):
+    """
+    Pydantic model for creating a Node.
+    """
+    name         : Optional[str] = None
+    parent_id    : Optional[int] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+
+class PydanticNodeFrontModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for a Node with its UEs.
+    """
+    id         : int
+    name       : str
+    child_nodes: Optional[Union[list["PydanticNodeFrontModel"], list["PydanticUEInNodeModel"]]] = None
 
     class Config:
         """
