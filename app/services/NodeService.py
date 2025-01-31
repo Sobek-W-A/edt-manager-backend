@@ -4,7 +4,7 @@ Nodes are the "folders" before an UE.
 """
 
 from fastapi import HTTPException
-from app.models.pydantic.NodeModel import PydanticNodeModel
+from app.models.pydantic.NodeModel import PydanticNodeCreateModel, PydanticNodeModel, PydanticNodeUpdateModel
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.node import NodeInDB
 from app.services.PermissionService import check_permissions
@@ -155,23 +155,67 @@ async def get_all_child_nodes(node: int | NodeInDB, academic_year: int, current_
     return await build_tree_recursive(node, node_map)
 
 
-async def create_node(node_id: int) -> None:
+async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, current_account: AccountInDB) -> PydanticNodeModel:
     """
     This method creates a new Node.
     """
+    await check_permissions(
+        AvailableServices.NODE_SERVICE,
+        AvailableOperations.CREATE,
+        current_account)
+    
+    if node_to_add.parent_id is not None and not await NodeInDB.exists(id=node_to_add.parent_id, academic_year=academic_year):
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
-async def add_or_modify_arborescence(academic_year: int) -> None:
-    """
-    This method adds or modifies the arborescence of the given academic year.
-    """
+    node: NodeInDB = NodeInDB(
+        academic_year=academic_year,
+        name=node_to_add.name,
+        parent_id=node_to_add.parent_id
+    )
 
-async def update_node(node_id: int) -> None:
+    await node.save()
+    return PydanticNodeModel.model_validate(node)
+
+async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AccountInDB) -> None:
     """
     This method updates the Node of the given node id.
     """
+    await check_permissions(
+        AvailableServices.NODE_SERVICE,
+        AvailableOperations.UPDATE,
+        current_account)
 
+    node_to_update: NodeInDB | None = await NodeInDB.get_or_none(id=node_id, academic_year=academic_year)
+    if node_to_update is None:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+    
+    if new_data.parent_id is not None and not await NodeInDB.exists(id=new_data.parent_id, academic_year=academic_year):
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
-async def delete_node(node_id: int) -> None:
+    node_to_update.update_from_dict(new_data.model_dump(exclude_none=True))# type: ignore
+
+    await node_to_update.save()
+
+async def delete_node(academic_year: int, node_id: int, current_account: AccountInDB) -> None:
     """
     This method deletes the Node of the given node id.
     """
+    await check_permissions(
+        AvailableServices.NODE_SERVICE,
+        AvailableOperations.DELETE,
+        current_account)
+
+    node_to_delete: NodeInDB | None = await NodeInDB.get_or_none(id=node_id, academic_year=academic_year)\
+                                                    .prefetch_related("child_nodes")
+    if node_to_delete is None:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+    
+    if node_to_delete.child_nodes is not None:
+        raise HTTPException(status_code=400,
+                            detail=CommonErrorMessages.NODE_CANT_DELETE_CHILDREN.value)
+
+    await node_to_delete.delete()

@@ -50,12 +50,37 @@ class PydanticUEInNodeModel(AcademicYearPydanticModel):
         """
         arbitrary_types_allowed : bool = True
 
+class PydanticNodeCreateModel(BaseModel):
+    """
+    Pydantic model for creating a Node.
+    """
+    name         : str
+    parent_id    : Optional[int] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+
+class PydanticNodeUpdateModel(BaseModel):
+    """
+    Pydantic model for creating a Node.
+    """
+    name         : Optional[str] = None
+    parent_id    : Optional[int] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        arbitrary_types_allowed : bool = True
+
 class PydanticNodeFrontModel(AcademicYearPydanticModel):
     """
     Pydantic model for a Node with its UEs.
     """
     id         : int
-    type       : str
     name       : str
     child_nodes: Optional[Union[list["PydanticNodeFrontModel"], list["PydanticUEInNodeModel"]]] = None
 

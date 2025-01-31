@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
 
-from app.models.pydantic.NodeModel import PydanticNodeFrontModel, PydanticNodeModel
+from app.models.pydantic.NodeModel import PydanticNodeCreateModel, PydanticNodeFrontModel, PydanticNodeModel, PydanticNodeUpdateModel
 from app.routes.tags import Tag
 from app.services import NodeService
 
@@ -47,34 +47,23 @@ async def get_arborescence_from_node(academic_year: int, node_id: int,current_ac
     return await NodeService.get_all_child_nodes(node_id, academic_year, current_account)
 
 
-@nodeRouter.post("/", status_code=201, response_model=None)
-async def add_node(current_account: AuthenticatedAccount) -> None:
+@nodeRouter.post("/{academic_year}", status_code=201, response_model=PydanticNodeModel)
+async def add_node(academic_year: int, node_to_add: PydanticNodeCreateModel, current_account: AuthenticatedAccount) -> PydanticNodeModel:
     """
     This method creates a new node.
     """
-    # TODO
-    return None
+    return await NodeService.create_node(academic_year, node_to_add, current_account)
 
-@nodeRouter.post("/{academic_year}", status_code=205)
-async def add_or_modify_arborescence(academic_year: int, body: PydanticNodeFrontModel, current_account: AuthenticatedAccount) -> None:
-    """
-    This method adds or modifies the arborescence of the given academic year.
-    """
-    # TODO
-    return None
-
-@nodeRouter.patch("/{node_id}", status_code=205)
-async def modify_node(node_id: int, body: None, current_account: AuthenticatedAccount) -> None:
+@nodeRouter.patch("/{academic_year}/{node_id}", status_code=205)
+async def modify_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AuthenticatedAccount) -> None:
     """
     This method modifies the node of the given node id.
     """
-    # TODO
-    return None
+    return await NodeService.update_node(academic_year, node_id, new_data, current_account)
 
-@nodeRouter.delete("/{node_id}", status_code=204)
-async def delete_node(node_id: int, current_account: AuthenticatedAccount) -> None:
+@nodeRouter.delete("/{academic_year}/{node_id}", status_code=204)
+async def delete_node(academic_year: int, node_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the node of the given node id.
     """
-    # TODO
-    return None
+    return await NodeService.delete_node(academic_year, node_id, current_account)
