@@ -238,6 +238,14 @@ async def delete_node(academic_year: int, node_id: int, current_account: Account
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
     
     if node_to_delete.child_nodes is not None:
+        children :list[NodeInDB] = await node_to_delete.child_nodes.all()
+        if len(children) > 0:
+            raise HTTPException(status_code=400,
+                                detail=CommonErrorMessages.NODE_CANT_DELETE_CHILDREN.value)
+        
+    children_ues = await UEInDB.filter(parent_id=node_to_delete.id,
+                                       academic_year=academic_year).all()
+    if len(children_ues) > 0:
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.NODE_CANT_DELETE_CHILDREN.value)
 

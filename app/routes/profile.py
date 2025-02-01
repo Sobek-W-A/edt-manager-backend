@@ -7,7 +7,6 @@ from app.models.pydantic.ProfileModel import (PydanticProfileModify,
                                               PydanticProfileCreate,
                                               PydanticProfileResponse, PydanticNumberOfProfile)
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.routes.tags import Tag
 from app.services import ProfileService
 

@@ -10,7 +10,6 @@ from tortoise.expressions import Q
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
                                               PydanticProfileResponse, PydanticNumberOfProfile)
-from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
