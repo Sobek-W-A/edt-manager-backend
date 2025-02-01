@@ -29,7 +29,7 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
                             AvailableOperations.UPDATE,
                             current_account)
 
-    academic_year: int = 2024 # TODO: Change this to a URL parameter.
+    academic_year: int = model.academic_year
 
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
 
@@ -69,7 +69,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
                             AvailableOperations.CREATE,
                             current_account)
 
-    academic_year: int = 2024
+    academic_year: int = model.academic_year
 
     #We check if the login or mail are already used
     if await ProfileInDB.filter(mail=model.mail, academic_year=academic_year).exists():
