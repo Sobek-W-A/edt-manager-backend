@@ -198,7 +198,7 @@ async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, 
     )
 
     await node.save()
-    return PydanticNodeModelWithChildIds.model_validate(node)
+    return await build_node_with_child_id(node)
 
 async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AccountInDB) -> None:
     """
