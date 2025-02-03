@@ -11,6 +11,7 @@ from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
                                               PydanticProfileResponse)
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
@@ -102,7 +103,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
     except ValidationError as e:
         raise MailInvalidException from e
 
-async def get_all_profiles(current_account: AccountInDB) -> list[PydanticProfileResponse]:
+async def get_all_profiles(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles.
     """
@@ -123,7 +124,7 @@ async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> Py
 
     return PydanticProfileResponse.model_validate(profile)  # Use model_validate to create the response model
 
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles not linked to an account.
     """

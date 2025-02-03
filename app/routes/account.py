@@ -13,6 +13,7 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.routes.tags import Tag
 from app.services import AccountService
 
@@ -24,23 +25,23 @@ tag: Tag = {
 
 
 @accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AuthenticatedAccount, body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method returns all the accounts.
     """
-    return await AccountService.get_all_accounts(current_account)
+    return await AccountService.get_all_accounts(current_account, body)
 
 
 @accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200,
                    response_model=list[PydanticAccountWithoutProfileModel])
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount, body: PydanticPagination) -> list[
     PydanticAccountWithoutProfileModel]:
     """
     This method returns all the accounts not linked to a profile.
     It returns specifically accounts that are not linked to a profile ever,
     or for the given academic year.
     """
-    return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account)
+    return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account, body)
 
 
 @accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountModel)

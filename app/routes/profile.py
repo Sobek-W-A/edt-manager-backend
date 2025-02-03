@@ -8,6 +8,7 @@ from app.models.pydantic.ProfileModel import (PydanticProfileModify,
                                               PydanticProfileResponse)
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.routes.tags import Tag
 from app.services import ProfileService
 
@@ -38,11 +39,11 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
 
 
 @profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_all_profiles(current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+async def get_all_profiles(current_account: AuthenticatedAccount, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
-    return await ProfileService.get_all_profiles(current_account)
+    return await ProfileService.get_all_profiles(current_account, body)
 
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
@@ -54,12 +55,12 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
 
 
 @profileRouter.get("/notlinked/{academic_year}", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount) -> list[
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount, body: PydanticPagination) -> list[
     PydanticProfileResponse]:
     """
     Returns all the profiles that are not linked to an account for the given academic year.
     """
-    return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account)
+    return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account, body)
 
 
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)

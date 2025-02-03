@@ -19,6 +19,7 @@ from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.profile import ProfileInDB
@@ -58,7 +59,7 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[
     PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
@@ -80,7 +81,7 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AccountInDB, body : PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
