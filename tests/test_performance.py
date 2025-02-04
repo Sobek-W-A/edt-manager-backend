@@ -14,12 +14,13 @@ class TestPerformance(AppTestCase):
     MAX_RESPONSE_TIME = 50
 
     def measure_response_time(
-        self, method: str, url: str, *, use_auth: bool, body: dict[str, Any] = {}):
-        start_time = time.time()
+        self, method: str, url: str, *, use_auth: bool, body: dict[str, Any] = {}
+    ) -> None:
+        start_time: float = time.time()
         self.call_api(method, url, use_auth=use_auth, body=body)
-        end_time = time.time()
+        end_time: float = time.time()
 
-        response_time = (end_time - start_time) * 1000
+        response_time: float = (end_time - start_time) * 1000
 
         self.assertLessEqual(
             response_time,
@@ -68,13 +69,10 @@ class TestPerformance(AppTestCase):
             "mail": "example@mail.com",
             "quota": 0,
             "account_id": 42,
-            "status_id": 42
+            "status_id": 42,
         }
         self.measure_response_time("POST", "/profile", use_auth=True, body=data)
 
     def test_patch_profile(self):
-        data = {
-            "firstname": "new name"
-        }
+        data: dict[str, str] = {"firstname": "new name"}
         self.measure_response_time("PATCH", "/profile/1", use_auth=True, body=data)
-

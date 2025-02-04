@@ -1,8 +1,11 @@
-import unittest
+"""
+main file to execute the test suite
+"""
+
+from unittest import TestLoader, TestSuite, TextTestRunner
 
 if __name__ == "__main__":
 
-    loader = unittest.TestLoader().discover("./tests")
-    runner = unittest.TextTestRunner(verbosity=2)
+    loader: TestSuite = TestLoader().discover("./tests")
+    runner: TextTestRunner = TextTestRunner(verbosity=2)
     runner.run(loader)
-
