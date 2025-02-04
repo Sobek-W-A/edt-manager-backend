@@ -21,54 +21,59 @@ class TestBehavior(AppTestCase):
         self.assertEqual(body["detail"], "Not authenticated")
 
     def test_get_account(self):
-        response = self.call_api("GET", "/account", use_auth=True)
-        body = response.json()
+        response: Response = self.call_api("GET", "/account", use_auth=True)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertSchemaValidation(body, "tests/schemas/list_account.schema.json")
 
     def test_get_account_by_id(self):
-        response = self.call_api("GET", "/account/1", use_auth=True)
-        body = response.json()
+        response: Response = self.call_api("GET", "/account/1", use_auth=True)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertSchemaValidation(body, "tests/schemas/user.schema.json")
 
     def test_post_account(self):
-        data = {"username": "testuser", "password": "securepassword"}
-        response = self.call_api("POST", "/account", use_auth=True, body=data)
+        data: dict[str, str | int] = {
+            "username": "testuser",
+            "password": "securepassword",
+        }
+        response: Response = self.call_api("POST", "/account", use_auth=True, body=data)
 
-        body = response.json()
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 201)
         self.assertSchemaValidation(body, "tests/schemas/post_account.schema.json")
 
     def test_patch_account(self):
-        data = {"username": "updateduser"}
-        response = self.call_api("PATCH", "/account/1", use_auth=True, body=data)
+        data: dict[str, str | int] = {"username": "updateduser"}
+        response: Response = self.call_api(
+            "PATCH", "/account/1", use_auth=True, body=data
+        )
         self.assertEqual(response.status_code, 205)
 
     # def test_delete_account(self):
-    #     response = self.call_api("DELETE", "/account/1", use_auth=True)
+    #     response: Response = self.call_api("DELETE", "/account/1", use_auth=True)
     #     self.assertEqual(response.status_code, 204)
 
     def test_get_profile(self):
-        response = self.call_api("GET", "/profile", use_auth=True)
-        body = response.json()
+        response: Response = self.call_api("GET", "/profile", use_auth=True)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertSchemaValidation(body, "tests/schemas/list_profile.schema.json")
 
     def test_get_profile_by_id(self):
-        response = self.call_api("GET", "/profile/1", use_auth=True)
-        body = response.json()
+        response: Response = self.call_api("GET", "/profile/1", use_auth=True)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertSchemaValidation(body, "tests/schemas/profile.schema.json")
 
     def test_get_profile_me(self):
-        response = self.call_api("GET", "/profile/me", use_auth=True)
-        body = response.json()
+        response: Response = self.call_api("GET", "/profile/me", use_auth=True)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertSchemaValidation(body, "tests/schemas/profile.schema.json")
@@ -79,21 +84,21 @@ class TestBehavior(AppTestCase):
             "firstname": "jhon",
             "lastname": "doe",
             "mail": "example@mail.com",
-            "quota": 0
+            "quota": 0,
         }
-        response = self.call_api("POST", "/profile", use_auth=True, body=data)
-        body = response.json()
+        response: Response = self.call_api("POST", "/profile", use_auth=True, body=data)
+        body: dict[str, Any] = response.json()
 
         self.assertEqual(response.status_code, 201)
         self.assertSchemaValidation(body, "tests/schemas/post_profile.schema.json")
 
     def test_patch_profile(self):
-        data = {
-            "firstname": "new name"
-        }
-        response = self.call_api("PATCH", "/profile/1", use_auth=True, body=data)
+        data: dict[str, str | int] = {"firstname": "new name"}
+        response: Response = self.call_api(
+            "PATCH", "/profile/1", use_auth=True, body=data
+        )
         self.assertEqual(response.status_code, 205)
 
     # def test_delete_profile(self):
-    #     response = self.call_api("DELETE", "/profile/1", use_auth=True)
+    #     response: Response = self.call_api("DELETE", "/profile/1", use_auth=True)
     #     self.assertEqual(response.status_code, 204)
