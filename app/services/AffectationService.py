@@ -30,9 +30,18 @@ async def get_teacher_affectations(profile_id: int, current_account: AccountInDB
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
     affectations : list[AffectationInDB] = await AffectationInDB.filter(profile_id=profile_id).all()
-    return [PydanticAffectation.model_validate(affectation) for affectation in affectations]
 
-async def get_course_affectations(course_id: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+    return [PydanticAffectation(
+                id=affectation.id,
+                profile=PydanticProfileResponse.model_validate(affectation.profile),
+                course_id=affectation.course.id,
+                hours=affectation.hours,
+                notes=affectation.notes,
+                date=affectation.date,
+                group=affectation.group
+            ) for affectation in affectations]
+
+async def get_course_affectations(course_id: int, current_account: AccountInDB) -> list[PydanticAffectation]:
     """
     This method returns all teachers assigned to a class.
     """
@@ -48,7 +57,15 @@ async def get_course_affectations(course_id: int, current_account: AccountInDB) 
     affectations : list[AffectationInDB] = await AffectationInDB.filter(course_id=course_id)\
                                                                 .all()\
                                                                 .prefetch_related("profile")
-    return [PydanticProfileResponse.model_validate(affectation.profile) for affectation in affectations]
+    return [PydanticAffectation(
+                id=affectation.id,
+                profile=PydanticProfileResponse.model_validate(affectation.profile),
+                course_id=affectation.course.id,
+                hours=affectation.hours,
+                notes=affectation.notes,
+                date=affectation.date,
+                group=affectation.group
+            ) for affectation in affectations]
 
 async def assign_course_to_profile(affectation: PydanticAffectationInCreate, current_account: AccountInDB) -> PydanticAffectation:
     """
@@ -81,7 +98,16 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
                                                                         hours=affectation.hours,
                                                                         date=datetime.now())
     
-    return PydanticAffectation.model_validate(affectation_created)
+    await affectation_created.fetch_related("profile", "course")
+
+    PydanticAffectation(
+                id=affectation_created.id,
+                profile=PydanticProfileResponse.model_validate(affectation_created.profile),
+                course_id=affectation_created.course.id,
+                hours=affectation_created.hours,
+                notes=affectation_created.notes,
+                date=affectation_created.date,
+                group=affectation_created.group)
 
 
 async def modify_affectation_by_affectation_id(current_account: AccountInDB, new_data: PydanticAffectationInModify, affectation_id: int) -> None:

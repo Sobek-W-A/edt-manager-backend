@@ -12,9 +12,9 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
 
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
+from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.routes.tags import Tag
 from app.services import AccountService
-
 
 accountRouter: APIRouter = APIRouter(prefix="/account")
 tag: Tag = {
@@ -30,14 +30,18 @@ async def get_all_accounts(current_account: AuthenticatedAccount) -> list[Pydant
     """
     return await AccountService.get_all_accounts(current_account)
 
-@accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200, response_model=list[PydanticAccountWithoutProfileModel])
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAccountWithoutProfileModel]:
+
+@accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200,
+                   response_model=list[PydanticAccountWithoutProfileModel])
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
+    PydanticAccountWithoutProfileModel]:
     """
     This method returns all the accounts not linked to a profile.
     It returns specifically accounts that are not linked to a profile ever,
     or for the given academic year.
     """
     return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account)
+
 
 @accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountModel)
 async def get_account(account_id: int, current_account: AuthenticatedAccount) -> PydanticAccountModel:
@@ -75,15 +79,17 @@ async def delete_account(account_id: int, current_account: AuthenticatedAccount)
     await AccountService.delete_account(account_id, current_account)
 
 
-@accountRouter.get("/{account_id}/role/{academic_year}", status_code=200,response_model=PydanticRoleResponseModel)
-async def get_role_account_by_id(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
+@accountRouter.get("/{account_id}/role/{academic_year}", status_code=200, response_model=PydanticRoleResponseModel)
+async def get_role_account_by_id(account_id: int, academic_year: int,
+                                 current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
     """
     This method get an account's roles with the account ID.
     """
 
     return await AccountService.get_role_account_by_id(account_id, current_account, academic_year)
 
-@accountRouter.get("/search/login/{keywords}", status_code=200,response_model=list[PydanticAccountModel])
+
+@accountRouter.get("/search/login/{keywords}", status_code=200, response_model=list[PydanticAccountModel])
 async def search_account_by_login(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
     """
     This method search an account by login.
@@ -91,13 +97,16 @@ async def search_account_by_login(keywords: str, current_account: AuthenticatedA
 
     return await AccountService.search_accounts_by_login(keywords, current_account)
 
-@accountRouter.get("/search/{keywords}", status_code=200,response_model=list[PydanticAccountModel])
-async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+
+@accountRouter.get("/search/{keywords}", status_code=200, response_model=list[PydanticAccountModel])
+async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount) -> list[
+    PydanticAccountModel]:
     """
     This method search an account by keywords.
     """
 
     return await AccountService.search_account_by_keywords(keywords, current_account)
+
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)
 async def set_role_account_by_id(account_id: int, current_account: AuthenticatedAccount,
@@ -108,3 +117,11 @@ async def set_role_account_by_id(account_id: int, current_account: Authenticated
     await AccountService.set_role_account_by_name(account_id, current_account, body)
 
     return Response(status_code=205)
+
+
+@accountRouter.get("/nb/", status_code=200, response_model=NumberOfElement)
+async def get_nb_accounts(current_account: AuthenticatedAccount) -> NumberOfElement:
+    """
+    This method get the number of account in the database.
+    """
+    return await AccountService.get_number_of_account(current_account)

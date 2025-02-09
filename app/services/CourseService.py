@@ -49,7 +49,7 @@ async def add_course(body: PydanticCreateCourseModel, current_account: Authentic
     if body.group_count < 0:
         raise HTTPException(status_code=422, detail=CommonErrorMessages.GROUP_VALUE_INCORRECT.value)
 
-    course_type: CourseTypeInDB = await CourseTypeInDB.get_or_none(id=body.course_type_id)
+    course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=body.course_type_id)
 
     if course_type is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_TYPE_NOT_FOUND.value)
@@ -91,7 +91,7 @@ async def modify_course(course_id: int, body: PydanticModifyCourseModel, current
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COURSE_NOT_FOUND.value)
 
     try:
-        await course_to_modify.update_from_dict(body.model_dump(exclude_none=True))
+        await course_to_modify.update_from_dict(body.model_dump(exclude_none=True)) # type: ignore
         await course_to_modify.save()
 
     except ValueError as e:

@@ -128,6 +128,7 @@ class AvailableServices(AbstractEnumLoader):
     AFFECTATION_SERVICE = Service("Affectation Service", "Service that manages course to teachers affectations.")
     STATUS_SERVICE      = Service("Status Service",  "Service that manages statuses.")
     UE_SERVICE          = Service("UE Service",      "Service that manages Learning Units.")
+    NODE_SERVICE        = Service("Node Service",    "Service that manages nodes.")
     ROLE_SERVICE        = Service("Role Service",    "Service that manages roles.")
     COURSE_SERVICE      = Service("Course Service", "Service that manages courses.")
 
@@ -136,10 +137,10 @@ class AvailablePermissions(AbstractEnumLoader):
     Enumeration to provide the available permissions.
     """
     CRUD_PROFILE = Permission(AvailableServices.PROFILE_SERVICE.value,
-                              [AvailableOperations.CREATE.value,
-                               AvailableOperations.GET.value,
-                               AvailableOperations.UPDATE.value,
-                               AvailableOperations.DELETE.value])
+                                [AvailableOperations.CREATE.value,
+                                 AvailableOperations.GET.value,
+                                 AvailableOperations.UPDATE.value,
+                                 AvailableOperations.DELETE.value])
     CRUD_ACCOUNT = Permission(AvailableServices.ACCOUNT_SERVICE.value,
                                 [AvailableOperations.CREATE.value,
                                  AvailableOperations.GET.value,
@@ -150,6 +151,11 @@ class AvailablePermissions(AbstractEnumLoader):
                                  AvailableOperations.GET.value,
                                  AvailableOperations.UPDATE.value,
                                  AvailableOperations.DELETE.value])
+    CRUD_NODE    = Permission(AvailableServices.NODE_SERVICE.value,
+                                [AvailableOperations.CREATE.value,
+                                AvailableOperations.GET.value,
+                                AvailableOperations.UPDATE.value,
+                                AvailableOperations.DELETE.value])
     CRUD_UE      = Permission(AvailableServices.UE_SERVICE.value,
                                 [AvailableOperations.CREATE.value,
                                  AvailableOperations.GET.value,
@@ -166,10 +172,10 @@ class AvailablePermissions(AbstractEnumLoader):
                                  AvailableOperations.UPDATE.value,
                                  AvailableOperations.DELETE.value])
     CRUD_COURSE = Permission(AvailableServices.COURSE_SERVICE.value,
-                             [AvailableOperations.CREATE.value,
-                              AvailableOperations.GET.value,
-                              AvailableOperations.UPDATE.value,
-                              AvailableOperations.DELETE.value])
+                                 [AvailableOperations.CREATE.value,
+                                  AvailableOperations.GET.value,
+                                  AvailableOperations.UPDATE.value,
+                                  AvailableOperations.DELETE.value])
 
 class AvailableEnsemblesPermissions(enum.Enum):
     """
