@@ -34,6 +34,7 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
 
     academic_year: int = 2024 # TODO: Change this to a URL parameter.
 
+
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
 
     if profile_to_modify is None:

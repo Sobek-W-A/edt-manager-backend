@@ -29,8 +29,7 @@ async def create_profile(body: PydanticProfileCreate, current_account: Authentic
 
 
 @profileRouter.patch("/{profile_id}", status_code=205)
-async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
-                         current_account: AuthenticatedAccount) -> Response:
+async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,current_account: AuthenticatedAccount) -> Response:
     """
     This controllers is used when modifying Profile informations.
     """
