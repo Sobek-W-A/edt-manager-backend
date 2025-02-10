@@ -112,6 +112,11 @@ async def get_all_profiles(current_account: AccountInDB, page:int, limit:int, or
 
     body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
+    valid_fields = ProfileInDB._meta.fields_map.keys()
+
+    if order not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+
     profiles_query: QuerySet[ProfileInDB] = ProfileInDB.all()
 
     paginated_profile: list[ProfileInDB] = await body.paginate_query(profiles_query)

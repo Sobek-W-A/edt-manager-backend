@@ -71,12 +71,12 @@ async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccou
     return await ProfileService.get_profile_by_id(profile_id, current_account)
 
 
-@profileRouter.get("/search/{keywords}", response_model=list[PydanticProfileResponse], status_code=200)
-async def search_profile(keywords: str, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+@profileRouter.get("/search/{keywords}/{page}/{limit}", response_model=list[PydanticProfileResponse], status_code=200)
+async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int, limit: int) -> list[PydanticProfileResponse]:
     """
     This method retrieves profiles that matches the keywords provided.
     """
-    return await ProfileService.search_profile_by_keywords(keywords, current_account)
+    return await ProfileService.search_profile_by_keywords(keywords, current_account, page, limit)
 
 
 @profileRouter.delete("/{profile_id}", status_code=204)

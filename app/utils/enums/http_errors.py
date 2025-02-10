@@ -20,6 +20,7 @@ class CommonErrorMessages(enum.StrEnum):
     ACCOUNT_NOT_FOUND        = "Account was not found."
     ACCOUNT_ALREADY_LINKED   = "This account is already linked to a profile for the academic year provided."
     PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
+    ORDER_DOES_NOT_EXIST     = "Can't order on a line who doesn't exist."
     # Credentials Errors
     INVALID_CREDENTIALS       = "Invalid credentials."
     INCORRECT_LOGIN_PASSWORD  = "Incorrect login or password."

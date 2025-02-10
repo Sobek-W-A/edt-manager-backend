@@ -95,6 +95,11 @@ async def get_all_accounts(current_account: AccountInDB, page: int, limit: int, 
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
+    valid_fields = AccountInDB._meta.fields_map.keys()
+
+    if order not in valid_fields:
+        raise HTTPException(status_code=404,detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+
     body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
     accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
