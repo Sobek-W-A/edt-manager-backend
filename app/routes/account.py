@@ -24,12 +24,12 @@ tag: Tag = {
 }
 
 
-@accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(current_account: AuthenticatedAccount, body: PydanticPagination) -> list[PydanticAccountModel]:
+@accountRouter.get("/{page}/{limit}/{order}", status_code=200, response_model=list[PydanticAccountModel])
+async def get_all_accounts(current_account: AuthenticatedAccount, page: int, limit: int, order : str) -> list[PydanticAccountModel]:
     """
     This method returns all the accounts.
     """
-    return await AccountService.get_all_accounts(current_account, body)
+    return await AccountService.get_all_accounts(current_account, page, limit,order)
 
 
 @accountRouter.get("/notlinkedtoprofile/{academic_year}", status_code=200,
@@ -99,14 +99,14 @@ async def search_account_by_login(keywords: str, current_account: AuthenticatedA
     return await AccountService.search_accounts_by_login(keywords, current_account)
 
 
-@accountRouter.get("/search/{keywords}", status_code=200, response_model=list[PydanticAccountModel])
-async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount) -> list[
+@accountRouter.get("/search/{keywords}/{page}/{limit}/{order}", status_code=200, response_model=list[PydanticAccountModel])
+async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount,page: int, limit: int) -> list[
     PydanticAccountModel]:
     """
     This method search an account by keywords.
     """
 
-    return await AccountService.search_account_by_keywords(keywords, current_account)
+    return await AccountService.search_account_by_keywords(keywords, current_account, page, limit)
 
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)

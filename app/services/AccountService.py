@@ -8,7 +8,9 @@ from typing import Annotated, Optional, TypeAlias
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from tortoise.queryset import QuerySet
 from tortoise.expressions import Q
+
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
@@ -59,7 +61,8 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB,
+                                             body: PydanticPagination) -> list[
     PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
@@ -81,7 +84,8 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(current_account: AccountInDB, body : PydanticPagination) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AccountInDB, page: int, limit: int, order: str) -> list[
+    PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
@@ -91,11 +95,14 @@ async def get_all_accounts(current_account: AccountInDB, body : PydanticPaginati
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
-    accounts: list[AccountInDB] = await AccountInDB.all() \
-        .prefetch_related("profile")
+    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+
+    accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
+
+    paginated_accounts: list[AccountInDB] = await body.paginate_query(accounts_query)
 
     profiles: dict[int, ProfileInDB | None] = {}
-    for account in accounts:
+    for account in paginated_accounts:
         if account.profile is not None:
             profile = await account.profile.filter(academic_year=academic_year) \
                 .first()
@@ -105,7 +112,7 @@ async def get_all_accounts(current_account: AccountInDB, body : PydanticPaginati
                                  id=account.id,
                                  profile=PydanticProfileResponse.model_validate(profiles[account.id]) if profiles[
                                                                                                              account.id] is not None else None)
-            for account in accounts]
+            for account in paginated_accounts]
 
 
 async def search_accounts_by_login(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
@@ -146,7 +153,7 @@ async def search_accounts_by_login(keywords: str, current_account: AccountInDB) 
     return accounts_to_return
 
 
-async def search_account_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def search_account_by_keywords(keywords: str, current_account: AccountInDB, page: int, limit: int) ->list[PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
     The search applies to the following fields: login, firstname, lastname, and email.
@@ -159,9 +166,12 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
 
     account_query: Q = Q()
     profile_query: Q = Q()
+
     for keyword in keywords.split(" "):
         account_query &= Q(login__icontains=keyword)
         profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword) | Q(mail__icontains=keyword)
+
+
 
     # Fetch accounts and prefetch profiles
     accounts: list[AccountInDB] = await AccountInDB.filter(account_query) \
@@ -202,7 +212,10 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
             ))
             account_ids.append(profile.account.id)
 
-    return accounts_to_return
+    start: int = (page - 1) * limit
+    end: int = start + limit
+
+    return accounts_to_return[start:end]
 
 
 async def create_account(account: PydanticCreateAccountModel,

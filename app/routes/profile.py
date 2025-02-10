@@ -38,12 +38,12 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
     return Response(status_code=205)
 
 
-@profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_all_profiles(current_account: AuthenticatedAccount, body: PydanticPagination) -> list[PydanticProfileResponse]:
+@profileRouter.get("/{page}/{limit}/{order}", response_model=list[PydanticProfileResponse], status_code=200)
+async def get_all_profiles(current_account: AuthenticatedAccount, page: int, limit: int, order : str ) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
-    return await ProfileService.get_all_profiles(current_account, body)
+    return await ProfileService.get_all_profiles(current_account, page, limit, order)
 
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)

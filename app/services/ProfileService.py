@@ -6,6 +6,7 @@ Provides the methods to use when interacting with a profile.
 from fastapi import HTTPException
 from pydantic import ValidationError
 from tortoise.expressions import Q
+from tortoise.queryset import QuerySet
 
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
@@ -103,14 +104,18 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
     except ValidationError as e:
         raise MailInvalidException from e
 
-async def get_all_profiles(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
+async def get_all_profiles(current_account: AccountInDB, page:int, limit:int, order: str) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles.
     """
     await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.GET, current_account)
 
-    profiles: list[ProfileInDB] = await ProfileInDB.all()
-    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]  # Use model_validate for each profile
+    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.all()
+
+    paginated_profile: list[ProfileInDB] = await body.paginate_query(profiles_query)
+    return [PydanticProfileResponse.model_validate(profile) for profile in paginated_profile]  # Use model_validate for each profile
 
 async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> PydanticProfileResponse:
     """
@@ -150,7 +155,7 @@ async def get_current_profile(current_account: AccountInDB) -> PydanticProfileRe
 
     return PydanticProfileResponse.model_validate(profile)
 
-async def search_profile_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+async def search_profile_by_keywords(keywords: str, current_account: AccountInDB, page: int, limit: int) -> list[PydanticProfileResponse]:
     """
     Searches for a profile by keywords.
     """
@@ -167,7 +172,10 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
         )
 
     profiles: list[ProfileInDB] = await ProfileInDB.filter(query).all()
-    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
+
+    start: int = (page - 1) * limit
+    end: int = start + limit
+    return [PydanticProfileResponse.model_validate(profile) for profile in profiles][start:end]
 
 async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     """
