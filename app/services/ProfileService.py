@@ -10,19 +10,18 @@ from tortoise.queryset import QuerySet
 
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
-                                              PydanticProfileResponse)
-from app.models.pydantic.tools.number_of_elements import NumberOfElement
-from app.models.pydantic.tools.pagination import PydanticPagination
                                               PydanticProfileResponse, PydanticNumberOfProfile)
+
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
 from app.services.PermissionService import check_permissions
-from app.utils.CustomExceptions import (MailAlreadyUsedException,
-                                        MailInvalidException)
+from app.utils.CustomExceptions import (MailAlreadyUsedException, MailInvalidException)
 from app.utils.enums.http_errors import CommonErrorMessages
-from app.utils.enums.permission_enums import (AvailableOperations,
-                                              AvailableServices)
+from app.utils.enums.permission_enums import (AvailableOperations, AvailableServices)
+
+
 
 
 async def modify_profile(profile_id: int, model: PydanticProfileModify, current_account: AccountInDB) -> None:
