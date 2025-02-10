@@ -13,6 +13,7 @@ from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileResponse)
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.pydantic.tools.pagination import PydanticPagination
+                                              PydanticProfileResponse, PydanticNumberOfProfile)
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
@@ -32,7 +33,7 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
                             AvailableOperations.UPDATE,
                             current_account)
 
-    academic_year: int = 2024 # TODO: Change this to a URL parameter.
+    academic_year: int = model.academic_year
 
 
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
@@ -73,7 +74,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
                             AvailableOperations.CREATE,
                             current_account)
 
-    academic_year: int = 2024
+    academic_year: int = model.academic_year
 
     #We check if the login or mail are already used
     if await ProfileInDB.filter(mail=model.mail, academic_year=academic_year).exists():
@@ -198,7 +199,7 @@ async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     await profile.delete()
 
 
-async def get_number_of_profile(academic_year: int, current_account: AccountInDB) -> NumberOfElement:
+async def get_number_of_profile(academic_year: int, current_account: AccountInDB) -> PydanticNumberOfProfile:
     """
     This method get the number of profile.
     """
@@ -208,6 +209,9 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
 
     number_profile: int = await ProfileInDB.filter(academic_year=academic_year).count()
 
-    return NumberOfElement(
-        number_of_elements=number_profile
+    number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(account_id=None).count()
+
+    return PydanticNumberOfProfile(
+        number_of_profiles_without_account=number_profile_without_account,
+        number_of_profiles_with_account=number_profile - number_profile_without_account
     )
