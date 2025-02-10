@@ -22,13 +22,14 @@ class PydanticNodeModelFromJSON(BaseModel):
         from_attributes: bool = True
 
 
-class PydanticNodeModel(AcademicYearPydanticModel):
+class PydanticNodeModelWithChildIds(AcademicYearPydanticModel):
     """
     This module provides a model for a Folder.
     """
     id         : int
     name       : str
-    child_nodes: Optional[Union[list[int], list["PydanticNodeModel"]]] = None
+    type       : str = "node"
+    child_nodes: Optional[list[Union[int, "PydanticUEInNodeModel"]]] = None
 
     class Config:
         """
@@ -37,18 +38,31 @@ class PydanticNodeModel(AcademicYearPydanticModel):
         arbitrary_types_allowed : bool = True
         from_attributes: bool = True
 
-class PydanticUEInNodeModel(AcademicYearPydanticModel):
+
+class PydanticNodeModel(AcademicYearPydanticModel):
     """
-    Pydantic model for a Node with its UEs.
+    This module provides a model for a Folder.
     """
-    id       : int
-    type     : str
+    id         : int
+    name       : str
+    type       : str = "node"
+    child_nodes: Optional[Union[list["PydanticUEInNodeModel"], list["PydanticNodeModel"]]] = None
 
     class Config:
         """
         Pydantic configuration.
         """
         arbitrary_types_allowed : bool = True
+        from_attributes: bool = True
+
+class PydanticUEInNodeModel(PydanticNodeModel):
+    """
+    Pydantic model for a Node with its UEs.
+    """
+    id  : int
+    name: str
+    type: str = "ue"
+
 
 class PydanticNodeCreateModel(BaseModel):
     """
