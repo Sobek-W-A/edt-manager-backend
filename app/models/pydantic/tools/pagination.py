@@ -29,8 +29,6 @@ class PydanticPagination(BaseModel):
             order_field = self.order_by.lstrip('-')
             descending = self.order_by.startswith('-')
 
-            print("test")
-
             if descending:
                 return await query.offset(self.compute_offset()).limit(self.limit).order_by(f'-{order_field}')
             else:
