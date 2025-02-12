@@ -43,7 +43,7 @@ async def get_all_profiles(current_account: AuthenticatedAccount, page: int, lim
     Retrieves a list of all Profiles.
     """
 
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
     return await ProfileService.get_all_profiles(current_account, body)
 
@@ -78,7 +78,7 @@ async def search_profile(keywords: str, current_account: AuthenticatedAccount, p
     """
     This method retrieves profiles that matches the keywords provided.
     """
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
     return await ProfileService.search_profile_by_keywords(keywords, current_account, body)
 

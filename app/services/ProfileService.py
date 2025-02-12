@@ -2,6 +2,7 @@
 Profile-related operations service.
 Provides the methods to use when interacting with a profile.
 """
+from collections.abc import dict_keys
 
 from fastapi import HTTPException
 from pydantic import ValidationError
@@ -110,7 +111,7 @@ async def get_all_profiles(current_account: AccountInDB, body: PydanticPaginatio
     """
     await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.GET, current_account)
 
-    valid_fields = ProfileInDB._meta.fields_map.keys()
+    valid_fields: dict_keys[str] = ProfileInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
@@ -172,7 +173,7 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    valid_fields = ProfileInDB._meta.fields_map.keys()
+    valid_fields: dict_keys[str] = ProfileInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)

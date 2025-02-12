@@ -30,7 +30,7 @@ async def get_all_accounts(current_account: AuthenticatedAccount, page: int, lim
     This method returns all the accounts.
     """
 
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
     return await AccountService.get_all_accounts(current_account, body)
 
@@ -109,7 +109,7 @@ async def search_account_by_keywords(keywords: str, current_account: Authenticat
     This method search an account by keywords.
     """
 
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
 
     return await AccountService.search_account_by_keywords(keywords, current_account, body)
 
