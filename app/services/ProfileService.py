@@ -114,7 +114,7 @@ async def get_all_profiles(current_account: AccountInDB, body: PydanticPaginatio
     valid_fields: dict_keys[str] = ProfileInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     profiles_query: QuerySet[ProfileInDB] = ProfileInDB.all()
 
@@ -176,7 +176,7 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
     valid_fields: dict_keys[str] = ProfileInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     query: Q = Q()
     for keyword in keywords.split(" "):

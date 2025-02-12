@@ -97,7 +97,7 @@ async def get_all_accounts(current_account: AccountInDB, body: PydanticPaginatio
     valid_fields: dict_keys[str] = AccountInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
 
@@ -168,7 +168,7 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     valid_fields: dict_keys[str] = AccountInDB._meta.fields_map.keys()
 
     if body.order_by not in valid_fields:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
