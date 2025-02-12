@@ -66,7 +66,9 @@ async def add_ue(body: PydanticCreateUEModel, current_account=AuthenticatedAccou
     if await UEInDB.filter(name=body.name).exists():
         raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
 
-    ue_to_create: UEInDB = UEInDB(name=body.name, academic_year=body.academic_year)
+    ue_to_create: UEInDB = UEInDB(name=body.name,
+                                  academic_year=body.academic_year,
+                                  parent_id=body.parent_id)
 
     await UEInDB.save(ue_to_create)
 
