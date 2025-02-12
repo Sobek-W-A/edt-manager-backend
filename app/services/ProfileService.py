@@ -22,8 +22,6 @@ from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations, AvailableServices)
 
 
-
-
 async def modify_profile(profile_id: int, model: PydanticProfileModify, current_account: AccountInDB) -> None:
     """
     This method modifies the profile qualified by the id provided.
@@ -33,7 +31,6 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
                             current_account)
 
     academic_year: int = model.academic_year
-
 
     profile_to_modify: ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
 
@@ -59,11 +56,12 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
         raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
-        profile_to_modify.update_from_dict(model.model_dump(exclude_none=True))    # type: ignore
+        profile_to_modify.update_from_dict(model.model_dump(exclude_none=True))  # type: ignore
         await profile_to_modify.save()
 
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
+
 
 async def create_profile(model: PydanticProfileCreate, current_account: AccountInDB) -> None:
     """
@@ -105,23 +103,24 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
     except ValidationError as e:
         raise MailInvalidException from e
 
-async def get_all_profiles(current_account: AccountInDB, page:int, limit:int, order: str) -> list[PydanticProfileResponse]:
+
+async def get_all_profiles(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles.
     """
     await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.GET, current_account)
 
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
-
     valid_fields = ProfileInDB._meta.fields_map.keys()
 
-    if order not in valid_fields:
+    if body.order_by not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
 
     profiles_query: QuerySet[ProfileInDB] = ProfileInDB.all()
 
     paginated_profile: list[ProfileInDB] = await body.paginate_query(profiles_query)
-    return [PydanticProfileResponse.model_validate(profile) for profile in paginated_profile]  # Use model_validate for each profile
+    return [PydanticProfileResponse.model_validate(profile) for profile in
+            paginated_profile]  # Use model_validate for each profile
+
 
 async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> PydanticProfileResponse:
     """
@@ -135,7 +134,9 @@ async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> Py
 
     return PydanticProfileResponse.model_validate(profile)  # Use model_validate to create the response model
 
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
+
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB,
+                                             body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles not linked to an account.
     """
@@ -147,6 +148,7 @@ async def get_profiles_not_linked_to_account(academic_year: int, current_account
                                                            academic_year=academic_year).all()
     return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
 
+
 async def get_current_profile(current_account: AccountInDB) -> PydanticProfileResponse:
     """
     Retrieves the current profile.
@@ -155,13 +157,14 @@ async def get_current_profile(current_account: AccountInDB) -> PydanticProfileRe
                             AvailableOperations.GET,
                             current_account)
 
-    profile : ProfileInDB | None = await ProfileInDB.get_or_none(account=current_account.id)
+    profile: ProfileInDB | None = await ProfileInDB.get_or_none(account=current_account.id)
     if profile is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
     return PydanticProfileResponse.model_validate(profile)
 
-async def search_profile_by_keywords(keywords: str, current_account: AccountInDB, page: int, limit: int) -> list[PydanticProfileResponse]:
+
+async def search_profile_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Searches for a profile by keywords.
     """
@@ -169,19 +172,25 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
+    valid_fields = ProfileInDB._meta.fields_map.keys()
+
+    if body.order_by not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
+
     query: Q = Q()
     for keyword in keywords.split(" "):
         query &= (
-            Q(lastname__icontains=keyword) |
-            Q(firstname__icontains=keyword) |
-            Q(mail__icontains=keyword)
+                Q(lastname__icontains=keyword) |
+                Q(firstname__icontains=keyword) |
+                Q(mail__icontains=keyword)
         )
 
-    profiles: list[ProfileInDB] = await ProfileInDB.filter(query).all()
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(query).all()
 
-    start: int = (page - 1) * limit
-    end: int = start + limit
-    return [PydanticProfileResponse.model_validate(profile) for profile in profiles][start:end]
+    profiles: list[ProfileInDB] = await body.paginate_query(profiles_query)
+
+    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
+
 
 async def delete_profile(profile_id: int, current_account: AccountInDB) -> None:
     """
@@ -208,7 +217,8 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
 
     number_profile: int = await ProfileInDB.filter(academic_year=academic_year).count()
 
-    number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(account_id=None).count()
+    number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(
+        account_id=None).count()
 
     return PydanticNumberOfProfile(
         number_of_profiles_without_account=number_profile_without_account,

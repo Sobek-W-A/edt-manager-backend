@@ -28,7 +28,8 @@ async def create_profile(body: PydanticProfileCreate, current_account: Authentic
 
 
 @profileRouter.patch("/{profile_id}", status_code=205)
-async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,current_account: AuthenticatedAccount) -> Response:
+async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
+                         current_account: AuthenticatedAccount) -> Response:
     """
     This controllers is used when modifying Profile informations.
     """
@@ -36,12 +37,15 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,c
     return Response(status_code=205)
 
 
-@profileRouter.get("/{page}/{limit}/{order}", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_all_profiles(current_account: AuthenticatedAccount, page: int, limit: int, order : str ) -> list[PydanticProfileResponse]:
+@profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
+async def get_all_profiles(current_account: AuthenticatedAccount, page: int, limit: int, order: str) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
-    return await ProfileService.get_all_profiles(current_account, page, limit, order)
+
+    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+
+    return await ProfileService.get_all_profiles(current_account, body)
 
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
@@ -69,12 +73,14 @@ async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccou
     return await ProfileService.get_profile_by_id(profile_id, current_account)
 
 
-@profileRouter.get("/search/{keywords}/{page}/{limit}", response_model=list[PydanticProfileResponse], status_code=200)
-async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int, limit: int) -> list[PydanticProfileResponse]:
+@profileRouter.get("/search/{keywords}/", response_model=list[PydanticProfileResponse], status_code=200)
+async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int, limit: int, order: str) -> list[PydanticProfileResponse]:
     """
     This method retrieves profiles that matches the keywords provided.
     """
-    return await ProfileService.search_profile_by_keywords(keywords, current_account, page, limit)
+    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+
+    return await ProfileService.search_profile_by_keywords(keywords, current_account, body)
 
 
 @profileRouter.delete("/{profile_id}", status_code=204)

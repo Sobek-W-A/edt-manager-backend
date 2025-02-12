@@ -11,7 +11,6 @@ from fastapi.security import OAuth2PasswordBearer
 from tortoise.queryset import QuerySet
 from tortoise.expressions import Q
 
-
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
@@ -84,8 +83,7 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(current_account: AccountInDB, page: int, limit: int, order: str) -> list[
-    PydanticAccountModel]:
+async def get_all_accounts(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
@@ -97,10 +95,8 @@ async def get_all_accounts(current_account: AccountInDB, page: int, limit: int, 
 
     valid_fields = AccountInDB._meta.fields_map.keys()
 
-    if order not in valid_fields:
-        raise HTTPException(status_code=404,detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
-
-    body = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    if body.order_by not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
 
     accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
 
@@ -158,7 +154,8 @@ async def search_accounts_by_login(keywords: str, current_account: AccountInDB) 
     return accounts_to_return
 
 
-async def search_account_by_keywords(keywords: str, current_account: AccountInDB, page: int, limit: int) ->list[PydanticAccountModel]:
+async def search_account_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[
+    PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
     The search applies to the following fields: login, firstname, lastname, and email.
@@ -166,6 +163,11 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
+
+    valid_fields = AccountInDB._meta.fields_map.keys()
+
+    if body.order_by not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.ORDER_DOES_NOT_EXIST.value)
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
@@ -175,8 +177,6 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     for keyword in keywords.split(" "):
         account_query &= Q(login__icontains=keyword)
         profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword) | Q(mail__icontains=keyword)
-
-
 
     # Fetch accounts and prefetch profiles
     accounts: list[AccountInDB] = await AccountInDB.filter(account_query) \
@@ -217,10 +217,7 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
             ))
             account_ids.append(profile.account.id)
 
-    start: int = (page - 1) * limit
-    end: int = start + limit
-
-    return accounts_to_return[start:end]
+    return await body.paginate_query(accounts_to_return)
 
 
 async def create_account(account: PydanticCreateAccountModel,
