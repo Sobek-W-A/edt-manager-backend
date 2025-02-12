@@ -4,7 +4,7 @@ Account services. Basically the real functionalities concerning the account mode
 
 import random
 import string
-from collections.abc import dict_keys
+
 from typing import Annotated, Optional, TypeAlias
 
 from fastapi import Depends, HTTPException
@@ -94,9 +94,11 @@ async def get_all_accounts(current_account: AccountInDB, body: PydanticPaginatio
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
-    valid_fields: dict_keys[str] = AccountInDB._meta.fields_map.keys()
+    valid_fields = AccountInDB._meta.fields_map.keys()
 
-    if body.order_by not in valid_fields:
+    order_field = body.order_by.lstrip('-')
+
+    if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
@@ -165,9 +167,10 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    valid_fields: dict_keys[str] = AccountInDB._meta.fields_map.keys()
+    valid_fields= AccountInDB._meta.fields_map.keys()
+    order_field = body.order_by.lstrip('-')
 
-    if body.order_by not in valid_fields:
+    if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.

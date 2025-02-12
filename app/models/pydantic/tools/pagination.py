@@ -26,7 +26,16 @@ class PydanticPagination(BaseModel):
         """
 
         if isinstance(query, QuerySet):
-            return await query.offset(self.compute_offset()).limit(self.limit).order_by(self.order_by)
+            order_field = self.order_by.lstrip('-')
+            descending = self.order_by.startswith('-')
+
+            print("test")
+
+            if descending:
+                return await query.offset(self.compute_offset()).limit(self.limit).order_by(f'-{order_field}')
+            else:
+                return await query.offset(self.compute_offset()).limit(self.limit).order_by(order_field)
+
 
         if isinstance(query, list):
 
