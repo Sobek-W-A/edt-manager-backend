@@ -38,12 +38,12 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
 
 
 @profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_all_profiles(current_account: AuthenticatedAccount, page: int, limit: int, order: str) -> list[PydanticProfileResponse]:
+async def get_all_profiles(current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
 
-    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
     return await ProfileService.get_all_profiles(current_account, body)
 
@@ -57,12 +57,12 @@ async def get_current_profile(current_account: AuthenticatedAccount) -> Pydantic
 
 
 @profileRouter.get("/notlinked/{academic_year}", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount, body: PydanticPagination) -> list[
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AuthenticatedAccount) -> list[
     PydanticProfileResponse]:
     """
     Returns all the profiles that are not linked to an account for the given academic year.
     """
-    return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account, body)
+    return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account)
 
 
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
@@ -74,11 +74,11 @@ async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccou
 
 
 @profileRouter.get("/search/{keywords}/", response_model=list[PydanticProfileResponse], status_code=200)
-async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int, limit: int, order: str) -> list[PydanticProfileResponse]:
+async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
     """
     This method retrieves profiles that matches the keywords provided.
     """
-    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
     return await ProfileService.search_profile_by_keywords(keywords, current_account, body)
 

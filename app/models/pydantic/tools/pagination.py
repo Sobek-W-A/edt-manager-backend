@@ -14,6 +14,12 @@ class PydanticPagination(BaseModel):
     limit: int = 50
     order_by: str = "id"
 
+    @staticmethod
+    def create_model(page: int | None, limit: int | None, order: str | None):
+        return PydanticPagination(page=page or 1,
+                                  limit=limit or 50,
+                                  order_by=order or "id")
+
     def compute_offset(self) -> int:
         """
         This method computes the offset for the query.
@@ -52,3 +58,5 @@ class PydanticPagination(BaseModel):
         start = self.compute_offset()
         end = start + self.limit
         return query[start:end]
+
+

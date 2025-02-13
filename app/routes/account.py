@@ -25,12 +25,12 @@ tag: Tag = {
 
 
 @accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(current_account: AuthenticatedAccount, page: int, limit: int, order : str) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticAccountModel]:
     """
     This method returns all the accounts.
     """
 
-    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
     return await AccountService.get_all_accounts(current_account, body)
 
@@ -103,13 +103,13 @@ async def search_account_by_login(keywords: str, current_account: AuthenticatedA
 
 
 @accountRouter.get("/search/{keywords}/", status_code=200, response_model=list[PydanticAccountModel])
-async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount, page: int, limit: int, order: str) -> list[
+async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
     PydanticAccountModel]:
     """
     This method search an account by keywords.
     """
 
-    body: PydanticPagination = PydanticPagination.model_validate({"page": page, "limit": limit, "order_by": order})
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
     return await AccountService.search_account_by_keywords(keywords, current_account, body)
 
