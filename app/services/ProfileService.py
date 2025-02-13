@@ -141,7 +141,7 @@ async def get_profile_by_id(profile_id: int, current_account: AccountInDB) -> Py
     return PydanticProfileResponse.model_validate(profile)  # Use model_validate to create the response model
 
 
-async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+async def get_profiles_not_linked_to_account(academic_year: int, current_account: AccountInDB,body : PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles not linked to an account.
     """
@@ -149,9 +149,18 @@ async def get_profiles_not_linked_to_account(academic_year: int, current_account
                             AvailableOperations.GET,
                             current_account)
 
-    profiles: list[ProfileInDB] = await ProfileInDB.filter(account=None,
-                                                           academic_year=academic_year).all()
-    return [PydanticProfileResponse.model_validate(profile) for profile in profiles]
+    valid_fields: dict[str, Any] = get_fields_from_model(ProfileInDB)
+    order_field: str = body.order_by.lstrip('-')
+
+    if order_field not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
+
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(account=None,academic_year=academic_year).all()
+
+    paginated_profile: list[ProfileInDB] = await body.paginate_query(profiles_query)
+
+    return [PydanticProfileResponse.model_validate(profile) for profile in paginated_profile]
+
 
 
 async def get_current_profile(current_account: AccountInDB) -> PydanticProfileResponse:
