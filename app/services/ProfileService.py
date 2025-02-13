@@ -43,21 +43,24 @@ async def modify_profile(profile_id: int, model: PydanticProfileModify, current_
         raise MailAlreadyUsedException
 
     if model.account_id is not None:
-        if not await AccountInDB.filter(id=model.account_id).exists():
+        if model.account_id != -1 and not await AccountInDB.filter(id=model.account_id).exists():
             raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
 
         # Helps ensuring that the account is not already assigned to another profile for the academic year provided.
         # The custom filters the current account from the query to avoid raising errors when modifying the current profile.
         q: Q = ~Q(id=profile_to_modify.id)
-        if await ProfileInDB.filter(q,
-                                    account_id=model.account_id,
-                                    academic_year=academic_year).exists():
+        if model.account_id != -1 and await ProfileInDB.filter(q,
+                                                               account_id=model.account_id,
+                                                               academic_year=academic_year).exists():
             raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
 
     if not await StatusInDB.filter(id=model.status_id, academic_year=academic_year).exists():
         raise HTTPException(status_code=404, detail=CommonErrorMessages.STATUS_NOT_FOUND)
 
     try:
+        if model.account_id == -1:
+            profile_to_modify.account_id = None
+            model.account_id = None
         profile_to_modify.update_from_dict(model.model_dump(exclude_none=True))  # type: ignore
         await profile_to_modify.save()
 
