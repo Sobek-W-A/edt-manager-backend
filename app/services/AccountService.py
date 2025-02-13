@@ -62,9 +62,7 @@ async def get_account(account_id: int, current_account: AccountInDB) -> Pydantic
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB,
-                                             body: PydanticPagination) -> list[
-    PydanticAccountWithoutProfileModel]:
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB,) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
     """
