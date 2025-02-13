@@ -32,15 +32,13 @@ from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
 
 
-async def get_account(account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
+async def get_account(academic_year: int, account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
     """
     This method retrieves an account by its ID.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id) \
         .prefetch_related("profile")
@@ -80,15 +78,13 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def get_all_accounts(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
     accounts: list[AccountInDB] = await AccountInDB.all() \
         .prefetch_related("profile")
@@ -107,15 +103,13 @@ async def get_all_accounts(current_account: AccountInDB) -> list[PydanticAccount
             for account in accounts]
 
 
-async def search_accounts_by_login(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def search_accounts_by_login(academic_year: int, keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method fetches the accounts which logins matches the query provided.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
     account_query: Q = Q()
     for keyword in keywords.split(" "):
@@ -145,7 +139,7 @@ async def search_accounts_by_login(keywords: str, current_account: AccountInDB) 
     return accounts_to_return
 
 
-async def search_account_by_keywords(keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def search_account_by_keywords(academic_year: int, keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
     The search applies to the following fields: login, firstname, lastname, and email.
@@ -153,8 +147,6 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
                             current_account)
-
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
     account_query: Q = Q()
     profile_query: Q = Q()

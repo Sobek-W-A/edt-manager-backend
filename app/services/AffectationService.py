@@ -100,7 +100,7 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
     
     await affectation_created.fetch_related("profile", "course")
 
-    PydanticAffectation(
+    return PydanticAffectation(
                 id=affectation_created.id,
                 profile=PydanticProfileResponse.model_validate(affectation_created.profile),
                 course_id=affectation_created.course.id,
