@@ -5,7 +5,7 @@ Account services. Basically the real functionalities concerning the account mode
 import random
 import string
 
-from typing import Annotated, Optional, TypeAlias
+from typing import Annotated, Any, Optional, TypeAlias
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -30,6 +30,7 @@ from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
+from app.utils.databases.utils import get_fields_from_model
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
@@ -94,9 +95,9 @@ async def get_all_accounts(current_account: AccountInDB, body: PydanticPaginatio
 
     academic_year: int = 2024  # TODO : Get the current academic year from the url.
 
-    valid_fields = AccountInDB._meta.fields_map.keys()
-
-    order_field = body.order_by.lstrip('-')
+    # Forced to type ignore there since we access a protected member.
+    valid_fields: dict[str, Any] = get_fields_from_model(AccountInDB)
+    order_field: str = body.order_by.lstrip('-')
 
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
@@ -167,8 +168,8 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    valid_fields= AccountInDB._meta.fields_map.keys()
-    order_field = body.order_by.lstrip('-')
+    valid_fields = get_fields_from_model(AccountInDB)
+    order_field  = body.order_by.lstrip('-')
 
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
@@ -221,7 +222,7 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
             ))
             account_ids.append(profile.account.id)
 
-    return await body.paginate_query(accounts_to_return)
+    return await body.paginate_list(accounts_to_return)
 
 
 async def create_account(account: PydanticCreateAccountModel,

@@ -20,33 +20,35 @@ class PydanticPagination(BaseModel):
         """
         return (self.page - 1) * self.limit
 
-    async def paginate_query(self, query: QuerySet[Model] | list[Model]) -> list[Model]:
+    async def paginate_query[T: Model](self, query: QuerySet[T]) -> list[T]:
         """
         This method fetches the data from the query provided with pagination.
+        The type is generic, but must be a subclass of Model.
         """
 
-        if isinstance(query, QuerySet):
-            order_field = self.order_by.lstrip('-')
-            descending = self.order_by.startswith('-')
+        order_field: str = self.order_by.lstrip('-')
+        descending: bool = self.order_by.startswith('-')
+        if descending:
+            return await query.offset(self.compute_offset())\
+                              .limit(self.limit).order_by(f'-{order_field}')
+        else:
+            return await query.offset(self.compute_offset())\
+                              .limit(self.limit).order_by(order_field)
 
-            if descending:
-                return await query.offset(self.compute_offset()).limit(self.limit).order_by(f'-{order_field}')
-            else:
-                return await query.offset(self.compute_offset()).limit(self.limit).order_by(order_field)
+    async def paginate_list[T: BaseModel](self, query: list[T]) -> list[T]:
+        """
+        This method paginates a list.
+        """
+        if self.order_by.startswith('-'):
+            key = self.order_by[1:]
+            reverse = True
+        else:
+            key = self.order_by
+            reverse = False
 
+        if all(hasattr(item, key) for item in query):
+            query.sort(key=lambda x: getattr(x, key), reverse=reverse)
 
-        if isinstance(query, list):
-
-            if self.order_by.startswith('-'):
-                key = self.order_by[1:]
-                reverse = True
-            else:
-                key = self.order_by
-                reverse = False
-
-            if all(hasattr(item, key) for item in query):
-                query.sort(key=lambda x: getattr(x, key), reverse=reverse)
-
-            start = self.compute_offset()
-            end = start + self.limit
-            return query[start:end]
+        start = self.compute_offset()
+        end = start + self.limit
+        return query[start:end]

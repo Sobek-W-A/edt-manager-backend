@@ -3,6 +3,7 @@ Profile-related operations service.
 Provides the methods to use when interacting with a profile.
 """
 
+from typing import Any
 from fastapi import HTTPException
 from pydantic import ValidationError
 from tortoise.expressions import Q
@@ -18,6 +19,7 @@ from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
 from app.services.PermissionService import check_permissions
 from app.utils.CustomExceptions import (MailAlreadyUsedException, MailInvalidException)
+from app.utils.databases.utils import get_fields_from_model
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations, AvailableServices)
 
@@ -110,9 +112,8 @@ async def get_all_profiles(current_account: AccountInDB, body: PydanticPaginatio
     """
     await check_permissions(AvailableServices.PROFILE_SERVICE, AvailableOperations.GET, current_account)
 
-    valid_fields = ProfileInDB._meta.fields_map.keys()
-
-    order_field = body.order_by.lstrip('-')
+    valid_fields : dict[str, Any] = get_fields_from_model(ProfileInDB)
+    order_field  : str = body.order_by.lstrip('-')
 
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
@@ -174,9 +175,8 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    valid_fields = ProfileInDB._meta.fields_map.keys()
-
-    order_field = body.order_by.lstrip('-')
+    valid_fields : dict[str, Any] = get_fields_from_model(ProfileInDB)
+    order_field  : str = body.order_by.lstrip('-')
 
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
