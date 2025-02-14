@@ -18,7 +18,7 @@ tag: Tag = {
     "description": "Status-related operations."
 }
 
-@statusRouter.get("/{academic_year}",status_code=200, response_model=list[PydanticStatusResponseModel])
+@statusRouter.get("/",status_code=200, response_model=list[PydanticStatusResponseModel])
 async def get_all_status(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticStatusResponseModel]:
     """
     This method returns the status of the given status id.
