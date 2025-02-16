@@ -109,7 +109,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
         raise MailInvalidException from e
 
 
-async def get_all_profiles(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
+async def get_all_profiles(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Retrieves all profiles.
     """
@@ -121,7 +121,7 @@ async def get_all_profiles(current_account: AccountInDB, body: PydanticPaginatio
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
-    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.all()
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(academic_year=academic_year).all()
 
     paginated_profile: list[ProfileInDB] = await body.paginate_query(profiles_query)
     return [PydanticProfileResponse.model_validate(profile) for profile in

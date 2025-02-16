@@ -38,14 +38,14 @@ async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
 
 
 @profileRouter.get("/", response_model=list[PydanticProfileResponse], status_code=200)
-async def get_all_profiles(current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
+async def get_all_profiles(academic_year: int, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
     """
     Retrieves a list of all Profiles.
     """
 
     body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
-    return await ProfileService.get_all_profiles(current_account, body)
+    return await ProfileService.get_all_profiles(academic_year, current_account, body)
 
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
