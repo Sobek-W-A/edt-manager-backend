@@ -18,6 +18,7 @@ class CommonErrorMessages(enum.StrEnum):
     PROFILE_NOT_FOUND        = "Profile was not found."
     PROFILE_NOT_ENABLED      = "This profile is not enabled."
     ACCOUNT_NOT_FOUND        = "Account was not found."
+    ACCOUNT_ROLE_NOT_FOUND   = "This account has no role for this academic_year."
     ACCOUNT_ALREADY_LINKED   = "This account is already linked to a profile for the academic year provided."
     PASSWORD_OR_PASSCONFIRM_NOT_SPECIFIED = "Both 'password' and 'password_confirm' must be specified together or not at all."
     COLUMN_DOES_NOT_EXIST     = "This column name does not exists."

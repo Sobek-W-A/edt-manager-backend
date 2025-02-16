@@ -341,11 +341,11 @@ async def get_role_account_by_id(account_id: int, current_account: AccountInDB,
 
     metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=account_id,
                                                                                  academic_year=academic_year) \
-        .prefetch_related("role")
+                                                                    .prefetch_related("role")
 
     if not metadata:
         raise HTTPException(status_code=404,
-                            detail=CommonErrorMessages.ACCOUNT_NOT_FOUND.value)
+                            detail=CommonErrorMessages.ACCOUNT_ROLE_NOT_FOUND.value)
 
     role: RoleInDB | None = await RoleInDB.get_or_none(name=metadata.role.name)
 
