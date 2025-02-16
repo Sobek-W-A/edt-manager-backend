@@ -22,7 +22,7 @@ class ProfileInDB(AcademicYear):
     id       : Field[int] = IntField(primary_key=True)
     firstname: Field[str] = CharField(max_length=128)
     lastname : Field[str] = CharField(max_length=128)
-    mail     : Field[str] = CharField(unique=True, required=True, max_length=128)
+    mail     : Field[str] = CharField(required=True, max_length=128)
     quota    : Field[int] = IntField(min_value=0, default=0)
 
     account : ForeignKeyNullableRelation["AccountInDB"] = ForeignKeyField("models.AccountInDB", related_name="profile", null=True)
