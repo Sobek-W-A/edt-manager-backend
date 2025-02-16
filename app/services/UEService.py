@@ -4,10 +4,10 @@ Provides the methods to use when interacting with an UE.
 """
 from fastapi import HTTPException
 
-from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
+from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.ue import UEInDB
@@ -16,7 +16,7 @@ from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 #TODO
 
-async def get_ue_by_id(ue_id: int, current_account=AuthenticatedAccount) -> PydanticUEModel:
+async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEModel:
     """
     This method returns the UE of the given UE id.
     """
@@ -37,7 +37,7 @@ async def get_ue_by_id(ue_id: int, current_account=AuthenticatedAccount) -> Pyda
     coursesPydantic: list[PydanticCourseModel] = []
 
     for course in courses:
-        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
+        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type.id)
         course_type_pydantic = PydanticCourseTypeModel.model_validate(course_type)
         course_pydantic = PydanticCourseModel(
             academic_year=course.academic_year,
@@ -54,7 +54,7 @@ async def get_ue_by_id(ue_id: int, current_account=AuthenticatedAccount) -> Pyda
                            ue_id=ue.id)
 
 
-async def add_ue(body: PydanticCreateUEModel, current_account=AuthenticatedAccount) -> PydanticUEModel:
+async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> PydanticUEModel:
     """
     This method creates a new UE.
     """
@@ -73,7 +73,7 @@ async def add_ue(body: PydanticCreateUEModel, current_account=AuthenticatedAccou
                            ue_id=ue_to_create.id)
 
 
-async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=AuthenticatedAccount) -> None:
+async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account: AccountInDB) -> None:
     """
     This method modifies the UE of the given UE id.
     """
@@ -82,7 +82,7 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
                             AvailableOperations.UPDATE,
                             current_account)
 
-    ue_to_modify: UEInDB = await UEInDB.get_or_none(id=ue_id)
+    ue_to_modify: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
 
     if ue_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
@@ -91,7 +91,7 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
         raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
 
     try:
-        await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True))
+        await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True)) # type: ignore
         await ue_to_modify.save()
 
     except ValueError as e:
@@ -100,7 +100,7 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account=Aut
     return None
 
 
-async def delete_ue(ue_id: int, current_account=AuthenticatedAccount) -> None:
+async def delete_ue(ue_id: int, current_account: AccountInDB) -> None:
     """
     This method deletes the UE of the given UE id.
     """

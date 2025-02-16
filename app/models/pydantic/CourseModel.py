@@ -48,7 +48,6 @@ class PydanticModifyCourseModel(AcademicYearPydanticModel):
     """
     This model is meant to be used when we need to modify a Course.
     """
-    academic_year: Optional[int] = None
     duration : Optional[Hours] = None
     group_count : Optional[int] = None
     course_type_id : Optional[int] = None
