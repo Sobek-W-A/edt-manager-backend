@@ -2,10 +2,9 @@
 This module provides pydantic models for the Status.
 """
 from app.models.pydantic.abstract.ClassicModel import ClassicModel
-from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
-class PydanticStatusResponseModel(AcademicYearPydanticModel, ClassicModel):
+class PydanticStatusResponseModel(ClassicModel):
     """
     Simple Pydantic model to represent a status.
     """
@@ -18,7 +17,7 @@ class PydanticStatusResponseModel(AcademicYearPydanticModel, ClassicModel):
         """
         from_attributes : bool = True
 
-class PydanticStatusModelFromJSON(AcademicYearPydanticModel, ClassicModel):
+class PydanticStatusModelFromJSON(ClassicModel):
     """
     Pydantic model for status. Used to load data from JSON files.
     """
