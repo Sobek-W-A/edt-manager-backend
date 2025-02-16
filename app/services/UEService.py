@@ -10,6 +10,7 @@ from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, 
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
+from app.models.tortoise.node import NodeInDB
 from app.models.tortoise.ue import UEInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -61,8 +62,15 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> P
     await check_permissions(AvailableServices.UE_SERVICE,
                             AvailableOperations.CREATE,
                             current_account)
+    
+    parent_node: NodeInDB | None = await NodeInDB.get_or_none(id=body.parent_id)
+    if parent_node is None:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
-    ue_to_create: UEInDB = UEInDB(name=body.name, academic_year=body.academic_year)
+    ue_to_create: UEInDB = UEInDB(name=body.name,
+                                  academic_year=body.academic_year,
+                                  parent=parent_node)
 
     await UEInDB.save(ue_to_create)
 
