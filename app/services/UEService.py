@@ -14,7 +14,6 @@ from app.models.tortoise.ue import UEInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
-#TODO
 
 async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEModel:
     """
