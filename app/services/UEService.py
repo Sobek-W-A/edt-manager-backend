@@ -36,7 +36,7 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
     coursesPydantic: list[PydanticCourseModel] = []
 
     for course in courses:
-        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type.id)
+        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
         course_type_pydantic = PydanticCourseTypeModel.model_validate(course_type)
         course_pydantic = PydanticCourseModel(
             academic_year=course.academic_year,
