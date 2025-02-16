@@ -60,7 +60,7 @@ async def get_course_affectations(course_id: int, current_account: AccountInDB) 
     return [PydanticAffectation(
                 id=affectation.id,
                 profile=PydanticProfileResponse.model_validate(affectation.profile),
-                course_id=affectation.course.id,
+                course_id=affectation.course_id,
                 hours=affectation.hours,
                 notes=affectation.notes,
                 date=affectation.date,
