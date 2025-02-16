@@ -4,10 +4,12 @@ Account services. Basically the real functionalities concerning the account mode
 
 import random
 import string
-from typing import Annotated, Optional, TypeAlias
+
+from typing import Annotated, Any, Optional, TypeAlias
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from tortoise.queryset import QuerySet
 from tortoise.expressions import Q
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
@@ -19,6 +21,7 @@ from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
 from app.models.tortoise.profile import ProfileInDB
@@ -27,6 +30,7 @@ from app.services import SecurityService
 from app.services.PermissionService import check_permissions
 from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
+from app.utils.databases.utils import get_fields_from_model
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import (AvailableOperations,
                                               AvailableServices)
@@ -56,8 +60,7 @@ async def get_account(academic_year: int, account_id: int, current_account: Acco
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[
-    PydanticAccountWithoutProfileModel]:
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB,) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
     """
@@ -78,7 +81,7 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
@@ -86,11 +89,21 @@ async def get_all_accounts(academic_year: int, current_account: AccountInDB) -> 
                             AvailableOperations.GET,
                             current_account)
 
-    accounts: list[AccountInDB] = await AccountInDB.all() \
-        .prefetch_related("profile")
+    academic_year: int = 2024  # TODO : Get the current academic year from the url.
+
+    # Forced to type ignore there since we access a protected member.
+    valid_fields: dict[str, Any] = get_fields_from_model(AccountInDB)
+    order_field: str = body.order_by.lstrip('-')
+
+    if order_field not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
+
+    accounts_query: QuerySet[AccountInDB] = AccountInDB.all().prefetch_related("profile")
+
+    paginated_accounts: list[AccountInDB] = await body.paginate_query(accounts_query)
 
     profiles: dict[int, ProfileInDB | None] = {}
-    for account in accounts:
+    for account in paginated_accounts:
         if account.profile is not None:
             profile = await account.profile.filter(academic_year=academic_year) \
                 .first()
@@ -100,7 +113,7 @@ async def get_all_accounts(academic_year: int, current_account: AccountInDB) -> 
                                  id=account.id,
                                  profile=PydanticProfileResponse.model_validate(profiles[account.id]) if profiles[
                                                                                                              account.id] is not None else None)
-            for account in accounts]
+            for account in paginated_accounts]
 
 
 async def search_accounts_by_login(academic_year: int, keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
@@ -139,7 +152,8 @@ async def search_accounts_by_login(academic_year: int, keywords: str, current_ac
     return accounts_to_return
 
 
-async def search_account_by_keywords(academic_year: int, keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def search_account_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[
+    PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
     The search applies to the following fields: login, firstname, lastname, and email.
@@ -148,8 +162,16 @@ async def search_account_by_keywords(academic_year: int, keywords: str, current_
                             AvailableOperations.GET,
                             current_account)
 
+    valid_fields = get_fields_from_model(AccountInDB)
+    order_field  = body.order_by.lstrip('-')
+
+    if order_field not in valid_fields:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
+
+    academic_year: int = 2024  # TODO : Get the current academic year from the url.
     account_query: Q = Q()
     profile_query: Q = Q()
+
     for keyword in keywords.split(" "):
         account_query &= Q(login__icontains=keyword)
         profile_query &= Q(firstname__icontains=keyword) | Q(lastname__icontains=keyword) | Q(mail__icontains=keyword)
@@ -193,7 +215,7 @@ async def search_account_by_keywords(academic_year: int, keywords: str, current_
             ))
             account_ids.append(profile.account.id)
 
-    return accounts_to_return
+    return await body.paginate_list(accounts_to_return)
 
 
 async def create_account(account: PydanticCreateAccountModel,

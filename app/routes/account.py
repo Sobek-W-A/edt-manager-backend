@@ -13,6 +13,7 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
 from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
+from app.models.pydantic.tools.pagination import PydanticPagination
 from app.routes.tags import Tag
 from app.services import AccountService
 
@@ -24,11 +25,14 @@ tag: Tag = {
 
 
 @accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticAccountModel]:
     """
     This method returns all the accounts.
     """
-    return await AccountService.get_all_accounts(academic_year, current_account)
+
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
+
+    return await AccountService.get_all_accounts(current_account, body)
 
 
 @accountRouter.get("/notlinkedtoprofile", status_code=200,
@@ -98,14 +102,17 @@ async def search_account_by_login(academic_year: int, keywords: str, current_acc
     return await AccountService.search_accounts_by_login(academic_year, keywords, current_account)
 
 
-@accountRouter.get("/search/{keywords}", status_code=200, response_model=list[PydanticAccountModel])
-async def search_account_by_keywords(academic_year: int, keywords: str, current_account: AuthenticatedAccount) -> list[
+
+@accountRouter.get("/search/{keywords}/", status_code=200, response_model=list[PydanticAccountModel])
+async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
     PydanticAccountModel]:
     """
     This method search an account by keywords.
     """
 
-    return await AccountService.search_account_by_keywords(academic_year, keywords, current_account)
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
+
+    return await AccountService.search_account_by_keywords(keywords, current_account, body)
 
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)
