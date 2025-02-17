@@ -68,14 +68,6 @@ async def get_profiles_not_linked_to_account(academic_year: int, current_account
     return await ProfileService.get_profiles_not_linked_to_account(academic_year, current_account, body)
 
 
-@profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
-async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
-    """
-    Retrieves a Profile by their ID.
-    """
-    return await ProfileService.get_profile_by_id(profile_id, current_account)
-
-
 @profileRouter.get("/search/{keywords}/", response_model=list[PydanticProfileResponse], status_code=200)
 async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
     """
@@ -85,6 +77,21 @@ async def search_profile(keywords: str, current_account: AuthenticatedAccount, p
 
     return await ProfileService.search_profile_by_keywords(keywords, current_account, body)
 
+@profileRouter.get("/nb", status_code=200, response_model=PydanticNumberOfProfile)
+async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:
+    """
+    This method get the number of profile in the database.
+    """
+    return await ProfileService.get_number_of_profile(academic_year, current_account)
+
+
+@profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
+async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
+    """
+    Retrieves a Profile by their ID.
+    """
+    return await ProfileService.get_profile_by_id(profile_id, current_account)
+
 
 @profileRouter.delete("/{profile_id}", status_code=204)
 async def delete_profile(profile_id: int, current_account: AuthenticatedAccount) -> None:
@@ -92,11 +99,3 @@ async def delete_profile(profile_id: int, current_account: AuthenticatedAccount)
     This route is used for deleting a Profile
     """
     await ProfileService.delete_profile(profile_id, current_account)
-
-
-@profileRouter.get("/nb", status_code=200, response_model=PydanticNumberOfProfile)
-async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:
-    """
-    This method get the number of profile in the database.
-    """
-    return await ProfileService.get_number_of_profile(academic_year, current_account)
