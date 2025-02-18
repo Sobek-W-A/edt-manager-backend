@@ -23,3 +23,11 @@ async def get_all_academic_year(current_account: AuthenticatedAccount) -> list[P
     """
 
     return await AcademicYearService.get_all_academic_year(current_account)
+
+@academic_yearRouter.post("/", status_code=201,response_model=PydanticAcademicTableModel)
+async def create_new_academic_year(current_account: AuthenticatedAccount) -> PydanticAcademicTableModel:
+    """
+        This method creates a new academic_year.
+    """
+
+    return await AcademicYearService.create_new_academic_year(current_account)

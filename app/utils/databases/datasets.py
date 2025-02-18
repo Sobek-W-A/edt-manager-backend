@@ -9,6 +9,7 @@ from typing import Any, Type
 from pydantic import BaseModel
 from tortoise.models import Model
 
+from app.models.pydantic.AcademicYearTable import PydanticAcademicYearTableModelFromJSON
 from app.models.pydantic.AccountMetadataModel import PydanticAccountMetaModelFromJSON
 from app.models.pydantic.AccountModel import PydanticAccountModelFromJSON
 from app.models.pydantic.AffectationModel import PydanticAffectationFromJSON
@@ -17,6 +18,7 @@ from app.models.pydantic.CourseModel import PydanticCourseModelFromJSON
 from app.models.pydantic.NodeModel import PydanticNodeModelFromJSON
 from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
 from app.models.pydantic.UEModel import PydanticUEModelFromJSON
+from app.models.tortoise.academic_year_table import AcademicYearTableInDB
 
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.account_metadata import AccountMetadataInDB
@@ -92,6 +94,10 @@ async def load_dummy_datasets() -> None:
     await load_json_into_model_via_pydantic(AffectationInDB,
                                             PydanticAffectationFromJSON,
                                             "affectation_templates.json")
+
+    await load_json_into_model_via_pydantic(AcademicYearTableInDB,
+                                            PydanticAcademicYearTableModelFromJSON,
+                                            "academic_year_metadata_templates.json")
 
 
 async def load_json_into_model_via_pydantic(
