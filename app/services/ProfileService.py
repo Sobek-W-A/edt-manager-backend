@@ -89,7 +89,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
         if await ProfileInDB.filter(account_id=model.account_id,
                                     academic_year=academic_year).exists():
             raise HTTPException(status_code=409, detail=CommonErrorMessages.ACCOUNT_ALREADY_LINKED)
-        if not await AccountInDB.filter(id=model.account_id).exists():
+        if model.account_id != -1 and not await AccountInDB.filter(id=model.account_id).exists():
             raise HTTPException(status_code=404, detail=CommonErrorMessages.ACCOUNT_NOT_FOUND)
 
     if not await StatusInDB.filter(id=model.status_id).exists():
@@ -102,7 +102,7 @@ async def create_profile(model: PydanticProfileCreate, current_account: AccountI
             mail=model.mail,
             academic_year=academic_year,
             quota=model.quota,
-            account_id=model.account_id,
+            account_id=model.account_id if model.account_id != -1 else None,
             status_id=model.status_id
         )
     except ValidationError as e:
