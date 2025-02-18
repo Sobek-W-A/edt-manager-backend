@@ -18,4 +18,4 @@ async def get_all_status(academic_year: int, current_account: AccountInDB) -> li
                             current_account,
                             academic_year)
 
-    return [PydanticStatusResponseModel.model_validate(status) for status in await StatusInDB.filter(academic_year=academic_year).all()]
+    return [PydanticStatusResponseModel.model_validate(status) for status in await StatusInDB.all()]
