@@ -60,13 +60,39 @@ async def get_account(academic_year: int, account_id: int, current_account: Acco
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB,) -> list[PydanticAccountWithoutProfileModel]:
+async def get_accounts_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountModel]:
+    """
+    This method retrieves all accounts linked to a profile.
+    """
+    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+    accounts: list[AccountInDB] = await AccountInDB.all()\
+                                                   .prefetch_related("profile")
+    accounts_to_return: list[AccountInDB] = []
+    profiles: dict[int, ProfileInDB] = {}
+
+    for account in accounts:
+        if account.profile:
+            profile: ProfileInDB | None = await ProfileInDB.filter(academic_year=academic_year, account_id=account.id).first()
+            if profile:
+                profiles[account.id] = profile
+                accounts_to_return.append(account)
+
+    return [PydanticAccountModel(login=account.login,
+                                 id=account.id,
+                                 profile=PydanticProfileResponse.model_validate(profiles[account.id]))
+            for account in accounts_to_return]
+
+
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
-                            current_account)
+                            current_account,
+                            academic_year)
     accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
     accounts_to_return: list[AccountInDB] = []
 
@@ -81,15 +107,14 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
 
 
-async def get_all_accounts(current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
+async def get_all_accounts(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
-                            current_account)
-
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
+                            current_account,
+                            academic_year)
 
     # Forced to type ignore there since we access a protected member.
     valid_fields: dict[str, Any] = get_fields_from_model(AccountInDB)
@@ -122,7 +147,8 @@ async def search_accounts_by_login(academic_year: int, keywords: str, current_ac
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     account_query: Q = Q()
     for keyword in keywords.split(" "):
@@ -152,7 +178,7 @@ async def search_accounts_by_login(academic_year: int, keywords: str, current_ac
     return accounts_to_return
 
 
-async def search_account_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[
+async def search_account_by_keywords(academic_year:int, keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[
     PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
@@ -160,7 +186,8 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.GET,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     valid_fields = get_fields_from_model(AccountInDB)
     order_field  = body.order_by.lstrip('-')
@@ -168,7 +195,6 @@ async def search_account_by_keywords(keywords: str, current_account: AccountInDB
     if order_field not in valid_fields:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.COLUMN_DOES_NOT_EXIST.value)
 
-    academic_year: int = 2024  # TODO : Get the current academic year from the url.
     account_query: Q = Q()
     profile_query: Q = Q()
 

@@ -25,17 +25,28 @@ tag: Tag = {
 
 
 @accountRouter.get("/", status_code=200, response_model=list[PydanticAccountModel])
-async def get_all_accounts(current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticAccountModel]:
+async def get_all_accounts(current_account: AuthenticatedAccount, academic_year: int, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticAccountModel]:
     """
     This method returns all the accounts.
     """
 
     body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
-    return await AccountService.get_all_accounts(current_account, body)
+    return await AccountService.get_all_accounts(academic_year, current_account, body)
 
 
-@accountRouter.get("/notlinkedtoprofile", status_code=200,
+@accountRouter.get("/linked", status_code=200,
+                   response_model=list[PydanticAccountModel])
+async def get_accounts_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
+    PydanticAccountModel]:
+    """
+    This method returns all the accounts not linked to a profile.
+    It returns specifically accounts that are not linked to a profile ever,
+    or for the given academic year.
+    """
+    return await AccountService.get_accounts_linked_to_profile(academic_year, current_account)
+
+@accountRouter.get("/notlinked", status_code=200,
                    response_model=list[PydanticAccountWithoutProfileModel])
 async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
     PydanticAccountWithoutProfileModel]:
@@ -104,7 +115,7 @@ async def search_account_by_login(academic_year: int, keywords: str, current_acc
 
 
 @accountRouter.get("/search/{keywords}/", status_code=200, response_model=list[PydanticAccountModel])
-async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
+async def search_account_by_keywords(keywords: str, current_account: AuthenticatedAccount, academic_year:int, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
     PydanticAccountModel]:
     """
     This method search an account by keywords.
@@ -112,7 +123,7 @@ async def search_account_by_keywords(keywords: str, current_account: Authenticat
 
     body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
-    return await AccountService.search_account_by_keywords(keywords, current_account, body)
+    return await AccountService.search_account_by_keywords(academic_year, keywords, current_account, body)
 
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)
