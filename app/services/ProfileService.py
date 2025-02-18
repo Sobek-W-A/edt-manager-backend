@@ -178,7 +178,7 @@ async def get_current_profile(current_account: AccountInDB) -> PydanticProfileRe
     return PydanticProfileResponse.model_validate(profile)
 
 
-async def search_profile_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
+async def search_profile_by_keywords(keywords: str, academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Searches for a profile by keywords.
     """
@@ -200,7 +200,7 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
                 Q(mail__icontains=keyword)
         )
 
-    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(query).all()
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(query, academic_year=academic_year).all()
 
     profiles: list[ProfileInDB] = await body.paginate_query(profiles_query)
 
