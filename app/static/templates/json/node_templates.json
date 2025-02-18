@@ -62,49 +62,49 @@
     {
         "name": "Informatique",
         "academic_year": 2025,
-        "parent_id": 1,
+        "parent_id": 10,
         "is_root": false
     },
     {
         "name": "M1 - Informatique",
         "academic_year": 2025,
-        "parent_id": 2,
+        "parent_id": 11,
         "is_root": false
     },
     {
         "name": "M2 - Informatique",
         "academic_year": 2025,
-        "parent_id": 2,
+        "parent_id": 11,
         "is_root": false
     },
     {
         "name": "Semestre 1",
         "academic_year": 2025,
-        "parent_id": 3,
+        "parent_id": 12,
         "is_root": false
     },
     {
         "name": "Semestre 2",
         "academic_year": 2025,
-        "parent_id": 3,
+        "parent_id": 12,
         "is_root": false
     },
     {
         "name": "Semestre 1",
         "academic_year": 2025,
-        "parent_id": 4,
+        "parent_id": 13,
         "is_root": false
     },
     {
         "name": "Semestre 2",
         "academic_year": 2025,
-        "parent_id": 4,
+        "parent_id": 13,
         "is_root": false
     },
     {
         "name": "Mathématiques",
         "academic_year": 2025,
-        "parent_id": 1,
+        "parent_id": 10,
         "is_root": false
     }
 ]
