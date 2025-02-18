@@ -230,11 +230,11 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    number_profile: int = await ProfileInDB.filter(academic_year=academic_year).exclude(account_id=None).count()
+    number_profile_with_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(account_id=None).count()
 
     number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year, account_id=None).count()
 
     return PydanticNumberOfProfile(
         number_of_profiles_without_account=number_profile_without_account,
-        number_of_profiles_with_account=number_profile - number_profile_without_account
+        number_of_profiles_with_account=number_profile_with_account
     )
