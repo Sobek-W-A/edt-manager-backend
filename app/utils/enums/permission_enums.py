@@ -131,6 +131,7 @@ class AvailableServices(AbstractEnumLoader):
     NODE_SERVICE        = Service("Node Service",    "Service that manages nodes.")
     ROLE_SERVICE        = Service("Role Service",    "Service that manages roles.")
     COURSE_SERVICE      = Service("Course Service", "Service that manages courses.")
+    ACADEMIC_YEAR_SERVICE = Service("Academic Year Service", "Service that manages academic years.")
 
 class AvailablePermissions(AbstractEnumLoader):
     """
@@ -176,6 +177,12 @@ class AvailablePermissions(AbstractEnumLoader):
                                   AvailableOperations.GET.value,
                                   AvailableOperations.UPDATE.value,
                                   AvailableOperations.DELETE.value])
+
+    CRUD_ACADEMIC_YEAR = Permission(AvailableServices.ACADEMIC_YEAR_SERVICE.value,
+                             [AvailableOperations.CREATE.value,
+                              AvailableOperations.GET.value,
+                              AvailableOperations.UPDATE.value,
+                              AvailableOperations.DELETE.value])
 
 class AvailableEnsemblesPermissions(enum.Enum):
     """

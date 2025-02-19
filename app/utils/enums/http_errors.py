@@ -58,3 +58,5 @@ class CommonErrorMessages(enum.StrEnum):
     AFFECTATION_GROUP_INVALID            = "Invalid group number. Must be positive and less than the group count of the course."
     # Status Errors 
     STATUS_NOT_FOUND          = "Status was not found"
+    # Academic_year Errors
+    ACADEMIC_YEAR_NOT_FOUND = "Academic year was not found"
