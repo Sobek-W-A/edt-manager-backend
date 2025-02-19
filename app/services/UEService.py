@@ -68,6 +68,11 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> P
         raise HTTPException(status_code=404,
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
+    if await NodeInDB.filter(parent_id=body.parent_id).exists():
+        raise HTTPException(status_code=409,
+                            detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
+
+
     ue_to_create: UEInDB = UEInDB(name=body.name,
                                   academic_year=body.academic_year,
                                   parent=parent_node)

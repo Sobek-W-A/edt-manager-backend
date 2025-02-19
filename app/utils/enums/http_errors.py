@@ -36,11 +36,11 @@ class CommonErrorMessages(enum.StrEnum):
     PARENT_NODE_NOT_FOUND     = "Parent node was not found"
     ROOT_NODE_NOT_FOUND       = "Root node was not found"
     NODE_CANT_DELETE_CHILDREN = "You can't delete a node with children. Delete the children first."
-    FOLDER_AND_UE_NOT_ENABLED = "You can't have a folder with a folder and an UE"
+    FOLDER_AND_UE_NOT_ENABLED = "You can't have a folder that contains a folder and an UE"
     # UE Errors
     UE_NOT_FOUND              = "UE was not found"
     UE_ALREADY_EXIST          = "UE already exists"
-    #Course Errors
+    # Course Errors
     COURSE_NOT_FOUND          = "Course was not found"
     COURSE_ALREADY_EXIST      = "Course already exists"
     COURSE_TYPE_NOT_FOUND     = "Course type was not found"

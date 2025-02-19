@@ -190,6 +190,11 @@ async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, 
     if node_to_add.parent_id is not None and not await NodeInDB.exists(id=node_to_add.parent_id, academic_year=academic_year):
         raise HTTPException(status_code=404,
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+    
+    # We check if the parent Node does not already contain a children that are UES and not Nodes.
+    if node_to_add.parent_id is not None and  await UEInDB.exists(parent_id=node_to_add.parent_id, academic_year=academic_year):
+        raise HTTPException(status_code=400,
+                            detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
 
     node: NodeInDB = NodeInDB(
         academic_year=academic_year,
@@ -217,6 +222,11 @@ async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUp
     if new_data.parent_id is not None and not await NodeInDB.exists(id=new_data.parent_id, academic_year=academic_year):
         raise HTTPException(status_code=404,
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+
+    # We check if the parent Node does not already contain a children that are UES and not Nodes.
+    if new_data.parent_id is not None and await UEInDB.exists(parent_id=new_data.parent_id, academic_year=academic_year):
+        raise HTTPException(status_code=400,
+                            detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
 
     node_to_update.update_from_dict(new_data.model_dump(exclude_none=True))# type: ignore
 
