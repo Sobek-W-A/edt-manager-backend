@@ -184,6 +184,12 @@ async def modify_affectation(new_data: PydanticAffectationInModify, affectation:
         has_changed = True
 
     if new_data.group is not None:
+        course: CourseInDB | None = await affectation.course.first()
+        if course is None:
+            raise HTTPException(status_code=404,
+                                detail=CommonErrorMessages.COURSE_NOT_FOUND)
+        else:
+            affectation.course = course
         if new_data.group < 1 or new_data.group > affectation.course.group_count:
             raise HTTPException(status_code=400, detail=CommonErrorMessages.AFFECTATION_GROUP_INVALID)
         affectation.group = new_data.group
