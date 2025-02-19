@@ -54,7 +54,7 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
                            ue_id=ue.id)
 
 
-async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> PydanticUEModel:
+async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> None:
     """
     This method creates a new UE.
     """
@@ -79,10 +79,20 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> P
 
     await UEInDB.save(ue_to_create)
 
-    return PydanticUEModel(academic_year=body.academic_year,
-                           courses=[],
-                           name=body.name,
-                           ue_id=ue_to_create.id)
+    created_courses : list[CourseInDB] = []
+    if body.courses:
+        for course_data in body.courses:
+            course = await CourseInDB.create(
+                academic_year=course_data.academic_year,
+                duration=course_data.duration,
+                group_count=course_data.group_count,
+                course_type_id=course_data.course_type_id,
+            )
+            created_courses.append(course)
+
+    await ue_to_create.courses.add(*created_courses)
+
+
 
 
 async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account: AccountInDB) -> None:

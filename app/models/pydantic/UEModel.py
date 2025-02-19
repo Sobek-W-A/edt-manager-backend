@@ -5,7 +5,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
-from app.models.pydantic.CourseModel import PydanticCourseModel
+from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCreateCourseModel
 
 
 class PydanticUEModelFromJSON(BaseModel):
@@ -39,7 +39,7 @@ class PydanticCreateUEModel(AcademicYearPydanticModel):
     """
     name      : str
     parent_id : int
-    courses   : Optional[list[PydanticCourseModel]]
+    courses   : Optional[list[PydanticCreateCourseModel]]
 
 class PydanticModifyUEModel(AcademicYearPydanticModel):
     """
