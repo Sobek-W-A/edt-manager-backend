@@ -59,4 +59,4 @@ class CommonErrorMessages(enum.StrEnum):
     # Status Errors 
     STATUS_NOT_FOUND          = "Status was not found"
     # Academic_year Errors
-    ACADEMIC_YEAR_NOT_FOUND = "Academic year was not found, please create one manually"
+    ACADEMIC_YEAR_NOT_FOUND = "Academic year was not found"
