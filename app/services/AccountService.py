@@ -60,7 +60,7 @@ async def get_account(academic_year: int, account_id: int, current_account: Acco
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def get_accounts_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts linked to a profile.
     """
@@ -79,13 +79,13 @@ async def get_accounts_linked_to_profile(academic_year: int, current_account: Ac
                 profiles[account.id] = profile
                 accounts_to_return.append(account)
 
-    return [PydanticAccountModel(login=account.login,
+    return body.paginate_list(([PydanticAccountModel(login=account.login,
                                  id=account.id,
                                  profile=PydanticProfileResponse.model_validate(profiles[account.id]))
-            for account in accounts_to_return]
+            for account in accounts_to_return]))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticAccountWithoutProfileModel]:
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
     """
@@ -104,7 +104,7 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
             if not profile:
                 accounts_to_return.append(account)
 
-    return [PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return]
+    return body.paginate_list([PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return])
 
 
 async def get_all_accounts(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
@@ -241,7 +241,7 @@ async def search_account_by_keywords(academic_year:int, keywords: str, current_a
             ))
             account_ids.append(profile.account.id)
 
-    return await body.paginate_list(accounts_to_return)
+    return body.paginate_list(accounts_to_return)
 
 
 async def create_account(account: PydanticCreateAccountModel,

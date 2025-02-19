@@ -178,7 +178,7 @@ async def get_current_profile(current_account: AccountInDB) -> PydanticProfileRe
     return PydanticProfileResponse.model_validate(profile)
 
 
-async def search_profile_by_keywords(keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
+async def search_profile_by_keywords(keywords: str, academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticProfileResponse]:
     """
     Searches for a profile by keywords.
     """
@@ -200,7 +200,7 @@ async def search_profile_by_keywords(keywords: str, current_account: AccountInDB
                 Q(mail__icontains=keyword)
         )
 
-    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(query).all()
+    profiles_query: QuerySet[ProfileInDB] = ProfileInDB.filter(query, academic_year=academic_year).all()
 
     profiles: list[ProfileInDB] = await body.paginate_query(profiles_query)
 
@@ -230,12 +230,11 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
                             AvailableOperations.GET,
                             current_account)
 
-    number_profile: int = await ProfileInDB.filter(academic_year=academic_year).count()
+    number_profile_with_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(account_id=None).count()
 
-    number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year).exclude(
-        account_id=None).count()
+    number_profile_without_account: int = await ProfileInDB.filter(academic_year=academic_year, account_id=None).count()
 
     return PydanticNumberOfProfile(
         number_of_profiles_without_account=number_profile_without_account,
-        number_of_profiles_with_account=number_profile - number_profile_without_account
+        number_of_profiles_with_account=number_profile_with_account
     )

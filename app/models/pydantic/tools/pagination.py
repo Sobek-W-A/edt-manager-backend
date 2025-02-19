@@ -41,7 +41,7 @@ class PydanticPagination(BaseModel):
             return await query.offset(self.compute_offset())\
                               .limit(self.limit).order_by(order_field)
 
-    async def paginate_list[T: BaseModel](self, query: list[T]) -> list[T]:
+    def paginate_list[T: BaseModel](self, query: list[T]) -> list[T]:
         """
         This method paginates a list.
         """
@@ -58,5 +58,3 @@ class PydanticPagination(BaseModel):
         start = self.compute_offset()
         end = start + self.limit
         return query[start:end]
-
-

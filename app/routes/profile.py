@@ -69,13 +69,13 @@ async def get_profiles_not_linked_to_account(academic_year: int, current_account
 
 
 @profileRouter.get("/search/{keywords}/", response_model=list[PydanticProfileResponse], status_code=200)
-async def search_profile(keywords: str, current_account: AuthenticatedAccount, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
+async def search_profile(keywords: str, current_account: AuthenticatedAccount, academic_year: int, page: int | None = None, limit: int | None = None, order: str | None = None) -> list[PydanticProfileResponse]:
     """
     This method retrieves profiles that matches the keywords provided.
     """
     body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
 
-    return await ProfileService.search_profile_by_keywords(keywords, current_account, body)
+    return await ProfileService.search_profile_by_keywords(keywords, academic_year, current_account, body)
 
 @profileRouter.get("/nb", status_code=200, response_model=PydanticNumberOfProfile)
 async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccount) -> PydanticNumberOfProfile:

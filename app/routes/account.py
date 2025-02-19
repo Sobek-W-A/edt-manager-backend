@@ -37,25 +37,29 @@ async def get_all_accounts(current_account: AuthenticatedAccount, academic_year:
 
 @accountRouter.get("/linked", status_code=200,
                    response_model=list[PydanticAccountModel])
-async def get_accounts_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
+async def get_accounts_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount,
+                                         page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
     PydanticAccountModel]:
     """
     This method returns all the accounts not linked to a profile.
     It returns specifically accounts that are not linked to a profile ever,
     or for the given academic year.
     """
-    return await AccountService.get_accounts_linked_to_profile(academic_year, current_account)
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
+    return await AccountService.get_accounts_linked_to_profile(academic_year, current_account, body)
 
 @accountRouter.get("/notlinked", status_code=200,
                    response_model=list[PydanticAccountWithoutProfileModel])
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[
+async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AuthenticatedAccount,
+                                             page: int | None = None, limit: int | None = None, order: str | None = None) -> list[
     PydanticAccountWithoutProfileModel]:
     """
     This method returns all the accounts not linked to a profile.
     It returns specifically accounts that are not linked to a profile ever,
     or for the given academic year.
     """
-    return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account)
+    body: PydanticPagination = PydanticPagination.create_model(page, limit, order)
+    return await AccountService.get_accounts_not_linked_to_profile(academic_year, current_account, body)
 
 
 @accountRouter.get("/{account_id}", status_code=200, response_model=PydanticAccountModel)
