@@ -46,11 +46,9 @@ async def create_new_academic_year(current_account) -> PydanticAcademicTableMode
     new_academic_year = last_academic_year.academic_year + 1
     new_description = f"{new_academic_year}-{new_academic_year + 1}"
 
-    new_academic_year_entry : AcademicYearTableInDB = AcademicYearTableInDB(
-                                            academic_year=new_academic_year,
-                                            description=new_description
-                                            )
-
-    await AcademicYearTableInDB.save(new_academic_year_entry)
+    new_academic_year_entry = await AcademicYearTableInDB.create(
+        academic_year=new_academic_year,
+        description=new_description
+    )
 
     return PydanticAcademicTableModel.model_validate(new_academic_year_entry)

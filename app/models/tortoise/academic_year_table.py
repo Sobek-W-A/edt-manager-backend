@@ -13,8 +13,8 @@ class AcademicYearTableInDB(AcademicYear):
     """
         This class is the tortoise model for academic year table.
     """
-    id: Field[int] = IntField(pk=True)
-    description: Field[str] = TextField(null=False)
+    id: int = IntField(pk=True)
+    description: str = TextField(null=False)
 
 
     class Meta(AcademicYear.Meta):

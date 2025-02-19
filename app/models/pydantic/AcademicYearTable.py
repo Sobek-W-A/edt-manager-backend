@@ -23,7 +23,6 @@ class PydanticAcademicYearTableModelFromJSON(BaseModel):
     """
     Pydantic Model for Academic year. This model is used to validate and transform JSON data.
     """
-    id: int
     description: str
     academic_year: int
 
