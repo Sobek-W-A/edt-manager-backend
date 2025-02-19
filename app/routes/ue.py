@@ -30,14 +30,14 @@ async def get_ue_by_id(
     return await UEService.get_ue_by_id(ue_id, current_account)
 
 
-@ueRouter.post("/", status_code=201, response_model=PydanticUEModel)
+@ueRouter.post("/", status_code=201)
 async def add_ue(
     body: PydanticCreateUEModel, current_account: AuthenticatedAccount
-) -> PydanticUEModel:
+) -> None:
     """
     This method creates a new UE.
     """
-    return await UEService.add_ue(body, current_account)
+    await UEService.add_ue(body, current_account)
 
 
 @ueRouter.patch("/{ue_id}", status_code=205)
@@ -56,3 +56,5 @@ async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:
     This method deletes the UE of the given UE id.
     """
     return await UEService.delete_ue(ue_id, current_account)
+
+
