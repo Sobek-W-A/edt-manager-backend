@@ -1,17 +1,9 @@
 """
 This module contains the Course and Profile related enums to load in the database.
-CAREFUL : These models are dependent of the AcademicYear model. They will have a default
-value there.
 """
-
-import datetime
-
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.status import StatusInDB
 from app.utils.enums.enum_loaders import AbstractEnumLoader, LoadableData
-
-
-CURRENT_YEAR: int = datetime.datetime.now().year
 
 
 class Course(LoadableData):
@@ -30,8 +22,7 @@ class Course(LoadableData):
         This method is used to load the course type to the database.
         """
         await CourseTypeInDB.create(name=self.course_type_name,
-                                    description=self.course_type_description,
-                                    academic_year=CURRENT_YEAR)
+                                    description=self.course_type_description)
 
 class Status(LoadableData):
     """
@@ -52,8 +43,7 @@ class Status(LoadableData):
         """
         await StatusInDB.create(name=self.status_name,
                                 description=self.status_description,
-                                quota=self.quota,
-                                academic_year=CURRENT_YEAR)
+                                quota=self.quota)
 
 
 class AvailableCourseTypes(AbstractEnumLoader):

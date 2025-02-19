@@ -6,6 +6,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.pydantic.tools.validator import Hours
 
@@ -15,8 +16,8 @@ class PydanticAffectation(BaseModel):
     Represents a class-teacher affectation.
     """
     id       : int
-    profile  : PydanticProfileResponse
-    course_id: int
+    profile  : PydanticProfileResponse | int
+    course   : PydanticCourseModel     | int
     hours    : Hours
     notes    : Optional[str] = None
     date     : datetime

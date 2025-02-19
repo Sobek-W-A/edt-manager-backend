@@ -1,10 +1,9 @@
 """
 Pydantic models for CourseType.
 """
-from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
+from pydantic import BaseModel
 
-
-class PydanticCourseTypeModel(AcademicYearPydanticModel):
+class PydanticCourseTypeModel(BaseModel):
     """
     This model is meant to be used when we need to return a CourseType to the frontend.
     """
@@ -18,7 +17,7 @@ class PydanticCourseTypeModel(AcademicYearPydanticModel):
         """
         from_attributes : bool = True
 
-class PydanticCourseTypeModelFromJSON(AcademicYearPydanticModel):
+class PydanticCourseTypeModelFromJSON(BaseModel):
     """
     This class is used to load a JSON file into a Pydantic model.
     """

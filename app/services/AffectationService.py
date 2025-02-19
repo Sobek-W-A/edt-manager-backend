@@ -6,10 +6,12 @@ Used to assign/unassign classes to teachers and retrieve these informations.
 from datetime import datetime
 from fastapi import HTTPException
 from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify
+from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.course import CourseInDB
+from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -29,12 +31,21 @@ async def get_teacher_affectations(profile_id: int, current_account: AccountInDB
     if profile is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
-    affectations : list[AffectationInDB] = await AffectationInDB.filter(profile_id=profile_id).all()
+    affectations : list[AffectationInDB] = await AffectationInDB.filter(profile_id=profile_id)\
+                                                                .all()\
+                                                                .prefetch_related("course")
+    for affectation in affectations:
+        course: CourseInDB | None = await affectation.course.first()
+        if course is not None:
+            affectation.course = course
+            course_type : CourseTypeInDB | None = await course.course_type.first()
+            if course_type is not None:
+                affectation.course.course_type = course_type
 
     return [PydanticAffectation(
                 id=affectation.id,
-                profile=PydanticProfileResponse.model_validate(affectation.profile),
-                course_id=affectation.course.id,
+                profile=profile.id,
+                course=PydanticCourseModel.model_validate(affectation.course),
                 hours=affectation.hours,
                 notes=affectation.notes,
                 date=affectation.date,
@@ -57,10 +68,11 @@ async def get_course_affectations(course_id: int, current_account: AccountInDB) 
     affectations : list[AffectationInDB] = await AffectationInDB.filter(course_id=course_id)\
                                                                 .all()\
                                                                 .prefetch_related("profile")
+
     return [PydanticAffectation(
                 id=affectation.id,
                 profile=PydanticProfileResponse.model_validate(affectation.profile),
-                course_id=affectation.course_id,
+                course=course.id,
                 hours=affectation.hours,
                 notes=affectation.notes,
                 date=affectation.date,
@@ -96,14 +108,15 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, cur
                                                                         course_id=course_id,
                                                                         notes=affectation.notes,
                                                                         hours=affectation.hours,
+                                                                        group=affectation.group,
                                                                         date=datetime.now())
     
     await affectation_created.fetch_related("profile", "course")
 
     return PydanticAffectation(
                 id=affectation_created.id,
-                profile=PydanticProfileResponse.model_validate(affectation_created.profile),
-                course_id=affectation_created.course.id,
+                profile=profile.id,
+                course=affectation_created.course.id,
                 hours=affectation_created.hours,
                 notes=affectation_created.notes,
                 date=affectation_created.date,
@@ -177,7 +190,7 @@ async def modify_affectation(new_data: PydanticAffectationInModify, affectation:
         has_changed = True
 
     if has_changed:
-        affectation.date  = datetime.now()
+        affectation.date = datetime.now()
 
     await affectation.save()
 

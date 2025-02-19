@@ -28,7 +28,7 @@ class PydanticCourseModel(AcademicYearPydanticModel):
     id: int
     duration : int
     group_count : int
-    course_type : PydanticCourseTypeModel
+    course_type : PydanticCourseTypeModel | int
 
     class Config:
         """
