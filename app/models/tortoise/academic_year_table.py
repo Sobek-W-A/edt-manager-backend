@@ -3,7 +3,7 @@ This module contains the AcademicYearTableInDB model which is used to represent 
 academic year which exist.
 """
 
-from tortoise.fields import Field, IntField, TextField
+from tortoise.fields import IntField, TextField
 
 from app.models.tortoise.abstract.academic_year import AcademicYear
 

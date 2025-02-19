@@ -3,7 +3,6 @@ Academic_Year services. Basically the real functionalities concerning the Academ
 """
 from fastapi import HTTPException
 
-from app.models.pydantic import AcademicYearTable
 from app.models.pydantic.AcademicYearTable import PydanticAcademicTableModel
 from app.models.tortoise.academic_year_table import AcademicYearTableInDB
 from app.models.tortoise.account import AccountInDB
