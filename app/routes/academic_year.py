@@ -21,7 +21,6 @@ async def get_all_academic_year(current_account: AuthenticatedAccount) -> list[P
     """
         This method returns all the academic_year.
     """
-
     return await AcademicYearService.get_all_academic_year(current_account)
 
 @academic_yearRouter.post("/", status_code=201,response_model=PydanticAcademicTableModel)
@@ -29,5 +28,4 @@ async def create_new_academic_year(current_account: AuthenticatedAccount) -> Pyd
     """
         This method creates a new academic_year.
     """
-
     return await AcademicYearService.create_new_academic_year(current_account)

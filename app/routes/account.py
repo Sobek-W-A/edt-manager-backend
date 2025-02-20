@@ -71,7 +71,7 @@ async def get_account(academic_year: int, account_id: int, current_account: Auth
 
 
 @accountRouter.post("/", status_code=201, response_model=PydanticAccountPasswordResponse)
-async def create_account(account: PydanticCreateAccountModel,
+async def create_account(account: PydanticCreateAccountModel, academic_year: int,
                          current_account: AuthenticatedAccount) -> PydanticAccountPasswordResponse:
     """
     This method creates an account.
@@ -80,7 +80,7 @@ async def create_account(account: PydanticCreateAccountModel,
 
 
 @accountRouter.patch("/{account_id}", status_code=205)
-async def modify_account(account_id: int, account: PydanticModifyAccountModel,
+async def modify_account(account_id: int, academic_year: int, account: PydanticModifyAccountModel,
                          current_account: AuthenticatedAccount) -> Response:
     """
     This method modifies an account.
@@ -91,7 +91,7 @@ async def modify_account(account_id: int, account: PydanticModifyAccountModel,
 
 
 @accountRouter.delete("/{account_id}", status_code=204)
-async def delete_account(account_id: int, current_account: AuthenticatedAccount) -> None:
+async def delete_account(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes an account.
     """
@@ -131,7 +131,7 @@ async def search_account_by_keywords(keywords: str, current_account: Authenticat
 
 
 @accountRouter.patch("/{account_id}/role/", status_code=205)
-async def set_role_account_by_id(account_id: int, current_account: AuthenticatedAccount,
+async def set_role_account_by_id(account_id: int, academic_year: int, current_account: AuthenticatedAccount,
                                  body: PydanticSetRoleToAccountModel) -> Response:
     """
     This method set an account's roles with the account ID and a body.
@@ -142,7 +142,7 @@ async def set_role_account_by_id(account_id: int, current_account: Authenticated
 
 
 @accountRouter.get("/nb/", status_code=200, response_model=NumberOfElement)
-async def get_nb_accounts(current_account: AuthenticatedAccount) -> NumberOfElement:
+async def get_nb_accounts(current_account: AuthenticatedAccount, academic_year: int) -> NumberOfElement:
     """
     This method get the number of account in the database.
     """
