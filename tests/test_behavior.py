@@ -53,10 +53,6 @@ class TestBehavior(AppTestCase):
         )
         self.assertEqual(response.status_code, 205)
 
-    # def test_delete_account(self):
-    #     response: Response = self.call_api("DELETE", "/account/1", use_auth=True)
-    #     self.assertEqual(response.status_code, 204)
-
     def test_get_profile(self):
         response: Response = self.call_api("GET", "/profile", use_auth=True)
         body: dict[str, Any] = response.json()
@@ -98,7 +94,3 @@ class TestBehavior(AppTestCase):
             "PATCH", "/profile/1", use_auth=True, body=data
         )
         self.assertEqual(response.status_code, 205)
-
-    # def test_delete_profile(self):
-    #     response: Response = self.call_api("DELETE", "/profile/1", use_auth=True)
-    #     self.assertEqual(response.status_code, 204)
