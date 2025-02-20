@@ -19,7 +19,7 @@ tag: Tag = {
 
 
 @profileRouter.post("/", status_code=201)
-async def create_profile(body: PydanticProfileCreate, current_account: AuthenticatedAccount) -> None:
+async def create_profile(body: PydanticProfileCreate, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This method creates a new Profile
     and return his password.
@@ -28,7 +28,7 @@ async def create_profile(body: PydanticProfileCreate, current_account: Authentic
 
 
 @profileRouter.patch("/{profile_id}", status_code=205)
-async def modify_profile(profile_id: int, profile_model: PydanticProfileModify,
+async def modify_profile(profile_id: int, academic_year: int, profile_model: PydanticProfileModify,
                          current_account: AuthenticatedAccount) -> Response:
     """
     This controllers is used when modifying Profile informations.
@@ -49,7 +49,7 @@ async def get_all_profiles(academic_year: int, current_account: AuthenticatedAcc
 
 
 @profileRouter.get("/me", response_model=PydanticProfileResponse, status_code=200)
-async def get_current_profile(current_account: AuthenticatedAccount) -> PydanticProfileResponse:
+async def get_current_profile(academic_year: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
     """
     Retrieves data from the currently connected Profile.
     """
@@ -86,7 +86,7 @@ async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccou
 
 
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
-async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
+async def get_profile_by_id(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
     """
     Retrieves a Profile by their ID.
     """
@@ -94,7 +94,7 @@ async def get_profile_by_id(profile_id: int, current_account: AuthenticatedAccou
 
 
 @profileRouter.delete("/{profile_id}", status_code=204)
-async def delete_profile(profile_id: int, current_account: AuthenticatedAccount) -> None:
+async def delete_profile(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This route is used for deleting a Profile
     """

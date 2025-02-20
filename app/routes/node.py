@@ -24,7 +24,7 @@ async def get_root_node(academic_year: int, current_account: AuthenticatedAccoun
     return await NodeService.get_root_node(academic_year, current_account)
 
 @nodeRouter.get("/{node_id}", status_code=200, response_model=PydanticNodeModelWithChildIds)
-async def get_node_by_id(node_id: int, current_account: AuthenticatedAccount) ->  PydanticNodeModelWithChildIds:
+async def get_node_by_id(node_id: int, academic_year: int, current_account: AuthenticatedAccount) ->  PydanticNodeModelWithChildIds:
     """
     This method returns the node of the given node id.
     Also returns the contents of the sub-nodes.
@@ -39,7 +39,7 @@ async def get_arborescence_from_root(academic_year: int, current_account: Authen
     return await NodeService.get_root_arborescence(academic_year, current_account)
 
 @nodeRouter.get("/{node_id}/arborescence", status_code=200, response_model=PydanticNodeModel)
-async def get_arborescence_from_node(academic_year: int, node_id: int,current_account: AuthenticatedAccount) -> PydanticNodeModel:
+async def get_arborescence_from_node(academic_year: int, node_id: int, current_account: AuthenticatedAccount) -> PydanticNodeModel:
     """
     This method returns the node of the given academic year and id.
     Also returns the following tree.

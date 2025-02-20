@@ -86,8 +86,6 @@ async def modify_role(role_name : str, body: PydanticUpdateRoleModel , current_a
     This method modifies a role with given name.
     """
 
-    #TODO
-
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.UPDATE,
                             current_account)
