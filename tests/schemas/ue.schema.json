@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "properties": {
+        "academic_year": {
+            "type": "integer"
+        },
+        "ue_id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "courses": {
+            "type": "array",
+            "items": {}
+        }
+    },
+    "required": [
+        "academic_year",
+        "ue_id",
+        "name",
+        "courses"
+    ],
+    "additionalProperties": false
+}
