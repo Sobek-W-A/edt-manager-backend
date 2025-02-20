@@ -1,0 +1,19 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer"
+            },
+            "login": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "id",
+            "login"
+        ],
+        "additionalProperties": false
+    }
+}

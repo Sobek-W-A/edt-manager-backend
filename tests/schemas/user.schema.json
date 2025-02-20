@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "login": {
+            "type": "string"
+        },
+        "profile": {
+            "oneOf": [
+                {"type": "null"},
+                {"$ref": "file:///tests/schemas/profile.schema.json"}
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "id",
+        "login",
+        "profile"
+    ]
+}
