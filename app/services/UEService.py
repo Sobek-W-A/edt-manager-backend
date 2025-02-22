@@ -91,7 +91,8 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> N
             created_courses.append(course)
 
     await ue_to_create.courses.add(*created_courses)
-
+    await ue_to_create.parent.add(parent_node)
+    await ue_to_create.save()
 
 
 

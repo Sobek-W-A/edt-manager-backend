@@ -23,7 +23,8 @@ async def get_root(academic_year: int) -> NodeInDB:
     This method retrives the root node from the database.
     CAREFUL ! Does not check for permissions.
     """
-    root: NodeInDB | None = await NodeInDB.get_or_none(academic_year=academic_year, parent_id=None)\
+    root: NodeInDB | None = await NodeInDB.get_or_none(academic_year=academic_year,
+                                                       parent=None)\
                                           .prefetch_related("child_nodes")
     if root is None:
         raise HTTPException(status_code=404,
@@ -44,7 +45,7 @@ async def add_ues_to_node_model(node: PydanticNodeModel | PydanticNodeModelWithC
     """
     This method adds the UEs to the given node model.
     """
-    children_ues = await UEInDB.filter(parent_id=node.id,
+    children_ues = await UEInDB.filter(parent__id=node.id,
                                        academic_year=academic_year).all()
     for ue in children_ues:
         if node.child_nodes is None:
@@ -192,14 +193,14 @@ async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, 
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
     
     # We check if the parent Node does not already contain a children that are UES and not Nodes.
-    if node_to_add.parent_id is not None and  await UEInDB.exists(parent_id=node_to_add.parent_id, academic_year=academic_year):
+    if node_to_add.parent_id is not None and await UEInDB.exists(parent=node_to_add.parent_id, academic_year=academic_year):
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
 
     node: NodeInDB = NodeInDB(
         academic_year=academic_year,
         name=node_to_add.name,
-        parent_id=node_to_add.parent_id
+        parent=node_to_add.parent_id
     )
 
     await node.save()
@@ -224,7 +225,7 @@ async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUp
                             detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
     # We check if the parent Node does not already contain a children that are UES and not Nodes.
-    if new_data.parent_id is not None and await UEInDB.exists(parent_id=new_data.parent_id, academic_year=academic_year):
+    if new_data.parent_id is not None and await UEInDB.exists(parent=new_data.parent_id, academic_year=academic_year):
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
 
@@ -253,9 +254,9 @@ async def delete_node(academic_year: int, node_id: int, current_account: Account
             raise HTTPException(status_code=400,
                                 detail=CommonErrorMessages.NODE_CANT_DELETE_CHILDREN.value)
         
-    children_ues = await UEInDB.filter(parent_id=node_to_delete.id,
-                                       academic_year=academic_year).all()
-    if len(children_ues) > 0:
+    children_ues = await UEInDB.filter(parent=node_to_delete.id,
+                                       academic_year=academic_year).all().count()
+    if children_ues > 0:
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.NODE_CANT_DELETE_CHILDREN.value)
 

@@ -9,7 +9,7 @@
             5
         ],
         "academic_year": 2024,
-        "parent_id": 5
+        "parent_m2m": [5]
     },
     {
         "name": "UE 2",
@@ -21,7 +21,7 @@
             10
         ],
         "academic_year": 2025,
-        "parent_id": 5
+        "parent_m2m": [5]
     },
     {
         "name": "UE 3",
@@ -33,7 +33,7 @@
             15
         ],
         "academic_year": 2024,
-        "parent_id": 6
+        "parent_m2m": [6]
     },
     {
         "name": "UE 4",
@@ -45,7 +45,7 @@
             20
         ],
         "academic_year": 2025,
-        "parent_id": 7
+        "parent_m2m": [7]
     },
     {
         "name": "UE 5",
@@ -57,7 +57,7 @@
             25
         ],
         "academic_year": 2024,
-        "parent_id": 7
+        "parent_m2m": [7]
     },
     {
         "name": "UE 6",
@@ -69,7 +69,7 @@
             30
         ],
         "academic_year": 2025,
-        "parent_id": 7
+        "parent_m2m": [7]
     },
     {
         "name": "UE 7",
@@ -77,6 +77,6 @@
             31
         ],
         "academic_year": 2024,
-        "parent_id": 8
+        "parent_m2m": [8]
     }
 ]

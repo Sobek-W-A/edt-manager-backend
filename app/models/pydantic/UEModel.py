@@ -12,10 +12,10 @@ class PydanticUEModelFromJSON(BaseModel):
     """
     Pydantic model for loading data from a JSON file.
     """
-    name           : str
-    courses_m2m : list[int]
-    academic_year  : int
-    parent_id      : int | None
+    name         : str
+    courses_m2m  : list[int]
+    academic_year: int
+    parent_m2m   : list[int] | None
 
     class Config:
         """
