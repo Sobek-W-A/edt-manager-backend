@@ -2,7 +2,7 @@
 This module contains the model for the UE.
 """
 from tortoise.fields import (ManyToManyField, ManyToManyRelation,
-                             ForeignKeyNullableRelation, ForeignKeyField)
+                             ForeignKeyNullableRelation)
 
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.node import NodeInDB
@@ -11,11 +11,11 @@ class UEInDB(NodeInDB):
     """
     This model represents a UE.
     """
-    # Override `parent` and chil_nodes to remove backward relation duplication
-    parent: ForeignKeyNullableRelation["NodeInDB"] = ForeignKeyField(
+    # Override `parent` and child_nodes to remove backward relation duplication
+    parent: ManyToManyRelation[NodeInDB] = ManyToManyField(         # type: ignore
         "models.NodeInDB",
-        related_name=None,  # Disable backward relation for this subclass
-        null=True,
+        related_name="ues",
+        through="UE_NODE_ASSOCIATION"
     )
     child_nodes: ForeignKeyNullableRelation["NodeInDB"] = None
 

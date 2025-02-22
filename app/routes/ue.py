@@ -39,6 +39,24 @@ async def add_ue(
     """
     await UEService.add_ue(body, current_account)
 
+@ueRouter.post("/attach/{ue_id}/{node_id}", status_code=201)
+async def attach_ue_to_node(academic_year: int,
+    ue_id: int, node_id: int, current_account: AuthenticatedAccount
+) -> None:
+    """
+    This method attaches the UE to the parent node.
+    """
+    await UEService.attach_ue_to_node(ue_id, node_id, academic_year,  current_account)
+
+@ueRouter.post("/detach/{ue_id}/{node_id}", status_code=201)
+async def detach_ue_from_node(academic_year: int,
+    ue_id: int, node_id: int, current_account: AuthenticatedAccount
+) -> None:
+    """
+    This method detaches the UE from the parent node.
+    """
+    await UEService.detach_ue_from_node(ue_id, node_id, academic_year, current_account)
+
 
 @ueRouter.patch("/{ue_id}", status_code=205)
 async def modify_ue(
@@ -56,5 +74,3 @@ async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:
     This method deletes the UE of the given UE id.
     """
     return await UEService.delete_ue(ue_id, current_account)
-
-

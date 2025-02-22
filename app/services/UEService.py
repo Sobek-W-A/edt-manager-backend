@@ -21,7 +21,7 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
     This method returns the UE of the given UE id.
     """
 
-    #ACADEMIC_YEAR A RAJOUTE A L AVENIR
+    # todo :ACADEMIC_YEAR A RAJOUTE A L AVENIR
 
     await check_permissions(AvailableServices.UE_SERVICE,
                             AvailableOperations.GET,
@@ -34,7 +34,7 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
 
     courses: list[CourseInDB] | None = await ue.courses.all()
 
-    coursesPydantic: list[PydanticCourseModel] = []
+    courses_pydantic: list[PydanticCourseModel] = []
 
     for course in courses:
         course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
@@ -46,10 +46,10 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
             group_count=course.group_count,
             course_type=course_type_pydantic,
         )
-        coursesPydantic.append(course_pydantic)
+        courses_pydantic.append(course_pydantic)
 
     return PydanticUEModel(academic_year=ue.academic_year,
-                           courses=coursesPydantic,
+                           courses=courses_pydantic,
                            name=ue.name,
                            ue_id=ue.id)
 
@@ -137,3 +137,47 @@ async def delete_ue(ue_id: int, current_account: AccountInDB) -> None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
     await ue.delete()
+
+async def attach_ue_to_node(ue_id: int, node_id: int, academic_year: int, current_account: AccountInDB) -> None:
+    """
+    This method marks the node provided as the parent for the UE.
+    """
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account,
+                            academic_year)
+    
+    ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
+    if ue is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
+    
+    node: NodeInDB | None = await NodeInDB.get_or_none(id=node_id)
+    if node is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+    
+    if await NodeInDB.filter(parent_id=node_id).exists():
+        raise HTTPException(status_code=409, detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
+    
+    await ue.parent.add(node)
+    await ue.save()
+
+
+async def detach_ue_from_node(ue_id: int, node_id: int, academic_year: int, current_account: AccountInDB) -> None:
+    """
+    This method removes the parent node from the UE.
+    """
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account,
+                            academic_year)
+    
+    ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
+    if ue is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
+    
+    node: NodeInDB | None = await NodeInDB.get_or_none(id=node_id)
+    if node is None:
+        raise HTTPException(status_code=404, detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+    
+    await ue.parent.remove(node)
+    await ue.save()
