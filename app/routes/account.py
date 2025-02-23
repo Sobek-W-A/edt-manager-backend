@@ -86,11 +86,10 @@ async def modify_account(account_id: int, academic_year: int, account: PydanticM
     This method modifies an account.
     """
     await AccountService.modify_account(account_id, account, current_account)
-
     return Response(status_code=205)
 
 
-@accountRouter.delete("/{account_id}", status_code=204)
+@accountRouter.delete("/{account_id}", status_code=204, response_model=None)
 async def delete_account(account_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes an account.
@@ -130,7 +129,7 @@ async def search_account_by_keywords(keywords: str, current_account: Authenticat
     return await AccountService.search_account_by_keywords(academic_year, keywords, current_account, body)
 
 
-@accountRouter.patch("/{account_id}/role/", status_code=205)
+@accountRouter.patch("/{account_id}/role/", status_code=205, response_model=None)
 async def set_role_account_by_id(account_id: int, academic_year: int, current_account: AuthenticatedAccount,
                                  body: PydanticSetRoleToAccountModel) -> Response:
     """

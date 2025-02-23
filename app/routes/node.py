@@ -46,7 +46,6 @@ async def get_arborescence_from_node(academic_year: int, node_id: int, current_a
     """
     return await NodeService.get_all_child_nodes(node_id, academic_year, current_account)
 
-
 @nodeRouter.post("/", status_code=201, response_model=PydanticNodeModelWithChildIds)
 async def add_node(academic_year: int, node_to_add: PydanticNodeCreateModel, current_account: AuthenticatedAccount) -> PydanticNodeModelWithChildIds:
     """
@@ -54,16 +53,16 @@ async def add_node(academic_year: int, node_to_add: PydanticNodeCreateModel, cur
     """
     return await NodeService.create_node(academic_year, node_to_add, current_account)
 
-@nodeRouter.patch("/{node_id}", status_code=205)
+@nodeRouter.patch("/{node_id}", status_code=205, response_model=None)
 async def modify_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AuthenticatedAccount) -> None:
     """
     This method modifies the node of the given node id.
     """
-    return await NodeService.update_node(academic_year, node_id, new_data, current_account)
+    await NodeService.update_node(academic_year, node_id, new_data, current_account)
 
-@nodeRouter.delete("/{node_id}", status_code=204)
+@nodeRouter.delete("/{node_id}", status_code=204, response_model=None)
 async def delete_node(academic_year: int, node_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the node of the given node id.
     """
-    return await NodeService.delete_node(academic_year, node_id, current_account)
+    await NodeService.delete_node(academic_year, node_id, current_account)

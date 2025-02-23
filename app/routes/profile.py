@@ -18,7 +18,7 @@ tag: Tag = {
 }
 
 
-@profileRouter.post("/", status_code=201)
+@profileRouter.post("/", status_code=201, response_model=None)
 async def create_profile(body: PydanticProfileCreate, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This method creates a new Profile
@@ -93,7 +93,7 @@ async def get_profile_by_id(profile_id: int, academic_year: int, current_account
     return await ProfileService.get_profile_by_id(profile_id, current_account)
 
 
-@profileRouter.delete("/{profile_id}", status_code=204)
+@profileRouter.delete("/{profile_id}", status_code=204, response_model=None)
 async def delete_profile(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This route is used for deleting a Profile

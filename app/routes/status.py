@@ -39,14 +39,14 @@ async def add_status() -> None:
     """
     return None
 
-@statusRouter.patch("/{status_id}", status_code=205)
+@statusRouter.patch("/{status_id}", status_code=205, response_model=None)
 async def modify_status(status_id: int, body: None) -> None:
     """
     This method modifies the status of the given status id.
     """
     return None
 
-@statusRouter.delete("/{status_id}", status_code=204)
+@statusRouter.delete("/{status_id}", status_code=204, response_model=None)
 async def delete_status(status_id: int) -> None:
     """
     This method deletes the status of the given status id.
