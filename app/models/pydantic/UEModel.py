@@ -30,7 +30,7 @@ class PydanticUEModel(AcademicYearPydanticModel):
     """
     ue_id: int
     name: str
-    courses: list[PydanticCourseModel]
+    courses: list[PydanticCourseModel] | None
 
 
 class PydanticCreateUEModel(AcademicYearPydanticModel):

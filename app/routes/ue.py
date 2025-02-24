@@ -17,8 +17,6 @@ from app.services import UEService
 
 ueRouter: APIRouter = APIRouter(prefix="/ue")
 tag: Tag = {"name": "UE", "description": "UE-related operations."}
-# TODO
-
 
 @ueRouter.get("/{ue_id}", status_code=200, response_model=PydanticUEModel)
 async def get_ue_by_id(
@@ -28,6 +26,17 @@ async def get_ue_by_id(
     This method returns the UE of the given UE id.
     """
     return await UEService.get_ue_by_id(ue_id, current_account)
+
+
+@ueRouter.get("/affectedto/{profile_id}", status_code=200, response_model=list[PydanticUEModel])
+async def get_ue_by_affected_profile(
+    academic_year: int,
+    profile_id: int, current_account: AuthenticatedAccount
+) -> list[PydanticUEModel]:
+    """
+    This method returns the UEs affected to the given profile id.
+    """
+    return await UEService.get_ue_by_affected_profile(academic_year, profile_id, current_account)
 
 
 @ueRouter.post("/", status_code=201)
@@ -66,7 +75,6 @@ async def modify_ue(
     This method modifies the UE of the given UE id.
     """
     return await UEService.modify_ue(ue_id, body, current_account)
-
 
 @ueRouter.delete("/{ue_id}", status_code=204)
 async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:

@@ -19,7 +19,6 @@ tag: Tag = {
     "description": "Affectations-related operations. Used to manage classes-teachers associations."
 }
 
-
 @affectationRouter.get("/profile/{profile_id}",status_code=200, response_model=list[PydanticAffectation])
 async def get_teacher_affectations(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticAffectation]:
     """
