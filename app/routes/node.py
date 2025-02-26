@@ -2,7 +2,7 @@
 This module provides operations related to nodes.
 Those are the "folders" before an UE.
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from app.models.aliases import AuthenticatedAccount
 
@@ -55,11 +55,12 @@ async def add_node(academic_year: int, node_to_add: PydanticNodeCreateModel, cur
     return await NodeService.create_node(academic_year, node_to_add, current_account)
 
 @nodeRouter.patch("/{node_id}", status_code=205)
-async def modify_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AuthenticatedAccount) -> None:
+async def modify_node(academic_year: int, node_id: int, new_data: PydanticNodeUpdateModel, current_account: AuthenticatedAccount) -> Response:
     """
     This method modifies the node of the given node id.
     """
-    return await NodeService.update_node(academic_year, node_id, new_data, current_account)
+    await NodeService.update_node(academic_year, node_id, new_data, current_account)
+    return Response(status_code=205)
 
 @nodeRouter.delete("/{node_id}", status_code=204)
 async def delete_node(academic_year: int, node_id: int, current_account: AuthenticatedAccount) -> None:
