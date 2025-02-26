@@ -76,8 +76,7 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> N
 
 
     ue_to_create: UEInDB = UEInDB(name=body.name,
-                                  academic_year=body.academic_year,
-                                  parent=parent_node)
+                                  academic_year=body.academic_year)
 
     await UEInDB.save(ue_to_create)
 
