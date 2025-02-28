@@ -11,7 +11,6 @@ from app.models.pydantic.ProfileModel import PydanticProfileResponse
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.course import CourseInDB
-from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
@@ -32,15 +31,12 @@ async def get_teacher_affectations(profile_id: int, current_account: AccountInDB
         raise HTTPException(status_code=404, detail=CommonErrorMessages.PROFILE_NOT_FOUND)
 
     affectations : list[AffectationInDB] = await AffectationInDB.filter(profile_id=profile_id)\
-                                                                .all()\
                                                                 .prefetch_related("course")
     for affectation in affectations:
-        course: CourseInDB | None = await affectation.course.first()
-        if course is not None:
-            affectation.course = course
-            course_type : CourseTypeInDB | None = await course.course_type.first()
-            if course_type is not None:
-                affectation.course.course_type = course_type
+        await affectation.fetch_related("course")
+        print("Affectation: ", affectation.id, " Course: ", affectation.course.id)
+        if affectation.course is not None:
+            await affectation.course.fetch_related("course_type")
 
     return [PydanticAffectation(
                 id=affectation.id,

@@ -28,7 +28,19 @@ async def get_ue_by_id(
     """
     return await UEService.get_ue_by_id(ue_id, current_account)
 
-@ueRouter.post("/", status_code=201, response_model=None)
+
+@ueRouter.get("/affectedto/{profile_id}", status_code=200, response_model=list[PydanticUEModel])
+async def get_ue_by_affected_profile(
+    academic_year: int,
+    profile_id: int, current_account: AuthenticatedAccount
+) -> list[PydanticUEModel]:
+    """
+    This method returns the UEs affected to the given profile id.
+    """
+    return await UEService.get_ue_by_affected_profile(academic_year, profile_id, current_account)
+
+
+@ueRouter.post("/", status_code=201)
 async def add_ue(
     body: PydanticCreateUEModel, current_account: AuthenticatedAccount
 ) -> None:
@@ -62,9 +74,9 @@ async def modify_ue(
     """
     This method modifies the UE of the given UE id.
     """
-    await UEService.modify_ue(ue_id, body, current_account)
+    return await UEService.modify_ue(ue_id, body, current_account)
 
-@ueRouter.delete("/{ue_id}", status_code=204, response_model=None)
+@ueRouter.delete("/{ue_id}", status_code=204)
 async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the UE of the given UE id.

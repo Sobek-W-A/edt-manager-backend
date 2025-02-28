@@ -196,11 +196,16 @@ async def create_node(academic_year: int, node_to_add: PydanticNodeCreateModel, 
     if node_to_add.parent_id is not None and await UEInDB.exists(parent=node_to_add.parent_id, academic_year=academic_year):
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
+    
+    parent: NodeInDB | None = await NodeInDB.get_or_none(id=node_to_add.parent_id)
+    if parent is None:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
 
     node: NodeInDB = NodeInDB(
         academic_year=academic_year,
         name=node_to_add.name,
-        parent=node_to_add.parent_id
+        parent=parent
     )
 
     await node.save()
@@ -229,8 +234,15 @@ async def update_node(academic_year: int, node_id: int, new_data: PydanticNodeUp
         raise HTTPException(status_code=400,
                             detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
 
-    node_to_update.update_from_dict(new_data.model_dump(exclude_none=True))# type: ignore
+    if new_data.parent_id is not None:
+        parent: NodeInDB | None = await NodeInDB.get_or_none(id=new_data.parent_id)
+        if parent is None:
+            raise HTTPException(status_code=404,
+                                detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+        node_to_update.parent = parent
+        new_data.parent_id = None
 
+    node_to_update.update_from_dict(new_data.model_dump(exclude_none=True))# type: ignore
     await node_to_update.save()
 
 async def delete_node(academic_year: int, node_id: int, current_account: AccountInDB) -> None:

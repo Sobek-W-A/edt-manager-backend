@@ -4,6 +4,7 @@ Provides the methods to use when interacting with an UE.
 """
 from fastapi import HTTPException
 
+from app.models.pydantic.AffectationModel import PydanticAffectation
 from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
@@ -12,6 +13,7 @@ from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.node import NodeInDB
 from app.models.tortoise.ue import UEInDB
+from app.services import AffectationService
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
@@ -74,8 +76,7 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> N
 
 
     ue_to_create: UEInDB = UEInDB(name=body.name,
-                                  academic_year=body.academic_year,
-                                  parent=parent_node)
+                                  academic_year=body.academic_year)
 
     await UEInDB.save(ue_to_create)
 
@@ -94,6 +95,42 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> N
     await ue_to_create.parent.add(parent_node)
     await ue_to_create.save()
 
+async def get_ue_by_affected_profile(academic_year: int, profile_id: int, current_account: AccountInDB) -> list[PydanticUEModel]:
+    """
+    This method returns the UE's in which the profile is affected.
+    """
+
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account,
+                            academic_year)
+
+    affectations: list[PydanticAffectation] = await AffectationService.get_teacher_affectations(profile_id, current_account)
+    
+    # We get all courses affected to the teacher.
+    courses: list[PydanticCourseModel] = []
+    for affectation in affectations:
+        course: PydanticCourseModel | int = affectation.course
+        if isinstance(course, int):
+            course = PydanticCourseModel.model_validate(await CourseInDB.get_or_none(id=course))
+        courses.append(course)
+    
+
+    # For each course, we get the parent UE.
+    ues: dict[int, PydanticUEModel] = {}
+    for course in courses:
+        ue: UEInDB | None = await UEInDB.get_or_none(courses__id=course.id)
+        if ue is not None and ue.id not in ues:
+            ues.update(
+                {ue.id: PydanticUEModel(
+                    academic_year=ue.academic_year,
+                    courses=None,
+                    name=ue.name,
+                    ue_id=ue.id
+                )}
+            )
+
+    return [ue for ue in ues.values()]
 
 
 async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account: AccountInDB) -> None:
