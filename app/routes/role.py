@@ -33,21 +33,21 @@ async def get_role_by_name(role_name: str,current_account: AuthenticatedAccount)
     """
     return await RoleService.get_role_by_id(role_name, current_account)
 
-@roleRouter.post("/", status_code=201)
+@roleRouter.post("/", status_code=201, response_model=None)
 async def add_role(body: PydanticCreateRoleModel, current_account: AuthenticatedAccount) -> None:
     """
     This method creates a new role.
     """
     await RoleService.add_role(body, current_account)
 
-@roleRouter.patch("/{role_name}", status_code=205)
+@roleRouter.patch("/{role_name}", status_code=205, response_model=None)
 async def modify_role(body : PydanticUpdateRoleModel, role_name: str, current_account: AuthenticatedAccount) -> None :
     """
     This method modifies the role of the given role id.
     """
     await RoleService.modify_role(role_name, body, current_account)
 
-@roleRouter.delete("/{role_name}", status_code=204)
+@roleRouter.delete("/{role_name}", status_code=204, response_model=None)
 async def delete_role( role_name: str, current_account: AuthenticatedAccount) -> None:
     """
     This method deletes the role of the given role id.

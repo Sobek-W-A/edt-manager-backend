@@ -18,7 +18,7 @@ tag: Tag = {
 
 
 @coursetypeRouter.get("/",status_code=200, response_model=None)
-async def get_course_type(body : None) -> None:
+async def get_course_type() -> None:
     """
     This method returns all course types.
     """
@@ -38,7 +38,7 @@ async def add_course_type() -> None:
     """
     return None
 
-@coursetypeRouter.patch("/{course_type_id}", status_code=205)
+@coursetypeRouter.patch("/{course_type_id}", status_code=205, response_model=None)
 async def modify_course_type(course_id: int, body: None) -> None:
     """
     This method modifies the course type of the given course type id.
@@ -46,7 +46,7 @@ async def modify_course_type(course_id: int, body: None) -> None:
     return None
 
 
-@coursetypeRouter.delete("/{course_type_id}", status_code=204)
+@coursetypeRouter.delete("/{course_type_id}", status_code=204, response_model=None)
 async def delete_course_type(course_id: int) -> None:
     """
     This method deletes the course type of the given course type id.

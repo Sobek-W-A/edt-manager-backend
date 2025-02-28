@@ -40,28 +40,28 @@ async def assign_course_to_profile(affectation: PydanticAffectationInCreate, aca
     """
     return await AffectationService.assign_course_to_profile(affectation, current_account)
 
-@affectationRouter.patch("/{affectation_id}",status_code=205)
+@affectationRouter.patch("/{affectation_id}", status_code=205, response_model=None)
 async def modify_affectation_by_affectation_id(affectation_id: int, academic_year: int, affectation: PydanticAffectationInModify, current_account: AuthenticatedAccount) -> None:
     """
     This method modifies an affectation.
     """
     await AffectationService.modify_affectation_by_affectation_id(current_account, affectation, affectation_id)
 
-@affectationRouter.patch("/{profile_id}/{course_id}",status_code=205)
+@affectationRouter.patch("/{profile_id}/{course_id}", status_code=205, response_model=None)
 async def modify_affectation_by_profile_and_course(profile_id: int, academic_year: int, course_id: int, affectation: PydanticAffectationInModify, current_account: AuthenticatedAccount) -> None:
     """
     This method modifies an affectation.
     """
     await AffectationService.modify_affectation_by_profile_and_course(current_account, affectation, profile_id, course_id)
 
-@affectationRouter.delete("/unassign/{affectation_id}",status_code=205)
+@affectationRouter.delete("/unassign/{affectation_id}", status_code=205, response_model=None)
 async def unassign_course_from_profile_with_affectation_id(academic_year: int, affectation_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This method unassigns a course from a teacher.
     """
     await AffectationService.unassign_course_from_profile_with_affectation_id(affectation_id, current_account)
 
-@affectationRouter.delete("/unassign/profile/{profile_id}/course/{course_id}", status_code=205)
+@affectationRouter.delete("/unassign/profile/{profile_id}/course/{course_id}", status_code=205, response_model=None)
 async def unassign_course_from_profile_with_profile_and_course(profile_id: int, course_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
     """
     This method unassigns a course from a teacher.
