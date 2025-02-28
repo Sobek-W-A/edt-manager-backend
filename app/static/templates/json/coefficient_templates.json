@@ -1,0 +1,26 @@
+[
+    {
+        "academic_year": 2024,
+        "multiplier": 0.9,
+        "course_type_id": 1,
+        "status_id": 1
+    },
+    {
+        "academic_year": 2024,
+        "multiplier": 0.9,
+        "course_type_id": 2,
+        "status_id": 1
+    },
+    {
+        "academic_year": 2024,
+        "multiplier": 0.9,
+        "course_type_id": 3,
+        "status_id": 1
+    },
+    {
+        "academic_year": 2024,
+        "multiplier": 0.9,
+        "course_type_id": 4,
+        "status_id": 1
+    }
+]

@@ -6,10 +6,10 @@ It provides models and methods to do so.
 import enum
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional, TypeAlias
+from typing import Any, Optional, TypeAlias
 
 import bcrypt
-import jwt
+from jwt import encode, decode, exceptions  # type: ignore
 import redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
@@ -19,9 +19,34 @@ from app.utils.CustomExceptions import MissingEnvironnmentException, RequiredFie
 from app.utils.databases.redis_helper import Redis
 from app.utils.enums.http_errors import CommonErrorMessages
 
-from app.utils.type_hint import JWTData
-
 pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+class JWTData:
+    """
+    Class used to describe the encoded data from the JSON Web Tokens.
+    """
+    account_id: int
+    salt: str
+    iat: datetime
+    exp: datetime
+
+    def __init__(self, account_id: int, salt: str, iat: datetime, exp: datetime):
+        self.account_id = account_id
+        self.salt = salt
+        self.iat = iat
+        self.exp = exp
+
+    def export(self) -> dict[str, Any]:
+        """
+        Exports the JWTData to a dictionary.
+        """
+        return {
+            "account_id": self.account_id,
+            "salt": self.salt,
+            "iat": self.iat,
+            "exp": self.exp
+        }
 
 class TokenTypes(enum.Enum):
     """
@@ -77,14 +102,14 @@ class Token:
     It uses the Attributes specified by a specific instance of TokenAttributes.
     """
 
-    value: str | None = None
-    attributes: TokenAttributes
+    value      : str | None      = None
+    attributes : TokenAttributes
 
     def __init__(self, attributes: TokenAttributes, value: str | None = None):
         self.attributes = attributes
         self.value      = value
 
-    def generate(self, user_id: int) -> None:
+    def generate(self, account_id: int) -> None:
         """
         This method generates a single token.
         It uses the attributes specified to generate the correct token using the 
@@ -95,14 +120,14 @@ class Token:
         creation_date: datetime = datetime.now(tz=timezone.utc)
         expire_date: datetime   = datetime.now() + timedelta(minutes=float(self.attributes.expire_time))
 
-        jwt_data: JWTData = {
-            "user_id": user_id,
-            "salt": str(bcrypt.gensalt()),
-            "iat": creation_date,
-            "exp": expire_date
-        }
-        self.value = jwt.encode(jwt_data, str(self.attributes.secret), # type: ignore
-                                self.attributes.algorithm)             # type: ignore
+        jwt_data: JWTData = JWTData(account_id=account_id,
+                                    salt=str(bcrypt.gensalt()),
+                                    iat=creation_date,
+                                    exp=expire_date)
+
+        self.value = encode(payload=jwt_data.export(),
+                                key=self.attributes.secret,
+                                algorithm=self.attributes.algorithm)
 
     def revoke(self, redis_db: Optional["redis.Redis[bytes]"] = Redis.get_redis()) -> None:
         """
@@ -118,7 +143,7 @@ class Token:
         data: JWTData = self.extract_payload()
         # Adding the token to redis blocklist with an expiration equal to
         # the expiration date - creation date.
-        ttl: timedelta = data["exp"] - data["iat"]
+        ttl: timedelta = data.exp - data.iat
         redis_db.setex(self.value, ttl, self.attributes.token_type.value)
         self.value = None
 
@@ -135,15 +160,23 @@ class Token:
         try:
             # We use a different key whether it is a Refresh or an Auth token.
             # Both are supplied in the ENV variables
-            data: JWTData = jwt.decode(jwt=self.value, # type: ignore
-                              key=str(self.attributes.secret),
-                              algorithms=[self.attributes.algorithm])
+            if self.value is not None:
+                data: Any = decode(jwt=self.value,
+                                       key=str(self.attributes.secret),
+                                       algorithms=[self.attributes.algorithm])
 
-        except jwt.exceptions.ExpiredSignatureError as e:
+                data = JWTData(account_id=data["account_id"],
+                               salt=data["salt"],
+                               iat=datetime.fromtimestamp(data["iat"]),
+                               exp=datetime.fromtimestamp(data["exp"]))
+            else:
+                raise RequiredFieldIsNone("Token value is None !")
+
+        except exceptions.ExpiredSignatureError as e:
             # This exception is raised if the date of the token has expired
             raise HTTPException(status_code=401, detail=CommonErrorMessages.TOKEN_EXPIRED) from e
 
-        except jwt.exceptions.InvalidTokenError as e:
+        except exceptions.InvalidTokenError as e:
             # This exception is raised if the token cannot be decoded.
             raise HTTPException(status_code=401, detail=CommonErrorMessages.TOKEN_INVALID) from e
 
@@ -186,13 +219,13 @@ class TokenPair:
             "token_type":    "bearer"
         }
 
-    def generate_tokens(self, user_id: int) -> None:
+    def generate_tokens(self, account_id: int) -> None:
         """
         This method generates a pair of tokens.
         It stores them inside the current object instance.
         """
-        self.access_token.generate(user_id)
-        self.refresh_token.generate(user_id)
+        self.access_token.generate(account_id)
+        self.refresh_token.generate(account_id)
 
     def revoke_tokens(self) -> None:
         """
@@ -208,15 +241,15 @@ class TokenPair:
         """
         # Trying to decode the token given
         token_payload: JWTData = self.refresh_token.extract_payload()
-        user_id: int | None = token_payload.get("user_id")
+        account_id: int = token_payload.account_id
 
         # We need to add the refresh_token and the acces_token to the blocklist since it does not
         # (and may not) have expired yet.
         self.revoke_tokens()
 
-        # If we managed to get here, user and token are valid inputs. we can generate both tokens.
+        # If we managed to get here, account and token are valid inputs. we can generate both tokens.
         # Generating new tokens
-        self.generate_tokens(user_id=user_id)
+        self.generate_tokens(account_id=account_id)
 
 # This allows us to regroup the Token models into one type.
 AvailableTokenModels: TypeAlias = Token | TokenPair

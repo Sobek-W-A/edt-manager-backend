@@ -1,0 +1,68 @@
+[
+    {
+        "name": "UE 1",
+        "courses_m2m": [
+            1,
+            3,
+            5
+        ],
+        "academic_year": 2024,
+        "parent_m2m": [5]
+    },
+    {
+        "name": "UE 2",
+        "courses_m2m": [
+            6,
+            8,
+            10
+        ],
+        "academic_year": 2025,
+        "parent_m2m": [5]
+    },
+    {
+        "name": "UE 3",
+        "courses_m2m": [
+            11,
+            13,
+            15
+        ],
+        "academic_year": 2024,
+        "parent_m2m": [6]
+    },
+    {
+        "name": "UE 4",
+        "courses_m2m": [
+            16,
+            18,
+            20
+        ],
+        "academic_year": 2025,
+        "parent_m2m": [7]
+    },
+    {
+        "name": "UE 5",
+        "courses_m2m": [
+            21,
+            23,
+            25
+        ],
+        "academic_year": 2024,
+        "parent_m2m": [7]
+    },
+    {
+        "name": "UE 6",
+        "courses_m2m": [
+            26,
+            28,
+            30
+        ],
+        "academic_year": 2025,
+        "parent_m2m": [7]
+    },
+    {
+        "name": "UE 7",
+        "courses_m2m": [],
+        "academic_year": 2024,
+        "parent_m2m": [8]
+    }
+]

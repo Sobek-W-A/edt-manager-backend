@@ -4,26 +4,31 @@ This is where the FastAPI app is defined, as well as the different tags for the 
 Also contains the startup operations (like DB init).
 """
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import auth, user
+from app.routes import account, auth, profile, role, ue, course, course_type, status, affectation, node, academic_year
+from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
+from app.utils.printers import print_info
 
 # Array for the routes descriptions and names.
-tags_metadata: list[dict[str, str]] = [
-    {
-        "name": "user",
-        "description": "User operations."
-    },
-    {
-        "name": "auth",
-        "description": "Authentication endpoints."
-    }
+tags_metadata: list[Tag] = [
+    account.tag,
+    auth.tag,
+    profile.tag,
+    role.tag,
+    node.tag,
+    ue.tag,
+    course.tag,
+    course_type.tag,
+    status.tag,
+    affectation.tag,
+    academic_year.tag
 ]
 
 @asynccontextmanager
@@ -32,6 +37,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
     This method indicates what the method needs to do at startup.
     """
     # Démarrage des bases de données
+    print_info("Starting databases...")
     await startup_databases(app=application)
     yield
     # Code pour fermer les bases de données (si nécessaire)
@@ -40,7 +46,7 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[Any, Any]:
 # Creation of the main router
 app: FastAPI = FastAPI(title="SOBEK W.A. API",
                        description="API For the SOBEK W.A web application",
-                       openapi_tags=tags_metadata,
+                       openapi_tags=cast(list[dict[str, str]], tags_metadata),
                        lifespan=lifespan)
 
 # List of requests origins that are allowed for the API
@@ -62,8 +68,17 @@ app.add_middleware(
 )
 
 # Importing API routes :
-app.include_router(user.userRouter, tags=["user"])
-app.include_router(auth.authRouter, tags=["auth"])
+app.include_router(account.accountRouter,         tags=[account.tag["name"]])
+app.include_router(auth.authRouter,               tags=[auth.tag["name"]])
+app.include_router(profile.profileRouter,         tags=[profile.tag["name"]])
+app.include_router(role.roleRouter,               tags=[role.tag["name"]])
+app.include_router(node.nodeRouter,               tags=[node.tag["name"]])
+app.include_router(ue.ueRouter,                   tags=[ue.tag["name"]])
+app.include_router(course.courseRouter,           tags=[course.tag["name"]])
+app.include_router(course_type.coursetypeRouter,  tags=[course_type.tag["name"]])
+app.include_router(status.statusRouter,           tags=[status.tag["name"]])
+app.include_router(affectation.affectationRouter, tags=[affectation.tag["name"]])
+app.include_router(academic_year.academic_yearRouter, tags=[academic_year.tag["name"]])
 
 # Root path: Redirecting to the documentation.
 @app.get("/")

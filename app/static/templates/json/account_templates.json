@@ -1,0 +1,30 @@
+[
+    {
+        "login": "admin",
+        "hash": "CodeMaster123"
+    },
+    {
+        "login": "JohnDev",
+        "hash": "SecurePass789"
+    },
+    {
+        "login": "TechieTony",
+        "hash": "HashItAll99"
+    },
+    {
+        "login": "DevQueen",
+        "hash": "QwertyPass12"
+    },
+    {
+        "login": "CodeCrafter",
+        "hash": "CraftyKey77"
+    },
+    {
+        "login": "BugHunter",
+        "hash": "FixItQuick66"
+    },
+    {
+        "login": "DataWizard",
+        "hash": "MagicNumbers42"
+    }
+]

@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "password": {
+            "type": "string"
+        },
+        "password_confirm": {
+            "type": "string"
+        },
+        "login": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "password",
+        "password_confirm",
+        "login"
+    ],
+    "additionalProperties": false
+}
