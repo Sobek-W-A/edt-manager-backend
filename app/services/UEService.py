@@ -219,3 +219,19 @@ async def detach_ue_from_node(ue_id: int, node_id: int, academic_year: int, curr
     
     await ue.parent.remove(node)
     await ue.save()
+
+
+async def alerte_ue(academic_year: int, current_account: AccountInDB) -> None :
+    """
+    This method get the alert of the UE with a wrong number of affected hours.
+    """
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.UPDATE,
+                            current_account,
+                            academic_year)
+
+    ue_list : list[PydanticUEModel] = await UEInDB.filter(academic_year=academic_year).all()
+
+
+
+    return None
