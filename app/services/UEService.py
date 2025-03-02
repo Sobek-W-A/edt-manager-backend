@@ -9,6 +9,7 @@ from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.node import NodeInDB
@@ -226,11 +227,23 @@ async def alerte_ue(academic_year: int, current_account: AccountInDB) -> None :
     This method get the alert of the UE with a wrong number of affected hours.
     """
     await check_permissions(AvailableServices.UE_SERVICE,
-                            AvailableOperations.UPDATE,
+                            AvailableOperations.GET,
                             current_account,
                             academic_year)
 
-    ue_list : list[PydanticUEModel] = await UEInDB.filter(academic_year=academic_year).all()
+    ue_list : list[UEInDB] = await UEInDB.filter(academic_year=academic_year).all()
+
+    for ue in ue_list:
+        affectation_in_ue : list[AffectationInDB] = await AffectationInDB.filter(academic_year=academic_year, ue_id=ue.id).all()
+        sum_hours_affectation_in_ue: int = 0
+        for affectation in affectation_in_ue:
+            sum_hours_affectation_in_ue=1
+
+
+
+
+
+
 
 
 

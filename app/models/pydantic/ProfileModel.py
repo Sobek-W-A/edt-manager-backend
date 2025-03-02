@@ -76,3 +76,5 @@ class PydanticNumberOfProfile(BaseModel):
     """
     number_of_profiles_with_account: int
     number_of_profiles_without_account: int
+
+

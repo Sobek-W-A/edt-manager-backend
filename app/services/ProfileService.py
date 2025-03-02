@@ -15,6 +15,7 @@ from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
 
 from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.profile import ProfileInDB
 from app.models.tortoise.status import StatusInDB
 from app.services.PermissionService import check_permissions
@@ -238,3 +239,28 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
         number_of_profiles_without_account=number_profile_without_account,
         number_of_profiles_with_account=number_profile_with_account
     )
+
+
+async def alerte_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+    """
+    This methode get the alert of the UE with a wrong number of affected hours
+    """
+
+    await check_permissions(AvailableServices.PROFILE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account)
+
+    profiles_alert : list[PydanticProfileResponse] = []
+
+    profiles : list[ProfileInDB] = await ProfileInDB.filter(academic_year=academic_year).all()
+
+    for profile in profiles:
+        profile_affectation : list[AffectationInDB] = await AffectationInDB.filter(profile_id=profile.id).all()
+        sum_hours_affected: int = 0
+        for affectation in profile_affectation:
+            sum_hours_affected += affectation.hours
+        if sum_hours_affected != profile.quota:
+            profiles_alert.append(PydanticProfileResponse.model_validate(profile))
+
+
+    return profiles_alert

@@ -34,7 +34,6 @@ async def get_teacher_affectations(profile_id: int, current_account: AccountInDB
                                                                 .prefetch_related("course")
     for affectation in affectations:
         await affectation.fetch_related("course")
-        print("Affectation: ", affectation.id, " Course: ", affectation.course.id)
         if affectation.course is not None:
             await affectation.course.fetch_related("course_type")
 

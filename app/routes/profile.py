@@ -99,3 +99,11 @@ async def delete_profile(profile_id: int, academic_year: int, current_account: A
     This route is used for deleting a Profile
     """
     await ProfileService.delete_profile(profile_id, current_account)
+
+@profileRouter.get("/alerte/", status_code=201, response_model=list[PydanticProfileResponse])
+async def alerte_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+    """
+    This methode get the alerte of the profile with a wrong number of affected hours
+    """
+
+    return await ProfileService.alerte_profile(academic_year, current_account)
