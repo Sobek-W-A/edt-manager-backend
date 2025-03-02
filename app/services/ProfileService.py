@@ -262,5 +262,4 @@ async def alerte_profile(academic_year: int, current_account: AccountInDB) -> li
         if sum_hours_affected != profile.quota:
             profiles_alert.append(PydanticProfileResponse.model_validate(profile))
 
-
     return profiles_alert
