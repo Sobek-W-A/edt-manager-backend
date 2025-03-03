@@ -5,7 +5,7 @@ from fastapi import APIRouter, Response
 
 from app.models.pydantic.ProfileModel import (PydanticProfileModify,
                                               PydanticProfileCreate,
-                                              PydanticProfileResponse, PydanticNumberOfProfile)
+                                              PydanticProfileResponse, PydanticNumberOfProfile, PydanticProfileAlert)
 from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.tools.pagination import PydanticPagination
 from app.routes.tags import Tag
@@ -100,10 +100,10 @@ async def delete_profile(profile_id: int, academic_year: int, current_account: A
     """
     await ProfileService.delete_profile(profile_id, current_account)
 
-@profileRouter.get("/alerte/", status_code=201, response_model=list[PydanticProfileResponse])
-async def alerte_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileResponse]:
+@profileRouter.get("/alert/", status_code=201, response_model=list[PydanticProfileAlert])
+async def alerte_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileAlert]:
     """
-    This methode get the alerte of the profile with a wrong number of affected hours
+    This methode get the list of the profile with a wrong number of affected hours
     """
 
     return await ProfileService.alerte_profile(academic_year, current_account)

@@ -11,7 +11,7 @@ from tortoise.queryset import QuerySet
 
 from app.models.pydantic.ProfileModel import (PydanticProfileCreate,
                                               PydanticProfileModify,
-                                              PydanticProfileResponse, PydanticNumberOfProfile)
+                                              PydanticProfileResponse, PydanticNumberOfProfile, PydanticProfileAlert)
 
 from app.models.pydantic.tools.pagination import PydanticPagination
 from app.models.tortoise.account import AccountInDB
@@ -241,7 +241,7 @@ async def get_number_of_profile(academic_year: int, current_account: AccountInDB
     )
 
 
-async def alerte_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileResponse]:
+async def alerte_profile(academic_year: int, current_account: AccountInDB) -> list[PydanticProfileAlert]:
     """
     This methode get the alert of the UE with a wrong number of affected hours
     """
@@ -250,7 +250,7 @@ async def alerte_profile(academic_year: int, current_account: AccountInDB) -> li
                             AvailableOperations.GET,
                             current_account)
 
-    profiles_alert : list[PydanticProfileResponse] = []
+    profiles_alert : list[PydanticProfileAlert] = []
 
     profiles : list[ProfileInDB] = await ProfileInDB.filter(academic_year=academic_year).all()
 
@@ -260,6 +260,16 @@ async def alerte_profile(academic_year: int, current_account: AccountInDB) -> li
         for affectation in profile_affectation:
             sum_hours_affected += affectation.hours
         if sum_hours_affected != profile.quota:
-            profiles_alert.append(PydanticProfileResponse.model_validate(profile))
+            profiles_alert.append(PydanticProfileAlert(
+                id=profile.id,
+                firstname=profile.firstname,
+                lastname=profile.lastname,
+                mail=profile.mail,
+                quota=profile.quota,
+                hours_affected=sum_hours_affected,
+                account_id=profile.account_id,
+                status_id=profile.status_id,
+                academic_year=academic_year
+            ))
 
     return profiles_alert

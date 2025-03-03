@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 
-from app.routes import account, auth, profile, role, ue, course, course_type, status, affectation, node, academic_year
+from app.routes import account, auth, profile, role, ue, course, status, affectation, node, academic_year
 from app.routes.tags import Tag
 
 from app.utils.databases.db import startup_databases
@@ -25,7 +25,6 @@ tags_metadata: list[Tag] = [
     node.tag,
     ue.tag,
     course.tag,
-    course_type.tag,
     status.tag,
     affectation.tag,
     academic_year.tag
@@ -75,7 +74,6 @@ app.include_router(role.roleRouter,               tags=[role.tag["name"]])
 app.include_router(node.nodeRouter,               tags=[node.tag["name"]])
 app.include_router(ue.ueRouter,                   tags=[ue.tag["name"]])
 app.include_router(course.courseRouter,           tags=[course.tag["name"]])
-app.include_router(course_type.coursetypeRouter,  tags=[course_type.tag["name"]])
 app.include_router(status.statusRouter,           tags=[status.tag["name"]])
 app.include_router(affectation.affectationRouter, tags=[affectation.tag["name"]])
 app.include_router(academic_year.academic_yearRouter, tags=[academic_year.tag["name"]])

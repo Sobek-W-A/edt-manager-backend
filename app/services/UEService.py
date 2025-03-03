@@ -231,6 +231,8 @@ async def alerte_ue(academic_year: int, current_account: AccountInDB) -> None :
                             current_account,
                             academic_year)
 
+
+    #TODO
     ue_list : list[UEInDB] = await UEInDB.filter(academic_year=academic_year).all()
 
     for ue in ue_list:
