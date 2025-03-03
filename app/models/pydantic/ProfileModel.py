@@ -76,3 +76,25 @@ class PydanticNumberOfProfile(BaseModel):
     """
     number_of_profiles_with_account: int
     number_of_profiles_without_account: int
+
+
+class PydanticProfileAlert(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to return a Profile to the frontend.
+    """
+    id: int
+    firstname: Name
+    lastname: Name
+    mail: Mail
+    quota: Optional[int] = None
+    hours_affected : int
+    account_id: Optional[int] = None
+    status_id: int
+
+    class Config:
+        """
+        Config class used to allow the model to be created from a dictionary.
+        """
+        from_attributes: bool = True
+
+

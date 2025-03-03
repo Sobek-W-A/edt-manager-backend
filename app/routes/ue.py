@@ -82,3 +82,11 @@ async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:
     This method deletes the UE of the given UE id.
     """
     await UEService.delete_ue(ue_id, current_account)
+
+@ueRouter.get("/alerte",status_code=201)
+async def alerte_ue(academic_year: int,current_account: AuthenticatedAccount) -> None:
+    """
+    This methode get the alerte of the UE with a wrong number of affected hours
+    """
+    #TODO
+    await UEService.alerte_ue(academic_year,current_account)
