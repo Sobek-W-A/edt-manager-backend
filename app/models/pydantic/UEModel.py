@@ -46,3 +46,15 @@ class PydanticModifyUEModel(AcademicYearPydanticModel):
     Pydantic model for UE to create an UE.
     """
     name      : str
+
+
+class PydanticUEModelAlert(AcademicYearPydanticModel):
+    """
+    Pydantic model for UE to send to the Frontend.
+    """
+    ue_id: int
+    name: str
+    affected_hours : int
+    total_hours : int
+    courses: list[PydanticCourseModel] | None
+

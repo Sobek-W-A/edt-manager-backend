@@ -11,15 +11,10 @@ from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
 
-async def get_all_academic_year(current_account : AccountInDB) -> list[PydanticAcademicTableModel]:
+async def get_all_academic_year() -> list[PydanticAcademicTableModel]:
     """
         This method retrieves all the academic year.
     """
-
-    await check_permissions(AvailableServices.PROFILE_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
-
 
     academic_years : list[AcademicYearTableInDB] = await AcademicYearTableInDB.all()
 
@@ -30,7 +25,7 @@ async def create_new_academic_year(current_account : AccountInDB) -> PydanticAca
         This method create a new academic year by finding the most recent one and adding +1.
     """
 
-    await check_permissions(AvailableServices.PROFILE_SERVICE,
+    await check_permissions(AvailableServices.ACADEMIC_YEAR_SERVICE,
                             AvailableOperations.CREATE,
                             current_account)
 

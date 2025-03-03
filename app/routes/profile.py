@@ -84,6 +84,13 @@ async def get_nb_profile(academic_year: int, current_account: AuthenticatedAccou
     """
     return await ProfileService.get_number_of_profile(academic_year, current_account)
 
+@profileRouter.get("/alert", status_code=200, response_model=list[PydanticProfileAlert])
+async def alert_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileAlert]:
+    """
+    This methode get the list of the profile with a wrong number of affected hours
+    """
+
+    return await ProfileService.alerte_profile(academic_year, current_account)
 
 @profileRouter.get("/{profile_id}", response_model=PydanticProfileResponse, status_code=200)
 async def get_profile_by_id(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticProfileResponse:
@@ -94,16 +101,10 @@ async def get_profile_by_id(profile_id: int, academic_year: int, current_account
 
 
 @profileRouter.delete("/{profile_id}", status_code=204, response_model=None)
-async def delete_profile(profile_id: int, academic_year: int, current_account: AuthenticatedAccount) -> None:
+async def delete_profile(profile_id: int, current_account: AuthenticatedAccount) -> None:
     """
     This route is used for deleting a Profile
     """
     await ProfileService.delete_profile(profile_id, current_account)
 
-@profileRouter.get("/alert/", status_code=201, response_model=list[PydanticProfileAlert])
-async def alerte_profile(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticProfileAlert]:
-    """
-    This methode get the list of the profile with a wrong number of affected hours
-    """
 
-    return await ProfileService.alerte_profile(academic_year, current_account)
