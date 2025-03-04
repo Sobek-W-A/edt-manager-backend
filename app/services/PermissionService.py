@@ -14,12 +14,11 @@ from app.utils.enums.permission_enums import AvailableOperations, AvailableRoles
 async def check_permissions(service: AvailableServices,
                             operation: AvailableOperations,
                             current_account: AccountInDB,
-                            academic_year: int = 2024) -> None:
+                            academic_year: int) -> None:
     """
     This method checks if the provided user has the permission to perform the provided 
     operation on the provided service.
-    """
-    academic_year = 2024 # TODO : Add automatic recognition of the current academic year.
+    """    
     # We fetch the user's role.
     meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,
                                                                               academic_year=academic_year)\

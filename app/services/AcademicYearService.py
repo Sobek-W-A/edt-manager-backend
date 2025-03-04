@@ -32,7 +32,6 @@ async def create_new_academic_year(academic_year: int,
                             current_account,
                             academic_year)
 
-
     last_academic_year : AcademicYearTableInDB | None = await AcademicYearTableInDB.all()\
                                                                                    .order_by(
                                                                                     '-academic_year'
