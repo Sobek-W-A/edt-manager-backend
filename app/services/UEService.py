@@ -7,8 +7,10 @@ from fastapi import HTTPException
 from app.models.pydantic.AffectationModel import PydanticAffectation
 from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCourseAlert
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
-from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel, \
-    PydanticUEModelAlert
+from app.models.pydantic.UEModel import (PydanticCreateUEModel,
+                                         PydanticUEModel,
+                                         PydanticModifyUEModel,
+                                         PydanticUEModelAlert)
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.course import CourseInDB
@@ -20,16 +22,16 @@ from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
-async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEModel:
+async def get_ue_by_id(academic_year: int,
+                       ue_id: int,
+                       current_account: AccountInDB) -> PydanticUEModel:
     """
     This method returns the UE of the given UE id.
     """
-
-    # todo :ACADEMIC_YEAR A RAJOUTE A L AVENIR
-
     await check_permissions(AvailableServices.UE_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
+                            AvailableOperations.GET_SINGLE,
+                            current_account,
+                            academic_year)
 
     ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id).prefetch_related("courses__course_type")
 
@@ -41,7 +43,8 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
     courses_pydantic: list[PydanticCourseModel] = []
 
     for course in courses:
-        course_type: CourseTypeInDB | None = await CourseTypeInDB.get_or_none(id=course.course_type_id)
+        course_type: CourseTypeInDB | None = await CourseTypeInDB\
+                                                        .get_or_none(id=course.course_type_id) # type: ignore
         course_type_pydantic = PydanticCourseTypeModel.model_validate(course_type)
         course_pydantic = PydanticCourseModel(
             academic_year=course.academic_year,
@@ -58,15 +61,18 @@ async def get_ue_by_id(ue_id: int, current_account: AccountInDB) -> PydanticUEMo
                            ue_id=ue.id)
 
 
-async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> None:
+async def add_ue(academic_year: int,
+                 body: PydanticCreateUEModel,
+                 current_account: AccountInDB) -> None:
     """
     This method creates a new UE.
     """
 
     await check_permissions(AvailableServices.UE_SERVICE,
                             AvailableOperations.CREATE,
-                            current_account)
-    
+                            current_account,
+                            academic_year)
+
     parent_node: NodeInDB | None = await NodeInDB.get_or_none(id=body.parent_id)
     if parent_node is None:
         raise HTTPException(status_code=404,
@@ -97,18 +103,23 @@ async def add_ue(body: PydanticCreateUEModel, current_account: AccountInDB) -> N
     await ue_to_create.parent.add(parent_node)
     await ue_to_create.save()
 
-async def get_ue_by_affected_profile(academic_year: int, profile_id: int, current_account: AccountInDB) -> list[PydanticUEModel]:
+async def get_ue_by_affected_profile(academic_year: int,
+                                     profile_id: int,
+                                     current_account: AccountInDB) -> list[PydanticUEModel]:
     """
     This method returns the UE's in which the profile is affected.
     """
 
     await check_permissions(AvailableServices.UE_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
-    affectations: list[PydanticAffectation] = await AffectationService.get_teacher_affectations(profile_id, current_account)
-    
+    affectations: list[PydanticAffectation] = await AffectationService\
+                                                        .get_teacher_affectations(academic_year,
+                                                                                  profile_id,
+                                                                                  current_account)
+
     # We get all courses affected to the teacher.
     courses: list[PydanticCourseModel] = []
     for affectation in affectations:
@@ -116,7 +127,6 @@ async def get_ue_by_affected_profile(academic_year: int, profile_id: int, curren
         if isinstance(course, int):
             course = PydanticCourseModel.model_validate(await CourseInDB.get_or_none(id=course))
         courses.append(course)
-    
 
     # For each course, we get the parent UE.
     ues: dict[int, PydanticUEModel] = {}
@@ -132,27 +142,28 @@ async def get_ue_by_affected_profile(academic_year: int, profile_id: int, curren
                 )}
             )
         elif ue is not None and ues[ue.id].courses is not None:
-            ues[ue.id].courses.append(course)
+            ues[ue.id].courses.append(course)   # type: ignore
 
     return [ue for ue in ues.values()]
 
 
-async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account: AccountInDB) -> None:
+async def modify_ue(academic_year: int,
+                    ue_id: int,
+                    body: PydanticModifyUEModel,
+                    current_account: AccountInDB) -> None:
     """
     This method modifies the UE of the given UE id.
     """
 
     await check_permissions(AvailableServices.UE_SERVICE,
                             AvailableOperations.UPDATE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     ue_to_modify: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
 
     if ue_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
-
-    if await UEInDB.filter(name=body.name).exists():
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
 
     try:
         await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True)) # type: ignore
@@ -164,14 +175,17 @@ async def modify_ue(ue_id: int, body: PydanticModifyUEModel, current_account: Ac
     return None
 
 
-async def delete_ue(ue_id: int, current_account: AccountInDB) -> None:
+async def delete_ue(academic_year: int,
+                    ue_id: int,
+                    current_account: AccountInDB) -> None:
     """
     This method deletes the UE of the given UE id.
     """
 
     await check_permissions(AvailableServices.UE_SERVICE,
                             AvailableOperations.DELETE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
 
@@ -180,7 +194,10 @@ async def delete_ue(ue_id: int, current_account: AccountInDB) -> None:
 
     await ue.delete()
 
-async def attach_ue_to_node(ue_id: int, node_id: int, academic_year: int, current_account: AccountInDB) -> None:
+async def attach_ue_to_node(academic_year: int,
+                            ue_id: int,
+                            node_id: int,
+                            current_account: AccountInDB) -> None:
     """
     This method marks the node provided as the parent for the UE.
     """
@@ -188,23 +205,29 @@ async def attach_ue_to_node(ue_id: int, node_id: int, academic_year: int, curren
                             AvailableOperations.UPDATE,
                             current_account,
                             academic_year)
-    
+
     ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
     if ue is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
-    
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.UE_NOT_FOUND.value)
+
     node: NodeInDB | None = await NodeInDB.get_or_none(id=node_id)
     if node is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.NODE_NOT_FOUND.value)
-    
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+
     if await NodeInDB.filter(parent_id=node_id).exists():
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
-    
+        raise HTTPException(status_code=409,
+                            detail=CommonErrorMessages.FOLDER_AND_UE_NOT_ENABLED.value)
+
     await ue.parent.add(node)
     await ue.save()
 
 
-async def detach_ue_from_node(ue_id: int, node_id: int, academic_year: int, current_account: AccountInDB) -> None:
+async def detach_ue_from_node(academic_year: int,
+                              ue_id: int,
+                              node_id: int,
+                              current_account: AccountInDB) -> None:
     """
     This method removes the parent node from the UE.
     """
@@ -212,43 +235,48 @@ async def detach_ue_from_node(ue_id: int, node_id: int, academic_year: int, curr
                             AvailableOperations.UPDATE,
                             current_account,
                             academic_year)
-    
+
     ue: UEInDB | None = await UEInDB.get_or_none(id=ue_id)
     if ue is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
-    
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.UE_NOT_FOUND.value)
+
     node: NodeInDB | None = await NodeInDB.get_or_none(id=node_id)
     if node is None:
-        raise HTTPException(status_code=404, detail=CommonErrorMessages.NODE_NOT_FOUND.value)
-    
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.NODE_NOT_FOUND.value)
+
     await ue.parent.remove(node)
     await ue.save()
 
 
-async def alerte_ue(academic_year: int, current_account: AccountInDB) -> list[PydanticUEModelAlert] :
+async def alerte_ue(academic_year: int,
+                    current_account: AccountInDB) -> list[PydanticUEModelAlert] :
     """
     This method get the alert of the UE with a wrong number of affected hours.
     """
 
     await check_permissions(AvailableServices.UE_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
 
-    ue_list : list[UEInDB] = await UEInDB.filter(academic_year=academic_year).prefetch_related("courses__course_type").all()
-
+    ue_list : list[UEInDB] = await UEInDB.filter(academic_year=academic_year)\
+                                         .prefetch_related("courses__course_type")\
+                                         .all()
     ue_alert_list : list[PydanticUEModelAlert] = []
 
     for ue in ue_list:
-
         total_hours : int = 0
         sum_hours_affectation_in_ue: int = 0
         course_with_affected_hours: list[PydanticCourseAlert] = []
 
         for course in ue.courses:
             total_hours += course.duration * course.group_count
-            affectation_in_ue : list[AffectationInDB] = await AffectationInDB.filter(course_id=course.id).all()
+            affectation_in_ue : list[AffectationInDB] = await AffectationInDB\
+                                                                    .filter(course_id=course.id)\
+                                                                    .all()
             affected_hours: int = sum(affectation.hours for affectation in affectation_in_ue)
             sum_hours_affectation_in_ue +=  affected_hours
 
@@ -256,7 +284,7 @@ async def alerte_ue(academic_year: int, current_account: AccountInDB) -> list[Py
                 id=course.id,
                 duration=course.duration,
                 group_count=course.group_count,
-                course_type=course.course_type,
+                course_type=course.course_type, # type: ignore
                 affected_hours=affected_hours,
                 hours_to_affect=course.duration*course.group_count,
                 academic_year=course.academic_year,
@@ -272,6 +300,5 @@ async def alerte_ue(academic_year: int, current_account: AccountInDB) -> list[Py
                 academic_year=academic_year,
                 courses=course_with_affected_hours,
             ))
-
 
     return ue_alert_list

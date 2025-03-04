@@ -1,10 +1,12 @@
 """
 Simple pydantic models for the Coefficient model.
 """
+from pydantic import BaseModel
+
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
-class PydanticCoefficientModelFromJSON(AcademicYearPydanticModel):
+class PydanticCoefficientModelFromJSON(BaseModel):
     """
     This class is used to load a JSON file into a Pydantic model.
     """
@@ -31,3 +33,4 @@ class PydanticCoefficientExportModel(AcademicYearPydanticModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+

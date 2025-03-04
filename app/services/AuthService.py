@@ -10,7 +10,8 @@ from app.utils.CustomExceptions import IncorrectLoginOrPasswordException
 from app.models.pydantic.ClassicResponses import ClassicOkResponse
 
 
-async def login(username: str, password: str) -> PydanticTokenPair:
+async def login(username: str,
+                password: str) -> PydanticTokenPair:
     """
     This method checks if the credentials are correct.
     It returns a pair of tokens to access the application.
@@ -48,7 +49,9 @@ async def refresh_user_tokens(tokens: PydanticTokenPair) -> PydanticTokenPair:
     It invalidates the current tokens and gives new ones.
     """
     # Refreshing tokens
-    token_model: TokenPair = tokens.export_pydantic_to_model(AvailableTokenAttributes.REFRESH_TOKEN.value)
+    token_model: TokenPair = tokens.export_pydantic_to_model(
+        AvailableTokenAttributes.REFRESH_TOKEN.value
+    )
     token_model.refresh_tokens()
 
     access_token  : str = str(token_model.access_token.value)

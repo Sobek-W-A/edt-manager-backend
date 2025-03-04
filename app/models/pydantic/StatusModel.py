@@ -1,6 +1,7 @@
 """
 This module provides pydantic models for the Status.
 """
+from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON, PydanticCoefficientModelResponse
 from app.models.pydantic.abstract.ClassicModel import ClassicModel
 
 
@@ -10,6 +11,7 @@ class PydanticStatusResponseModel(ClassicModel):
     """
     id   : int
     quota: int
+    multiplier : list[PydanticCoefficientModelResponse]
 
     class Config:
         """
