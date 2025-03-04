@@ -37,8 +37,7 @@ class PydanticRoleResponseModel(ClassicModel):
     """
     Pydantic Model for Role. This model is used to get a role.
     """
-    name:        str
-    permissions: list[PydanticPermissionModel]
+    permissions: list[PydanticPermissionModel] = []
 
 class PydanticSetRoleToAccountModel(BaseModel):
     """
