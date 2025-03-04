@@ -25,6 +25,8 @@ class CommonErrorMessages(enum.StrEnum):
     # Credentials Errors
     INVALID_CREDENTIALS       = "Invalid credentials."
     INCORRECT_LOGIN_PASSWORD  = "Incorrect login or password."
+    # Status Errors
+    STATUS_NOT_FOUND          = "Status was not found."
     # Token Errors
     TOKEN_REVOKED             = "The token has been revoked."
     TOKEN_INVALID             = "The token is invalid."
@@ -56,7 +58,5 @@ class CommonErrorMessages(enum.StrEnum):
     AFFECTATION_ACADEMIC_YEAR_MISMATCH   = "The two academic year provided are different. They cannot be linked by the same affectation."
     AFFECTATION_NOT_FOUND                = "Affectation was not found."
     AFFECTATION_GROUP_INVALID            = "Invalid group number. Must be positive and less than the group count of the course."
-    # Status Errors 
-    STATUS_NOT_FOUND          = "Status was not found"
     # Academic_year Errors
     ACADEMIC_YEAR_NOT_FOUND = "Academic year was not found"

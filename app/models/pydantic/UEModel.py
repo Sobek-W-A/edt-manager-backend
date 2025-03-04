@@ -5,7 +5,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
-from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCreateCourseModel
+from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCreateCourseModel, PydanticCourseAlert
 
 
 class PydanticUEModelFromJSON(BaseModel):
@@ -46,3 +46,21 @@ class PydanticModifyUEModel(AcademicYearPydanticModel):
     Pydantic model for UE to create an UE.
     """
     name      : str
+
+
+class PydanticUEModelAlert(AcademicYearPydanticModel):
+    """
+    Pydantic model for UE to send to the Frontend.
+    """
+    ue_id: int
+    name: str
+    affected_hours : int
+    total_hours : int
+    courses: list[PydanticCourseAlert] | None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True
+

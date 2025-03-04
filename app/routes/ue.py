@@ -9,7 +9,7 @@ from app.models.aliases import AuthenticatedAccount
 from app.models.pydantic.UEModel import (
     PydanticUEModel,
     PydanticCreateUEModel,
-    PydanticModifyUEModel,
+    PydanticModifyUEModel, PydanticUEModelAlert,
 )
 from app.routes.tags import Tag
 from app.services import UEService
@@ -18,6 +18,14 @@ from app.services import UEService
 ueRouter: APIRouter = APIRouter(prefix="/ue")
 tag: Tag = {"name": "UE", "description": "UE-related operations."}
 
+
+@ueRouter.get("/alert",status_code=200, response_model=list[PydanticUEModelAlert])
+async def alerte_ue(academic_year: int,current_account: AuthenticatedAccount) -> list[PydanticUEModelAlert]:
+    """
+    This methode get the alerte of the UE with a wrong number of affected hours
+    """
+
+    return await UEService.alerte_ue(academic_year,current_account)
 
 @ueRouter.get("/{ue_id}", status_code=200, response_model=PydanticUEModel)
 async def get_ue_by_id(
@@ -82,3 +90,5 @@ async def delete_ue(ue_id: int, current_account: AuthenticatedAccount) -> None:
     This method deletes the UE of the given UE id.
     """
     await UEService.delete_ue(ue_id, current_account)
+
+

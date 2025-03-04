@@ -5,10 +5,12 @@ Provides the methods to use when interacting with an UE.
 from fastapi import HTTPException
 
 from app.models.pydantic.AffectationModel import PydanticAffectation
-from app.models.pydantic.CourseModel import PydanticCourseModel
+from app.models.pydantic.CourseModel import PydanticCourseModel, PydanticCourseAlert
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
-from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel
+from app.models.pydantic.UEModel import PydanticCreateUEModel, PydanticUEModel, PydanticModifyUEModel, \
+    PydanticUEModelAlert
 from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.node import NodeInDB
@@ -124,11 +126,13 @@ async def get_ue_by_affected_profile(academic_year: int, profile_id: int, curren
             ues.update(
                 {ue.id: PydanticUEModel(
                     academic_year=ue.academic_year,
-                    courses=None,
+                    courses=[course],
                     name=ue.name,
                     ue_id=ue.id
                 )}
             )
+        elif ue is not None and ues[ue.id].courses is not None:
+            ues[ue.id].courses.append(course)
 
     return [ue for ue in ues.values()]
 
@@ -219,3 +223,55 @@ async def detach_ue_from_node(ue_id: int, node_id: int, academic_year: int, curr
     
     await ue.parent.remove(node)
     await ue.save()
+
+
+async def alerte_ue(academic_year: int, current_account: AccountInDB) -> list[PydanticUEModelAlert] :
+    """
+    This method get the alert of the UE with a wrong number of affected hours.
+    """
+
+    await check_permissions(AvailableServices.UE_SERVICE,
+                            AvailableOperations.GET,
+                            current_account,
+                            academic_year)
+
+
+    ue_list : list[UEInDB] = await UEInDB.filter(academic_year=academic_year).prefetch_related("courses__course_type").all()
+
+    ue_alert_list : list[PydanticUEModelAlert] = []
+
+    for ue in ue_list:
+
+        total_hours : int = 0
+        sum_hours_affectation_in_ue: int = 0
+        course_with_affected_hours: list[PydanticCourseAlert] = []
+
+        for course in ue.courses:
+            total_hours += course.duration * course.group_count
+            affectation_in_ue : list[AffectationInDB] = await AffectationInDB.filter(course_id=course.id).all()
+            affected_hours: int = sum(affectation.hours for affectation in affectation_in_ue)
+            sum_hours_affectation_in_ue +=  affected_hours
+
+            course_alert = PydanticCourseAlert(
+                id=course.id,
+                duration=course.duration,
+                group_count=course.group_count,
+                course_type=course.course_type,
+                affected_hours=affected_hours,
+                hours_to_affect=course.duration*course.group_count,
+                academic_year=course.academic_year,
+            )
+            course_with_affected_hours.append(course_alert)
+
+        if sum_hours_affectation_in_ue != total_hours:
+            ue_alert_list.append(PydanticUEModelAlert(
+                ue_id=ue.id,
+                name=ue.name,
+                total_hours=total_hours,
+                affected_hours=sum_hours_affectation_in_ue,
+                academic_year=academic_year,
+                courses=course_with_affected_hours,
+            ))
+
+
+    return ue_alert_list
