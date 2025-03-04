@@ -107,7 +107,7 @@ class Role(LoadableData):
                 for permission in self.permissions:
                     perms: list[PermissionInDB] = await PermissionInDB.all()\
                                                                       .filter(service=permission.service.service_name,
-                                                                              operation__in=[op.operation_name for op in permission.operations])
+                                                                              operation__name__in=[op.operation_name for op in permission.operations])
                     await role.permissions.add(*perms)
 
 # Enums
