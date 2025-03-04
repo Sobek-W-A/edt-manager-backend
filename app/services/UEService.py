@@ -165,9 +165,6 @@ async def modify_ue(academic_year: int,
     if ue_to_modify is None:
         raise HTTPException(status_code=404, detail=CommonErrorMessages.UE_NOT_FOUND.value)
 
-    if await UEInDB.filter(name=body.name).exists():
-        raise HTTPException(status_code=409, detail=CommonErrorMessages.UE_ALREADY_EXIST.value)
-
     try:
         await ue_to_modify.update_from_dict(body.model_dump(exclude_none=True)) # type: ignore
         await ue_to_modify.save()
