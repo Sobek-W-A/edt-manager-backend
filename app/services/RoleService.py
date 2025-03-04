@@ -5,11 +5,15 @@ Provides the methods to use when interacting with a role.
 from fastapi import HTTPException
 
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.PydanticRole import (PydanticCreateRoleModel,
+from app.models.pydantic.PermissionModel import PydanticPermissionModel
+from app.models.pydantic.RoleModel import (PydanticCreateRoleModel,
                                               PydanticUpdateRoleModel,
                                               PydanticRoleResponseModel)
+from app.models.pydantic.ServiceModel import PydanticServiceModel
+from app.models.tortoise.operation import OperationInDB
 from app.models.tortoise.permission import PermissionInDB
 from app.models.tortoise.role import RoleInDB
+from app.models.tortoise.service import ServiceInDB
 from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableRoles, AvailableServices, AvailableOperations
@@ -26,14 +30,34 @@ async def get_all_roles(academic_year: int,
                             current_account,
                             academic_year)
 
-    roles: list[RoleInDB] = await RoleInDB.all()
+    roles:       list[RoleInDB] = await RoleInDB.all()\
+                                                .prefetch_related("permissions")
     roles_list : list[PydanticRoleResponseModel] = []
 
     for role in roles:
+        permissions: list[PermissionInDB] = await role.permissions.all()\
+                                                                  .prefetch_related("service",
+                                                                                    "operation")
+        permission_dict: dict[str, list[OperationInDB]] = {}
+        services: list[ServiceInDB] = []
+        for permission in permissions:
+            services.append(permission.service)
+            if permission.service.name not in permission_dict:
+                permission_dict[permission.service.name] = []
+            permission_dict[permission.service.name].append(permission.operation)
+
         role_dict: PydanticRoleResponseModel = PydanticRoleResponseModel(
-            name=role.name,
-            description=role.description
-        )
+                                                name=role.name,
+                                                description=role.description,
+                                                permissions=[PydanticPermissionModel(
+                                                    service=PydanticServiceModel(
+                                                        name=service.name,
+                                                        description=service.description
+                                                    ),
+                                                    operations=[operation.name 
+                                                                for operation in permission_dict[service.name]
+                                                                ]
+                                                ) for service in services])
         roles_list.append(role_dict)
 
     return roles_list
@@ -57,10 +81,27 @@ async def get_role_by_id(academic_year: int,
         raise HTTPException(status_code=404,
                             detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
 
+    permissions: list[PermissionInDB] = await role.permissions.all()\
+                                                                  .prefetch_related("service",
+                                                                                    "operation")
+    permission_dict: dict[str, list[OperationInDB]] = {}
+    services: list[ServiceInDB] = []
+    for permission in permissions:
+        services.append(permission.service)
+        if permission.service.name not in permission_dict:
+            permission_dict[permission.service.name] = []
+        permission_dict[permission.service.name].append(permission.operation)
+
     return PydanticRoleResponseModel(
-        name=role.name,
-        description=role.description
-    )
+            name=role.name,
+            description=role.description,
+            permissions=[PydanticPermissionModel(
+                service=PydanticServiceModel(
+                    name=service.name,
+                    description=service.description
+                ),
+                operations=[operation.name for operation in permission_dict[service.name]]
+            ) for service in services])
 
 
 async def add_role(academic_year: int,

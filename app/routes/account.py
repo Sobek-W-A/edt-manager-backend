@@ -10,7 +10,7 @@ from app.models.pydantic.AccountModel import (PydanticAccountModel,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
 
-from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
+from app.models.pydantic.RoleModel import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
 from app.models.pydantic.tools.pagination import PydanticPagination
