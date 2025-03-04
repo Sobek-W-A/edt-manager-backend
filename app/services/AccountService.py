@@ -414,9 +414,34 @@ async def get_role_account_by_id(academic_year: int,
     return PydanticRoleResponseModel(name=role.name,
                                      description=role.description)
 
+async def get_current_account_role(academic_year: int,
+                                   current_account: AccountInDB) -> PydanticRoleResponseModel:
+    """
+    This method retrieves the role of the current user.
+    """
+    await check_permissions(AvailableServices.ROLE_SERVICE,
+                            AvailableOperations.GET_ME,
+                            current_account,
+                            academic_year)
+    
+    metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,
+                                                                                    academic_year=academic_year)\
+                                                                    .prefetch_related("role")
+
+    if not metadata:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ACCOUNT_ROLE_NOT_FOUND.value)
+
+    role: RoleInDB | None = await RoleInDB.get_or_none(name=metadata.role.name)
+    if not role:
+        raise HTTPException(status_code=404,
+                            detail=CommonErrorMessages.ROLE_NOT_FOUND.value)
+
+    return PydanticRoleResponseModel(name=role.name,
+                                     description=role.description)
 
 async def set_role_account_by_name(academic_year: int,
-                                   account_id: int, 
+                                   account_id: int,
                                    current_account: AccountInDB,
                                    body: PydanticSetRoleToAccountModel) -> None:
     """

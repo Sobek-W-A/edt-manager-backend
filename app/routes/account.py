@@ -101,6 +101,13 @@ async def modify_account(account_id: int,
     await AccountService.modify_account(academic_year, account_id, account, current_account)
     return Response(status_code=205)
 
+@accountRouter.get("/me/role", status_code=200, response_model=PydanticRoleResponseModel)
+async def get_current_account_role(academic_year: int,
+                                   current_account: AuthenticatedAccount) -> PydanticRoleResponseModel:
+    """
+    This method get an account's roles with the account ID.
+    """
+    return await AccountService.get_current_account_role(academic_year, current_account)
 
 @accountRouter.delete("/{account_id}", status_code=204, response_model=None)
 async def delete_account(account_id: int,
@@ -122,7 +129,6 @@ async def get_role_account_by_id(account_id: int,
 
     return await AccountService.get_role_account_by_id(academic_year, account_id, current_account)
 
-
 @accountRouter.get("/search/login/{keywords}", status_code=200, response_model=list[PydanticAccountModel])
 async def search_account_by_login(academic_year: int,
                                   keywords: str,
@@ -132,8 +138,6 @@ async def search_account_by_login(academic_year: int,
     """
 
     return await AccountService.search_accounts_by_login(academic_year, keywords, current_account)
-
-
 
 @accountRouter.get("/search/{keywords}/", status_code=200, response_model=list[PydanticAccountModel])
 async def search_account_by_keywords(keywords: str,
