@@ -2,9 +2,6 @@
 Status routes.
 Used to manage status operations.
 """
-
-# TODO
-
 from fastapi import APIRouter
 
 from app.models.aliases import AuthenticatedAccount
@@ -19,14 +16,17 @@ tag: Tag = {
 }
 
 @statusRouter.get("/",status_code=200, response_model=list[PydanticStatusResponseModel])
-async def get_all_status(academic_year: int, current_account: AuthenticatedAccount) -> list[PydanticStatusResponseModel]:
+async def get_all_status(academic_year: int,
+                         current_account: AuthenticatedAccount) -> list[PydanticStatusResponseModel]:
     """
     This method returns the status of the given status id.
     """
     return await StatusService.get_all_status(academic_year, current_account)
 
 @statusRouter.get("/{status_id}",status_code=200, response_model=PydanticStatusResponseModel)
-async def get_status_by_id(status_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticStatusResponseModel:
+async def get_status_by_id(academic_year: int,
+                           status_id: int,
+                           current_account: AuthenticatedAccount) -> PydanticStatusResponseModel:
     """
     This method returns the status of the given status id.
     """

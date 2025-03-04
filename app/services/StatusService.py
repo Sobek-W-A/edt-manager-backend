@@ -11,23 +11,26 @@ from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
 
 
-async def get_all_status(academic_year: int, current_account: AccountInDB) -> list[PydanticStatusResponseModel]:
+async def get_all_status(academic_year: int,
+                         current_account: AccountInDB) -> list[PydanticStatusResponseModel]:
     """
     This method returns all the statuses.
     """
     await check_permissions(AvailableServices.STATUS_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
     return [PydanticStatusResponseModel.model_validate(status) for status in await StatusInDB.all()]
 
-async def get_status_by_id(academic_year: int, status_id: int, current_account: AccountInDB) -> PydanticStatusResponseModel:
+async def get_status_by_id(academic_year: int,
+                           status_id: int,
+                           current_account: AccountInDB) -> PydanticStatusResponseModel:
     """
     This method returns the status of the given status id.
     """
     await check_permissions(AvailableServices.STATUS_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_SINGLE,
                             current_account,
                             academic_year)
 

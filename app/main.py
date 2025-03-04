@@ -55,7 +55,7 @@ app: FastAPI = FastAPI(title="SOBEK W.A. API",
 # Listing authorized sources is MANDATORY.
 origins: list[str] = [
     "http://localhost:5173",
-    "https://localhost:5173",
+    "https://localhost:5173"
 ]
 
 app.add_middleware(
@@ -67,15 +67,15 @@ app.add_middleware(
 )
 
 # Importing API routes :
-app.include_router(account.accountRouter,         tags=[account.tag["name"]])
-app.include_router(auth.authRouter,               tags=[auth.tag["name"]])
-app.include_router(profile.profileRouter,         tags=[profile.tag["name"]])
-app.include_router(role.roleRouter,               tags=[role.tag["name"]])
-app.include_router(node.nodeRouter,               tags=[node.tag["name"]])
-app.include_router(ue.ueRouter,                   tags=[ue.tag["name"]])
-app.include_router(course.courseRouter,           tags=[course.tag["name"]])
-app.include_router(status.statusRouter,           tags=[status.tag["name"]])
-app.include_router(affectation.affectationRouter, tags=[affectation.tag["name"]])
+app.include_router(account.accountRouter,             tags=[account.tag["name"]])
+app.include_router(auth.authRouter,                   tags=[auth.tag["name"]])
+app.include_router(profile.profileRouter,             tags=[profile.tag["name"]])
+app.include_router(role.roleRouter,                   tags=[role.tag["name"]])
+app.include_router(node.nodeRouter,                   tags=[node.tag["name"]])
+app.include_router(ue.ueRouter,                       tags=[ue.tag["name"]])
+app.include_router(course.courseRouter,               tags=[course.tag["name"]])
+app.include_router(status.statusRouter,               tags=[status.tag["name"]])
+app.include_router(affectation.affectationRouter,     tags=[affectation.tag["name"]])
 app.include_router(academic_year.academic_yearRouter, tags=[academic_year.tag["name"]])
 
 # Root path: Redirecting to the documentation.

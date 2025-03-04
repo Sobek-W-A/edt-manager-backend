@@ -13,11 +13,12 @@ from tortoise.queryset import QuerySet
 from tortoise.expressions import Q
 
 from app.models.pydantic.AccountModel import (PydanticAccountModel,
-                                              PydanticAccountPasswordResponse, PydanticAccountWithoutProfileModel,
+                                              PydanticAccountPasswordResponse,
+                                              PydanticAccountWithoutProfileModel,
                                               PydanticCreateAccountModel,
                                               PydanticModifyAccountModel)
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
-from app.models.pydantic.PydanticRole import (PydanticRoleResponseModel,
+from app.models.pydantic.RoleModel import (PydanticRoleResponseModel,
                                               PydanticSetRoleToAccountModel)
 from app.models.pydantic.TokenModel import PydanticToken
 from app.models.pydantic.tools.number_of_elements import NumberOfElement
@@ -32,17 +33,20 @@ from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
 from app.utils.databases.utils import get_fields_from_model
 from app.utils.enums.http_errors import CommonErrorMessages
-from app.utils.enums.permission_enums import (AvailableOperations,
+from app.utils.enums.permission_enums import (AvailableOperations, AvailableRoles,
                                               AvailableServices)
 
 
-async def get_account(academic_year: int, account_id: int, current_account: AccountInDB) -> PydanticAccountModel:
+async def get_account(academic_year: int,
+                      account_id: int,
+                      current_account: AccountInDB) -> PydanticAccountModel:
     """
     This method retrieves an account by its ID.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
+                            AvailableOperations.GET_SINGLE,
+                            current_account,
+                            academic_year)
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id) \
         .prefetch_related("profile")
@@ -60,13 +64,16 @@ async def get_account(academic_year: int, account_id: int, current_account: Acco
                                 profile=PydanticProfileResponse.model_validate(profile))
 
 
-async def get_accounts_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
+async def get_accounts_linked_to_profile(academic_year: int,
+                                         current_account: AccountInDB,
+                                         body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts linked to a profile.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
+                            AvailableOperations.GET_MULTIPLE,
+                            current_account,
+                            academic_year)
     accounts: list[AccountInDB] = await AccountInDB.all()\
                                                    .prefetch_related("profile")
     accounts_to_return: list[AccountInDB] = []
@@ -85,12 +92,14 @@ async def get_accounts_linked_to_profile(academic_year: int, current_account: Ac
             for account in accounts_to_return]))
 
 
-async def get_accounts_not_linked_to_profile(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountWithoutProfileModel]:
+async def get_accounts_not_linked_to_profile(academic_year: int,
+                                             current_account: AccountInDB, body:
+                                             PydanticPagination) -> list[PydanticAccountWithoutProfileModel]:
     """
     This method retrieves all accounts not linked to a profile.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
     accounts: list[AccountInDB] = await AccountInDB.all().prefetch_related("profile")
@@ -107,12 +116,14 @@ async def get_accounts_not_linked_to_profile(academic_year: int, current_account
     return body.paginate_list([PydanticAccountWithoutProfileModel.model_validate(account) for account in accounts_to_return])
 
 
-async def get_all_accounts(academic_year: int, current_account: AccountInDB, body: PydanticPagination) -> list[PydanticAccountModel]:
+async def get_all_accounts(academic_year: int,
+                           current_account: AccountInDB,
+                           body: PydanticPagination) -> list[PydanticAccountModel]:
     """
     This method retrieves all accounts.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
@@ -141,12 +152,14 @@ async def get_all_accounts(academic_year: int, current_account: AccountInDB, bod
             for account in paginated_accounts]
 
 
-async def search_accounts_by_login(academic_year: int, keywords: str, current_account: AccountInDB) -> list[PydanticAccountModel]:
+async def search_accounts_by_login(academic_year: int,
+                                   keywords: str,
+                                   current_account: AccountInDB) -> list[PydanticAccountModel]:
     """
     This method fetches the accounts which logins matches the query provided.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
@@ -178,14 +191,17 @@ async def search_accounts_by_login(academic_year: int, keywords: str, current_ac
     return accounts_to_return
 
 
-async def search_account_by_keywords(academic_year:int, keywords: str, current_account: AccountInDB, body: PydanticPagination) -> list[
+async def search_account_by_keywords(academic_year:int,
+                                     keywords: str,
+                                     current_account: AccountInDB,
+                                     body: PydanticPagination) -> list[
     PydanticAccountModel]:
     """
     This method retrieves accounts that match the keywords provided.
     The search applies to the following fields: login, firstname, lastname, and email.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
+                            AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
 
@@ -244,14 +260,16 @@ async def search_account_by_keywords(academic_year:int, keywords: str, current_a
     return body.paginate_list(accounts_to_return)
 
 
-async def create_account(account: PydanticCreateAccountModel,
+async def create_account(academic_year: int,
+                         account: PydanticCreateAccountModel,
                          current_account: AccountInDB) -> PydanticAccountPasswordResponse:
     """
     This method creates an account.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.CREATE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     if await AccountInDB.filter(login=account.login).exists():
         raise LoginAlreadyUsedException
@@ -279,16 +297,24 @@ async def create_account(account: PydanticCreateAccountModel,
                                                  hash=hashed)
     await account_to_create.save()
 
+    # Creating account's default metadata
+    await AccountMetadataInDB.create(account_id=account_to_create.id,
+                                     academic_year=academic_year,
+                                     role_name=AvailableRoles.UNASSIGNED.value.role_name)
+
     return PydanticAccountPasswordResponse(password=password)
 
 
-async def delete_account(account_id: int, current_account: AccountInDB) -> None:
+async def delete_account(academic_year: int,
+                         account_id: int,
+                         current_account: AccountInDB) -> None:
     """
     This method deletes an account by its ID.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.DELETE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -298,14 +324,18 @@ async def delete_account(account_id: int, current_account: AccountInDB) -> None:
     await account.delete()
 
 
-async def modify_account(account_id: int, account: PydanticModifyAccountModel, current_account: AccountInDB) -> None:
+async def modify_account(academic_year: int,
+                         account_id: int,
+                         account: PydanticModifyAccountModel,
+                         current_account: AccountInDB) -> None:
     """
     This method modifies an account by its ID.
     """
 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.UPDATE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     account_to_modify: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -355,15 +385,17 @@ async def get_current_account(token: OAuthToken) -> Optional["AccountInDB"]:
     return account
 
 
-async def get_role_account_by_id(account_id: int, current_account: AccountInDB,
-                                 academic_year: int) -> PydanticRoleResponseModel:
+async def get_role_account_by_id(academic_year: int,
+                                 account_id: int,
+                                 current_account: AccountInDB) -> PydanticRoleResponseModel:
     """
     This method returns the list of roles of an user.
     :param account_id: Account ID.
     """
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
+                            AvailableOperations.GET_SINGLE,
+                            current_account,
+                            academic_year)
 
     metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=account_id,
                                                                                  academic_year=academic_year) \
@@ -383,7 +415,9 @@ async def get_role_account_by_id(account_id: int, current_account: AccountInDB,
                                      description=role.description)
 
 
-async def set_role_account_by_name(account_id: int, current_account: AccountInDB,
+async def set_role_account_by_name(academic_year: int,
+                                   account_id: int, 
+                                   current_account: AccountInDB,
                                    body: PydanticSetRoleToAccountModel) -> None:
     """
     This method set the role of an account.
@@ -392,7 +426,8 @@ async def set_role_account_by_name(account_id: int, current_account: AccountInDB
 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
                             AvailableOperations.UPDATE,
-                            current_account)
+                            current_account,
+                            academic_year)
 
     account: AccountInDB | None = await AccountInDB.get_or_none(id=account_id)
 
@@ -414,14 +449,16 @@ async def set_role_account_by_name(account_id: int, current_account: AccountInDB
                                      academic_year=body.academic_year).update(role_id=role.name)
 
 
-async def get_number_of_account(current_account: AccountInDB) -> NumberOfElement:
+async def get_number_of_account(academic_year: int,
+                                current_account: AccountInDB) -> NumberOfElement:
     """
     This method get the number of account.
     """
 
     await check_permissions(AvailableServices.ACCOUNT_SERVICE,
-                            AvailableOperations.GET,
-                            current_account)
+                            AvailableOperations.GET_SINGLE,
+                            current_account,
+                            academic_year)
 
     number_account: int = await AccountInDB.all().count()
 
