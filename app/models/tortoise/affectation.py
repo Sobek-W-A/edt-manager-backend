@@ -12,11 +12,12 @@ from tortoise.fields import (ForeignKeyField,
                              CharField,
                              DatetimeField)
 
+from app.models.tortoise.abstract.serializable_model import SerializableModel
 from app.models.tortoise.course import CourseInDB
 from app.models.tortoise.profile import ProfileInDB
 
 
-class AffectationInDB(Model):
+class AffectationInDB(SerializableModel):
     """
     This model represents the affectation of a course to a teacher.
     """

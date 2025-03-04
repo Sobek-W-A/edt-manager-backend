@@ -10,7 +10,7 @@ from app.models.tortoise.abstract.academic_year import AcademicYear
 
 class AcademicYearTableInDB(AcademicYear):
     """
-        This class is the tortoise model for academic year table.
+    This class is the tortoise model for academic year table.
     """
     id         : Field[int] = IntField(pk=True)
     description: Field[str] = TextField(null=False)

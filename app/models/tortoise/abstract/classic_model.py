@@ -7,7 +7,9 @@ with the name being used as primary key.
 from tortoise import Model
 from tortoise.fields import Field, CharField, TextField
 
-class ClassicModel(Model):
+from app.models.tortoise.abstract.serializable_model import SerializableModel
+
+class ClassicModel(SerializableModel):
     """
     Simple model.
     It is used to simplify classes that only contains 2 fields : name and description, 

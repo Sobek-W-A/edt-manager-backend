@@ -5,7 +5,9 @@ different types of courses.
 from tortoise import Model
 from tortoise.fields import CharField, Field, IntField, TextField
 
-class CourseTypeInDB(Model):
+from app.models.tortoise.abstract.serializable_model import SerializableModel
+
+class CourseTypeInDB(SerializableModel):
     """
     This model represents a course type that can be assigned to a course.
     """

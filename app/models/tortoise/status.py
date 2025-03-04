@@ -7,7 +7,9 @@ when we need to calculate the total of hours dispensed.
 from tortoise import Model
 from tortoise.fields import Field, IntField, CharField, TextField
 
-class StatusInDB(Model):
+from app.models.tortoise.abstract.serializable_model import SerializableModel
+
+class StatusInDB(SerializableModel):
     """
     This model represents a status that can be assigned to a profile.
     """

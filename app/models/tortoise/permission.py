@@ -4,10 +4,11 @@ Database object representing a permission that can be granted to a user.
 from tortoise.models import Model
 from tortoise.fields import Field, IntField, ForeignKeyField, ForeignKeyRelation
 
+from app.models.tortoise.abstract.serializable_model import SerializableModel
 from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.operation import OperationInDB
 
-class PermissionInDB(Model):
+class PermissionInDB(SerializableModel):
     """
     This model represents a permission that can be granted to a user.
     """

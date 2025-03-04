@@ -5,8 +5,10 @@ Provides an abstract models to make easier the creation of tables that needs an 
 from tortoise import Model
 from tortoise.fields import Field, IntField
 
+from app.models.tortoise.abstract.serializable_model import SerializableModel
 
-class AcademicYear(Model):
+
+class AcademicYear(SerializableModel):
     """
     This class is meant to be used with all tables that needs an academic year.
     A.K.A : Almost all of them.

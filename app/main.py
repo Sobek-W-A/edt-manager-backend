@@ -4,12 +4,45 @@ This is where the FastAPI app is defined, as well as the different tags for the 
 Also contains the startup operations (like DB init).
 """
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, cast
+from typing import Any, AsyncGenerator, Type, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from starlette.responses import RedirectResponse
+from tortoise import Model
 
+from app.models.pydantic.AcademicYearTable import PydanticAcademicTableModel
+from app.models.pydantic.AccountMetadataModel import PydanticAccountMetaModelFromJSON
+from app.models.pydantic.AccountModel import PydanticAccountModel, PydanticAccountWithoutProfileModel
+from app.models.pydantic.AffectationModel import PydanticAffectation
+from app.models.pydantic.CoefficientModel import PydanticCoefficientModelFromJSON
+from app.models.pydantic.CourseModel import PydanticCourseModel
+from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
+from app.models.pydantic.NodeModel import PydanticNodeModel
+from app.models.pydantic.OperationModel import PydanticOperationModel
+from app.models.pydantic.PermissionsModel import PydanticPermissionsModel
+from app.models.pydantic.ProfileModel import PydanticProfileModelFromJSON
+from app.models.pydantic.PydanticRole import PydanticRoleModel
+from app.models.pydantic.ServiceModel import PydanticServiceModel
+from app.models.pydantic.StatusModel import PydanticStatusResponseModel
+from app.models.pydantic.UEModel import PydanticUEModel
+from app.models.tortoise.abstract.serializable_model import SerializableModel
+from app.models.tortoise.academic_year_table import AcademicYearTableInDB
+from app.models.tortoise.account import AccountInDB
+from app.models.tortoise.account_metadata import AccountMetadataInDB
+from app.models.tortoise.affectation import AffectationInDB
+from app.models.tortoise.coefficient import CoefficientInDB
+from app.models.tortoise.course import CourseInDB
+from app.models.tortoise.course_type import CourseTypeInDB
+from app.models.tortoise.node import NodeInDB
+from app.models.tortoise.operation import OperationInDB
+from app.models.tortoise.permission import PermissionInDB
+from app.models.tortoise.profile import ProfileInDB
+from app.models.tortoise.role import RoleInDB
+from app.models.tortoise.service import ServiceInDB
+from app.models.tortoise.status import StatusInDB
+from app.models.tortoise.ue import UEInDB
 from app.routes import account, auth, profile, role, ue, course, status, affectation, node, academic_year
 from app.routes.tags import Tag
 
@@ -86,3 +119,33 @@ async def root() -> RedirectResponse:
     Redirects to the documentation.
     """
     return RedirectResponse(url="/docs")
+
+@app.get("/export")
+async def export():
+    truc: dict[str, tuple[Type[SerializableModel], Type[BaseModel]]] = {
+        "academic_year": (AcademicYearTableInDB, PydanticAcademicTableModel),
+        "account_metadata": (AccountMetadataInDB, PydanticAccountMetaModelFromJSON),
+        "account": (AccountInDB, PydanticAccountWithoutProfileModel), # 6
+        # "affectation": (AffectationInDB, PydanticAffectation), # 13
+        "coefficient": (CoefficientInDB, PydanticCoefficientModelFromJSON),
+        "course_type": (CourseTypeInDB, PydanticCourseTypeModel),
+        # "course": (CourseInDB, PydanticCourseModel), # 4
+        # "node": (NodeInDB, PydanticNodeModel), # 2
+        "operation": (OperationInDB, PydanticOperationModel),
+        # "permission": (PermissionInDB, PydanticPermissionsModel), # 6
+        "profile": (ProfileInDB, PydanticProfileModelFromJSON),
+        # "role": (RoleInDB, PydanticRoleModel), # 1
+        "service": (ServiceInDB, PydanticServiceModel),
+        "status": (StatusInDB, PydanticStatusResponseModel),
+        # "ue": (UEInDB, PydanticUEModel) # 1
+    }
+
+    result: dict[str, Any] = {}
+
+    for name, value in truc.items():
+        tortoise_model, pydantic_model = value
+        result[name] = await tortoise_model.export(pydantic_model)
+
+    return result
+
+

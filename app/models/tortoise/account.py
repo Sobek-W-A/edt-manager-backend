@@ -9,10 +9,12 @@ from tortoise.fields import (CharField, Field, IntField,
                              ForeignKeyNullableRelation, TextField)
 from tortoise.models import Model
 
+from app.models.tortoise.abstract.serializable_model import SerializableModel
+
 if TYPE_CHECKING:
     from app.models.tortoise.profile import ProfileInDB
 
-class AccountInDB(Model):
+class AccountInDB(SerializableModel):
     """
     This class is the tortoise model for authentication.
     Will probably be removed in the future when UL auth will be used.
