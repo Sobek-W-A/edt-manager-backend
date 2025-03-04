@@ -271,6 +271,7 @@ async def alerte_ue(academic_year: int,
         total_hours : int = 0
         sum_hours_affectation_in_ue: int = 0
         course_with_affected_hours: list[PydanticCourseAlert] = []
+        has_incorrect_course : bool = False
 
         for course in ue.courses:
             total_hours += course.duration * course.group_count
@@ -291,7 +292,10 @@ async def alerte_ue(academic_year: int,
             )
             course_with_affected_hours.append(course_alert)
 
-        if sum_hours_affectation_in_ue != total_hours:
+            if affected_hours != course.duration * course.group_count:
+                has_incorrect_course = True
+
+        if sum_hours_affectation_in_ue != total_hours or has_incorrect_course:
             ue_alert_list.append(PydanticUEModelAlert(
                 ue_id=ue.id,
                 name=ue.name,
