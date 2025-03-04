@@ -20,4 +20,5 @@ class PermissionInDB(SerializableModel):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
+        abstract: bool = False
         table : str = "Permission"

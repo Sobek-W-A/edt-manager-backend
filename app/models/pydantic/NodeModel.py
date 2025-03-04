@@ -110,7 +110,7 @@ class PydanticNodeExportModel(AcademicYearPydanticModel):
     """
     id         : int
     name       : str
-    child_nodes: Optional[Union[list["PydanticNodeExportModel"], list["PydanticUEInNodeModel"]]] = None
+    child_nodes_id: Optional[list[int]] = None
 
     class Config:
         """

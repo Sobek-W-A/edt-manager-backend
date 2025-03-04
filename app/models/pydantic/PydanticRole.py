@@ -63,10 +63,9 @@ class PydanticRoleExportModel(BaseModel):
     """
     Pydantic Model for Role. This model is used to export a role.
     """
-    id          : int
     name        : str
     description : str
-    permissions : list[int]
+    permissions_id : list[int]
 
     class Config:
         """

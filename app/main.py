@@ -14,6 +14,7 @@ from starlette.responses import RedirectResponse
 from app.routes import account, auth, profile, role, ue, course, status, affectation, node, academic_year
 from app.routes.tags import Tag
 
+from app.services import ExportService
 from app.utils.databases.db import startup_databases
 from app.utils.printers import print_info
 
@@ -90,30 +91,6 @@ async def root() -> RedirectResponse:
 
 @app.get("/export")
 async def export():
-    truc: dict[str, tuple[Type[SerializableModel], Type[BaseModel]]] = {
-        "academic_year": (AcademicYearTableInDB, PydanticAcademicTableModel),
-        "account_metadata": (AccountMetadataInDB, PydanticAccountMetaModelFromJSON),
-        "account": (AccountInDB, PydanticAccountWithoutProfileModel), # 6
-        "affectation": (AffectationInDB, PydanticAffectation), # 13
-        "coefficient": (CoefficientInDB, PydanticCoefficientModelFromJSON),
-        "course_type": (CourseTypeInDB, PydanticCourseTypeModel),
-        "course": (CourseInDB, PydanticCourseModel), # 4
-        "node": (NodeInDB, PydanticNodeModel), # 2
-        "operation": (OperationInDB, PydanticOperationModel),
-        "permission": (PermissionInDB, PydanticPermissionsModel), # 6
-        "profile": (ProfileInDB, PydanticProfileModelFromJSON),
-        "role": (RoleInDB, PydanticRoleModel), # 1
-        "service": (ServiceInDB, PydanticServiceModel),
-        "status": (StatusInDB, PydanticStatusResponseModel),
-        "ue": (UEInDB, PydanticUEModel) # 1
-    }
-
-    result: dict[str, Any] = {}
-
-    for name, value in truc.items():
-        tortoise_model, pydantic_model = value
-        result[name] = await tortoise_model.export(pydantic_model)
-
-    return result
+    return await ExportService.export()
 
 

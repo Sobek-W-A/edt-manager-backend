@@ -83,8 +83,8 @@ class PydanticAffectationExport(BaseModel):
     Pydantic model for exporting an affectation.
     """
     id       : int
-    profile  : int
-    course   : int
+    profile_id  : int
+    course_id   : int
     hours    : int
     notes    : Optional[str] = None
     date     : datetime
