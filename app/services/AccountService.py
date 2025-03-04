@@ -33,7 +33,7 @@ from app.services.Tokens import AvailableTokenAttributes, JWTData, Token
 from app.utils.CustomExceptions import LoginAlreadyUsedException
 from app.utils.databases.utils import get_fields_from_model
 from app.utils.enums.http_errors import CommonErrorMessages
-from app.utils.enums.permission_enums import (AvailableOperations,
+from app.utils.enums.permission_enums import (AvailableOperations, AvailableRoles,
                                               AvailableServices)
 
 
@@ -296,6 +296,11 @@ async def create_account(academic_year: int,
     account_to_create: AccountInDB = AccountInDB(login=account.login,
                                                  hash=hashed)
     await account_to_create.save()
+
+    # Creating account's default metadata
+    await AccountMetadataInDB.create(account_id=account_to_create.id,
+                                     academic_year=academic_year,
+                                     role_name=AvailableRoles.UNASSIGNED.value.role_name)
 
     return PydanticAccountPasswordResponse(password=password)
 
