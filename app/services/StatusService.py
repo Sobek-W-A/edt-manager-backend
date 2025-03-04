@@ -26,23 +26,22 @@ async def get_all_status(academic_year: int,
                             academic_year)
 
     statuses : list[StatusInDB] = await StatusInDB.all()
-    coefficients: list[CoefficientInDB] = await CoefficientInDB.all().prefetch_related("course_type")
+    coefficients: list[CoefficientInDB] = await CoefficientInDB.all().prefetch_related("course_type","status")
 
-
-    coefficients_map = {}
+    coefficients_map : dict[int, list[PydanticCoefficientModelResponse]] = {}
 
     for coefficient in coefficients:
-        if coefficient.status_id not in coefficients_map:
-            coefficients_map[coefficient.status_id] = []
+        if coefficient.status.id not in coefficients_map:
+            coefficients_map[coefficient.status.id] = []
 
-        coefficients_map[coefficient.status_id].append(
+        coefficients_map[coefficient.status.id].append(
             PydanticCoefficientModelResponse(
                 multiplier=coefficient.multiplier,
                 course_type=PydanticCourseTypeModel.model_validate(coefficient.course_type)
             )
         )
 
-    status_with_coef : list[PydanticStatusResponseModel] = [
+    status_with_coefficient : list[PydanticStatusResponseModel] = [
         PydanticStatusResponseModel(
             id=status.id,
             name=status.name,
@@ -52,7 +51,7 @@ async def get_all_status(academic_year: int,
         )
         for status in statuses
     ]
-    return status_with_coef
+    return status_with_coefficient
 
 
 async def get_status_by_id(academic_year: int,
