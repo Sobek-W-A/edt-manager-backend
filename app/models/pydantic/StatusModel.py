@@ -28,3 +28,16 @@ class PydanticStatusModelFromJSON(ClassicModel):
         Pydantic configuration for the model.
         """
         from_attributes : bool = True
+
+class PydanticStatusExportModel(ClassicModel):
+    """
+    Pydantic model for exporting status to JSON.
+    """
+    id   : int
+    quota: int
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True

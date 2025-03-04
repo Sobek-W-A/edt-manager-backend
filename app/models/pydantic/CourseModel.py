@@ -64,4 +64,22 @@ class PydanticCourseAlert(AcademicYearPydanticModel):
     course_type : PydanticCourseTypeModel | int
 
     class Config:
-        from_attributes: bool = True  # Ajout de cette ligne ✅
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True
+
+class PydanticCourseExportModel(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to export a Course.
+    """
+    id: int
+    duration : int
+    group_count : int
+    course_type_id : int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True

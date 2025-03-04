@@ -92,3 +92,17 @@ class PydanticAccountModelFromJSON(BaseModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticAccountExportModel(BaseModel):
+    """
+    This model is used to export the account data to JSON.
+    """
+    id:    int
+    login: str
+    hash:  str
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True

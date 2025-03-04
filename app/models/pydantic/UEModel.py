@@ -64,3 +64,18 @@ class PydanticUEModelAlert(AcademicYearPydanticModel):
         """
         from_attributes: bool = True
 
+
+class PydanticUEExportModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for exporting UE to JSON.
+    """
+    id          : int
+    name        : str
+    courses     : list[int]
+    academic_year: int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True

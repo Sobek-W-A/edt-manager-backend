@@ -26,3 +26,14 @@ class PydanticServiceModel(ClassicModel):
         Pydantic configuration for the model.
         """
         from_attributes : bool = True
+
+class PydanticServiceExportModel(ClassicModel):
+    """
+    Pydantic model for exporting services to JSON.
+    """
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True

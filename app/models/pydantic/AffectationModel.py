@@ -77,3 +77,21 @@ class PydanticAffectationInModify(BaseModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticAffectationExport(BaseModel):
+    """
+    Pydantic model for exporting an affectation.
+    """
+    id       : int
+    profile  : int
+    course   : int
+    hours    : int
+    notes    : Optional[str] = None
+    date     : datetime
+    group    : int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True

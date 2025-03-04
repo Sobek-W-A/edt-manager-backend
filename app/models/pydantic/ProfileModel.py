@@ -97,4 +97,20 @@ class PydanticProfileAlert(AcademicYearPydanticModel):
         """
         from_attributes: bool = True
 
+class PydanticProfileExportModel(BaseModel):
+    """
+    Pydantic model for exporting profiles to JSON.
+    """
+    id: int
+    firstname: str
+    lastname: str
+    mail: str
+    quota: int
+    account_id: Optional[int] = None
+    status_id: int
 
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes: bool = True

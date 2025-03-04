@@ -29,3 +29,16 @@ class PydanticCourseTypeModelFromJSON(BaseModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticCourseTypeExportModel(BaseModel):
+    """
+    This model is used to export a CourseType to a JSON file.
+    """
+    name         : str
+    description  : str
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True

@@ -31,3 +31,17 @@ class PydanticAcademicYearTableModelFromJSON(BaseModel):
         Pydantic configuration.
         """
         from_attributes: bool = True
+
+class PydanticAcademicYearTableExportModel(AcademicYearPydanticModel):
+    """
+    Pydantic Model for Academic year. This model is used to validate and transform JSON data.
+    """
+    id: int
+    description: str
+    academic_year: int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True

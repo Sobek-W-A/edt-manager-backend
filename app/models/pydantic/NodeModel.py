@@ -103,3 +103,18 @@ class PydanticNodeFrontModel(AcademicYearPydanticModel):
         Pydantic configuration.
         """
         arbitrary_types_allowed : bool = True
+
+class PydanticNodeExportModel(AcademicYearPydanticModel):
+    """
+    Pydantic model for exporting a Node.
+    """
+    id         : int
+    name       : str
+    child_nodes: Optional[Union[list["PydanticNodeExportModel"], list["PydanticUEInNodeModel"]]] = None
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes: bool = True
+        arbitrary_types_allowed : bool = True
