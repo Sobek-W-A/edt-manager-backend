@@ -25,7 +25,7 @@ async def get_all_roles(academic_year: int,
     This method retrieves all roles.
     """
 
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+    await check_permissions(AvailableServices.ROLE_SERVICE,
                             AvailableOperations.GET_MULTIPLE,
                             current_account,
                             academic_year)
@@ -70,7 +70,7 @@ async def get_role_by_id(academic_year: int,
     This method retrieves a role with given name.
     """
 
-    await check_permissions(AvailableServices.ACCOUNT_SERVICE,
+    await check_permissions(AvailableServices.ROLE_SERVICE,
                             AvailableOperations.GET_SINGLE,
                             current_account,
                             academic_year)
