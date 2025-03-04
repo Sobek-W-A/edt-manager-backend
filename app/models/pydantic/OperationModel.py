@@ -24,3 +24,14 @@ class PydanticOperationModel(ClassicModel):
         Pydantic configuration for the model.
         """
         from_attributes : bool = True
+
+class PydanticOperationExportModel(ClassicModel):
+    """
+    Pydantic model for exporting Operations to JSON.
+    """
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True

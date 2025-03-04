@@ -34,3 +34,17 @@ class PydanticPermissionModelFromJSON(BaseModel):
         Pydantic configuration for the model.
         """
         from_attributes : bool = True
+
+class PydanticPermissionExportModel(BaseModel):
+    """
+    Pydantic model for exporting permissions to JSON.
+    """
+    id            : int
+    service_name  : str
+    operation_name: str
+
+    class Config:
+        """
+        Pydantic configuration for the model.
+        """
+        from_attributes : bool = True

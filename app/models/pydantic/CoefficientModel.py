@@ -17,3 +17,17 @@ class PydanticCoefficientModelFromJSON(AcademicYearPydanticModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticCoefficientExportModel(AcademicYearPydanticModel):
+    """
+    This class is used to export a Pydantic model to a JSON file.
+    """
+    multiplier: float
+    course_type_id: int
+    status_id: int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True

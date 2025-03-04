@@ -58,3 +58,18 @@ class PydanticSetRoleToAccountModel(BaseModel):
     """
     name          : str
     academic_year : int
+
+class PydanticRoleExportModel(BaseModel):
+    """
+    Pydantic Model for Role. This model is used to export a role.
+    """
+    id          : int
+    name        : str
+    description : str
+    permissions : list[int]
+
+    class Config:
+        """
+        Pydantic configuration for Role.
+        """
+        from_attributes : bool = True

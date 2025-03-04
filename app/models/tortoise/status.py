@@ -4,7 +4,6 @@ These are used to determine the coefficients that needs to be applied
 when we need to calculate the total of hours dispensed.
 """
 
-from tortoise import Model
 from tortoise.fields import Field, IntField, CharField, TextField
 
 from app.models.tortoise.abstract.serializable_model import SerializableModel
@@ -18,7 +17,7 @@ class StatusInDB(SerializableModel):
     description : Field[str] = TextField()
     quota       : Field[int] = IntField(min_size=0, default=0)
 
-    class Meta(Model.Meta):
+    class Meta(SerializableModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """

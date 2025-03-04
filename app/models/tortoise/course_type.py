@@ -2,7 +2,6 @@
 This module contains the CourseTypeInDB model which is used to store
 different types of courses.
 """
-from tortoise import Model
 from tortoise.fields import CharField, Field, IntField, TextField
 
 from app.models.tortoise.abstract.serializable_model import SerializableModel
@@ -15,10 +14,9 @@ class CourseTypeInDB(SerializableModel):
     name        : Field[str] = CharField(max_length=128)
     description : Field[str] = TextField()
 
-    class Meta(Model.Meta):
+    class Meta(SerializableModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
         abstract : bool = False
         table    : str  = "CourseType"
-

@@ -15,7 +15,6 @@ class AcademicYearTableInDB(AcademicYear):
     id         : Field[int] = IntField(pk=True)
     description: Field[str] = TextField(null=False)
 
-
     class Meta(AcademicYear.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.

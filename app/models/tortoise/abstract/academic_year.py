@@ -1,8 +1,6 @@
 """
 Provides an abstract models to make easier the creation of tables that needs an academic year.
 """
-
-from tortoise import Model
 from tortoise.fields import Field, IntField
 
 from app.models.tortoise.abstract.serializable_model import SerializableModel
@@ -16,7 +14,7 @@ class AcademicYear(SerializableModel):
     """
     academic_year : Field[int] = IntField(required=True, default=2024)
 
-    class Meta(Model.Meta):
+    class Meta(SerializableModel.Meta):
         """
         This class specifies that our schema is abstract.
         """

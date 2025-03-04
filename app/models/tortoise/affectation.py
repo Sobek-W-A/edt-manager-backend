@@ -4,7 +4,6 @@ affectation of a course to a teacher.
 """
 
 from datetime import datetime
-from tortoise import Model
 from tortoise.fields import (ForeignKeyField,
                              ForeignKeyRelation,
                              IntField,
@@ -31,7 +30,7 @@ class AffectationInDB(SerializableModel):
     course : ForeignKeyRelation[CourseInDB]  = ForeignKeyField("models.CourseInDB", related_name="affectation")
     profile: ForeignKeyRelation[ProfileInDB] = ForeignKeyField("models.ProfileInDB", related_name="affectation")
 
-    class Meta(Model.Meta):
+    class Meta(SerializableModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
