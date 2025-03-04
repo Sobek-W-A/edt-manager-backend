@@ -426,6 +426,7 @@ async def get_current_account_role(academic_year: int,
     
     metadata: AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,
                                                                                     academic_year=academic_year)\
+                                                                    .prefetch_related("role")
 
     if not metadata:
         raise HTTPException(status_code=404,
