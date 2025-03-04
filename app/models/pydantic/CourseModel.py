@@ -51,3 +51,17 @@ class PydanticModifyCourseModel(AcademicYearPydanticModel):
     duration : Optional[Hours] = None
     group_count : Optional[int] = None
     course_type_id : Optional[int] = None
+
+class PydanticCourseAlert(AcademicYearPydanticModel):
+    """
+    This model is meant to be used when we need to return a Course to the frontend.
+    """
+    id: int
+    duration : int
+    group_count : int
+    affected_hours : int
+    hours_to_affect : int
+    course_type : PydanticCourseTypeModel | int
+
+    class Config:
+        from_attributes: bool = True  # Ajout de cette ligne ✅

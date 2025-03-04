@@ -11,7 +11,7 @@ from app.services.PermissionService import check_permissions
 from app.utils.enums.http_errors import CommonErrorMessages
 from app.utils.enums.permission_enums import AvailableServices, AvailableOperations
 
-#TODO
+
 
 
 async def get_course_by_id(course_id: int, current_account: AuthenticatedAccount) -> PydanticCourseModel:
