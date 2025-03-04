@@ -126,11 +126,13 @@ async def get_ue_by_affected_profile(academic_year: int, profile_id: int, curren
             ues.update(
                 {ue.id: PydanticUEModel(
                     academic_year=ue.academic_year,
-                    courses=None,
+                    courses=[course],
                     name=ue.name,
                     ue_id=ue.id
                 )}
             )
+        elif ue is not None and ues[ue.id].courses is not None:
+            ues[ue.id].courses.append(course)
 
     return [ue for ue in ues.values()]
 

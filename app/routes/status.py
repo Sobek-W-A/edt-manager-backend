@@ -25,30 +25,9 @@ async def get_all_status(academic_year: int, current_account: AuthenticatedAccou
     """
     return await StatusService.get_all_status(academic_year, current_account)
 
-@statusRouter.get("/{status_id}",status_code=200, response_model=None)
-async def get_status_by_id(status_id: int) -> None:
+@statusRouter.get("/{status_id}",status_code=200, response_model=PydanticStatusResponseModel)
+async def get_status_by_id(status_id: int, academic_year: int, current_account: AuthenticatedAccount) -> PydanticStatusResponseModel:
     """
     This method returns the status of the given status id.
     """
-    return None
-
-@statusRouter.post("/", status_code=201, response_model=None)
-async def add_status() -> None:
-    """
-    This method creates a new status.
-    """
-    return None
-
-@statusRouter.patch("/{status_id}", status_code=205, response_model=None)
-async def modify_status(status_id: int, body: None) -> None:
-    """
-    This method modifies the status of the given status id.
-    """
-    return None
-
-@statusRouter.delete("/{status_id}", status_code=204, response_model=None)
-async def delete_status(status_id: int) -> None:
-    """
-    This method deletes the status of the given status id.
-    """
-    return None
+    return await StatusService.get_status_by_id(academic_year, status_id, current_account)
