@@ -22,7 +22,8 @@ async def check_permissions(service: AvailableServices,
     academic_year = 2024 # TODO : Add automatic recognition of the current academic year.
     # We fetch the user's role.
     meta : AccountMetadataInDB | None = await AccountMetadataInDB.get_or_none(account_id=current_account.id,
-                                                                              academic_year=academic_year).prefetch_related("role")
+                                                                              academic_year=academic_year)\
+                                                                 .prefetch_related("role")
 
     if meta is None:
         raise HTTPException(status_code=403, detail=CommonErrorMessages.FORBIDDEN_ACTION)

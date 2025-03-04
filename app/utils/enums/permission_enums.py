@@ -156,61 +156,101 @@ class AvailablePermissions(AbstractEnumLoader):
     Enumeration to provide the available permissions.
     """
     CRUD_PROFILE = Permission(AvailableServices.PROFILE_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_PROFILES = Permission(AvailableServices.PROFILE_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+    
     CRUD_ACCOUNT = Permission(AvailableServices.ACCOUNT_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_ACCOUNT  = Permission(AvailableServices.ACCOUNT_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+    
     CRUD_STATUS  = Permission(AvailableServices.STATUS_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_SERVICE  = Permission(AvailableServices.STATUS_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+    
     CRUD_NODE    = Permission(AvailableServices.NODE_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_NODE     = Permission(AvailableServices.NODE_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+
     CRUD_UE      = Permission(AvailableServices.UE_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_UE       = Permission(AvailableServices.UE_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+
     CRUD_ROLE    = Permission(AvailableServices.ROLE_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_ROLE     = Permission(AvailableServices.ROLE_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+
     CRUD_AFFECTATION = Permission(AvailableServices.AFFECTATION_SERVICE.value,
-                                [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
-    CRUD_COURSE = Permission(AvailableServices.COURSE_SERVICE.value,
-                                 [AvailableOperations.CREATE.value,
-                                 AvailableOperations.GET_MULTIPLE.value,
-                                 AvailableOperations.GET_SINGLE.value,
-                                 AvailableOperations.GET_ME.value,
-                                 AvailableOperations.UPDATE.value,
-                                 AvailableOperations.DELETE.value])
+                                    [AvailableOperations.CREATE.value,
+                                     AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value,
+                                     AvailableOperations.UPDATE.value,
+                                     AvailableOperations.DELETE.value])
+    GET_AFFECTATION  = Permission(AvailableServices.AFFECTATION_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+
+    CRUD_COURSE      = Permission(AvailableServices.COURSE_SERVICE.value,
+                                    [AvailableOperations.CREATE.value,
+                                    AvailableOperations.GET_MULTIPLE.value,
+                                    AvailableOperations.GET_SINGLE.value,
+                                    AvailableOperations.GET_ME.value,
+                                    AvailableOperations.UPDATE.value,
+                                    AvailableOperations.DELETE.value])
+    GET_COURSE       = Permission(AvailableServices.COURSE_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
+
     CRUD_ACADEMIC_YEAR = Permission(AvailableServices.ACADEMIC_YEAR_SERVICE.value,
                                     [AvailableOperations.CREATE.value,
                                     AvailableOperations.GET_MULTIPLE.value,
@@ -218,6 +258,10 @@ class AvailablePermissions(AbstractEnumLoader):
                                     AvailableOperations.GET_ME.value,
                                     AvailableOperations.UPDATE.value,
                                     AvailableOperations.DELETE.value])
+    GET_ACADEMIC_YEAR  = Permission(AvailableServices.ACADEMIC_YEAR_SERVICE.value,
+                                    [AvailableOperations.GET_MULTIPLE.value,
+                                     AvailableOperations.GET_SINGLE.value,
+                                     AvailableOperations.GET_ME.value])
 
 class AvailableRoles(AbstractEnumLoader):
     """
@@ -225,22 +269,53 @@ class AvailableRoles(AbstractEnumLoader):
     This is static data. It should be stored in the database at 
     startup if not already present.
     """
-    ADMIN           = Role("Administrateur", "Rôle administrateur. Dispose de toutes les permissions pour toutes les années académiques.",
+    ADMIN           = Role("Administrateur",
+                           "Rôle administrateur. Dispose de toutes les permissions pour toutes les années académiques.",
                            None,
                            True)
-    DPT_MANAGER     = Role("Responsable de département", "Rôle pour gèrer un département.",
+
+    DPT_MANAGER     = Role("Responsable de département",
+                           "Rôle pour gèrer un département. Dispose de toutes les permissions pour une année académique.",
                            None,
                            True)
-    FMT_MANAGER     = Role("Responsable de formation", "Rôle pour gèrer une formation.",
+
+    FMT_MANAGER     = Role("Responsable de formation",
+                           "Rôle pour gèrer une formation. Dispose de toutes les permissions, en lecture seulement, pour une seule année académique.",
+                           [AvailablePermissions.GET_ACCOUNT.value,
+                            AvailablePermissions.GET_PROFILES.value,
+                            AvailablePermissions.GET_SERVICE.value,
+                            AvailablePermissions.GET_NODE.value,
+                            AvailablePermissions.GET_UE.value,
+                            AvailablePermissions.GET_ROLE.value,
+                            AvailablePermissions.GET_AFFECTATION.value,
+                            AvailablePermissions.GET_COURSE.value,
+                            AvailablePermissions.GET_ACADEMIC_YEAR.value],
+                           False)
+
+    ED_SECRETARIAT  = Role("Secrétariat",
+                           "Rôle pour le secrétariat. Dispose de toutes les permissions, en lecture seulement, pour une seule année académique.",
+                           [AvailablePermissions.GET_ACCOUNT.value,
+                            AvailablePermissions.GET_PROFILES.value,
+                            AvailablePermissions.GET_SERVICE.value,
+                            AvailablePermissions.GET_NODE.value,
+                            AvailablePermissions.GET_UE.value,
+                            AvailablePermissions.GET_ROLE.value,
+                            AvailablePermissions.GET_AFFECTATION.value,
+                            AvailablePermissions.GET_COURSE.value,
+                            AvailablePermissions.GET_ACADEMIC_YEAR.value],
+                           False)
+
+    TEACHER         = Role("Professeur",
+                           "Professeur. Ne dispose que des permissions de lecture pour les informations le concernant directement et pour les informations liées à ses affectations..",
+                           [AvailablePermissions.GET_PROFILES.value,
+                            AvailablePermissions.GET_AFFECTATION.value,
+                            AvailablePermissions.GET_COURSE.value,
+                            AvailablePermissions.GET_ACADEMIC_YEAR.value,
+                            AvailablePermissions.GET_UE.value,
+                            Permission(AvailableServices.ACCOUNT_SERVICE.value,
+                                       [AvailableOperations.GET_ME.value])],
+                           False)
+    UNASSIGNED      = Role("Non assigné",
+                           "Rôle par défaut. Ne dispose d'aucune permission.",
                            None,
                            False)
-    ED_SECRETARIAT  = Role("Secrétariat", "Rôle pour le secrétariat.",
-                           None,
-                           False)
-    TEACHER         = Role("Professeur", "Professeur.",
-                           None,
-                           False)
-    UNASSIGNED      = Role("Non assigné", "Rôle par défaut.",
-                           None,
-                           False)
-    # TODO : Add proper Ensemble permissions to roles.

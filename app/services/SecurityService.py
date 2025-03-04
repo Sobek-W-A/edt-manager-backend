@@ -20,13 +20,16 @@ def get_password_hash(password: str) -> str:
     password_hash: bytes = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return password_hash.decode('utf-8')
 
-async def authenticate_user(login: str, password: str) -> Optional["AccountInDB"]:
+async def authenticate_user(login: str,
+                            password: str) -> Optional["AccountInDB"]:
     """
     This method allows us to authenticate the user referenced by the login, 
     using the password provided.
-    :param login:    Login for the user.
-    :param password: Password used to check the authenticity of the connection.
-    :return: None value if the user could not be authenticated, a UserInDB otherwise.
+    Args:
+        login:    Login for the user.
+        password: Password used to check the authenticity of the connection.
+    Returns:
+        AccountInDB: The account if the user is authenticated, None otherwise.
     """
     # Checking if the user exists or not and checking its password.
     account: AccountInDB | None = await AccountInDB.get_or_none(login=login)
@@ -34,7 +37,8 @@ async def authenticate_user(login: str, password: str) -> Optional["AccountInDB"
         return None
     return account
 
-def verify_password(account: AccountInDB, password: str) -> bool:
+def verify_password(account: AccountInDB,
+                    password: str) -> bool:
     """
     This method will compare a hash provided with the hash of the object concerned.
     """
