@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from tortoise.fields import (CharField, Field, IntField,
                              ForeignKeyNullableRelation, TextField)
-from tortoise.models import Model
 
 from app.models.tortoise.abstract.serializable_model import SerializableModel
 
@@ -31,8 +30,9 @@ class AccountInDB(SerializableModel):
         """
         return f"[INFO] - ACCOUNT {self.login} ID : {self.id}"
 
-    class Meta(Model.Meta):
+    class Meta(SerializableModel.Meta):
         """
         This class is used to indicate the name of the Table to create inside the database.
         """
-        table : str = "Account"
+        table   : str = "Account"
+        abstract: bool = False
