@@ -15,7 +15,7 @@ from app.models.pydantic.NodeModel import PydanticNodeExportModel
 from app.models.pydantic.OperationModel import PydanticOperationExportModel
 from app.models.pydantic.PermissionsModel import PydanticPermissionExportModel
 from app.models.pydantic.ProfileModel import PydanticProfileExportModel
-from app.models.pydantic.PydanticRole import PydanticRoleExportModel
+from app.models.pydantic.RoleModel import PydanticRoleExportModel
 from app.models.pydantic.ServiceModel import PydanticServiceExportModel
 from app.models.pydantic.StatusModel import PydanticStatusExportModel
 from app.models.pydantic.UEModel import PydanticUEExportModel

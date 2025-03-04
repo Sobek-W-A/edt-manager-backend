@@ -6,11 +6,12 @@ from tortoise.fields import (Field,
                              FloatField,
                              ForeignKeyField,
                              ForeignKeyRelation)
+from app.models.tortoise.abstract.serializable_model import SerializableModel
 from app.models.tortoise.course_type import CourseTypeInDB
 from app.models.tortoise.status import StatusInDB
 
 
-class CoefficientInDB(Model):
+class CoefficientInDB(SerializableModel):
     """
     This model represents a coefficient that can be assigned to a course depending on a status.
     """
