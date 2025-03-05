@@ -4,7 +4,6 @@ Simple pydantic models for the Coefficient model.
 from pydantic import BaseModel
 
 from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
-from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
 class PydanticCoefficientModelFromJSON(BaseModel):
@@ -34,7 +33,7 @@ class PydanticCoefficientModelResponse(BaseModel):
         """
         from_attributes : bool = True
 
-class PydanticCoefficientExportModel(AcademicYearPydanticModel):
+class PydanticCoefficientExportModel(BaseModel):
     """
     This class is used to export a Pydantic model to a JSON file.
     """

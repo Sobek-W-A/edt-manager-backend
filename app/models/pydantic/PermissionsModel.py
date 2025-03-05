@@ -39,7 +39,7 @@ class PydanticPermissionExportModel(BaseModel):
     """
     Pydantic model for exporting permissions to JSON.
     """
-    id            : int
+    id          : int
     service_id  : str
     operation_id: str
 

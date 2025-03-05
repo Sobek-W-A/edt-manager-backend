@@ -19,4 +19,4 @@ class RoleInDB(ClassicModel):
         This class is used to indicate the name of the Table to create inside the database.
         """
         abstract : bool = False
-        table    : str = "Role"
+        table    : str  = "Role"
