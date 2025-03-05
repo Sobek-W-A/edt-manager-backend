@@ -245,6 +245,10 @@ class AvailableGetPermissions(Enum):
                                           [AvailableOperations.GET_MULTIPLE.value,
                                            AvailableOperations.GET_SINGLE.value,
                                            AvailableOperations.GET_ME.value])
+    GET_STATUS         = Permission(AvailableServices.STATUS_SERVICE.value,
+                                          [AvailableOperations.GET_MULTIPLE.value,
+                                           AvailableOperations.GET_SINGLE.value,
+                                           AvailableOperations.GET_ME.value])
     GET_NODE           = Permission(AvailableServices.NODE_SERVICE.value,
                                           [AvailableOperations.GET_MULTIPLE.value,
                                            AvailableOperations.GET_SINGLE.value,
@@ -296,7 +300,8 @@ class AvailableRoles(AbstractEnumLoader):
                             AvailableGetPermissions.GET_ROLE.value,
                             AvailableGetPermissions.GET_AFFECTATION.value,
                             AvailableGetPermissions.GET_COURSE.value,
-                            AvailableGetPermissions.GET_ACADEMIC_YEAR.value],
+                            AvailableGetPermissions.GET_ACADEMIC_YEAR.value,
+                            AvailableGetPermissions.GET_STATUS.value],
                            False)
 
     ED_SECRETARIAT  = Role("Secrétariat",
@@ -309,7 +314,8 @@ class AvailableRoles(AbstractEnumLoader):
                             AvailableGetPermissions.GET_ROLE.value,
                             AvailableGetPermissions.GET_AFFECTATION.value,
                             AvailableGetPermissions.GET_COURSE.value,
-                            AvailableGetPermissions.GET_ACADEMIC_YEAR.value],
+                            AvailableGetPermissions.GET_ACADEMIC_YEAR.value,
+                            AvailableGetPermissions.GET_STATUS.value],
                            False)
 
     TEACHER         = Role("Professeur",
@@ -320,6 +326,7 @@ class AvailableRoles(AbstractEnumLoader):
                             AvailableGetPermissions.GET_ACADEMIC_YEAR.value,
                             AvailableGetPermissions.GET_UE.value,
                             AvailableGetPermissions.GET_ROLE.value,
+                            AvailableGetPermissions.GET_STATUS.value,
                             Permission(AvailableServices.ACCOUNT_SERVICE.value,
                                        [AvailableOperations.GET_ME.value])],
                            False)
