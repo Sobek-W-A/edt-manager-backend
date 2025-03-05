@@ -4,13 +4,13 @@ This is where the FastAPI app is defined, as well as the different tags for the 
 Also contains the startup operations (like DB init).
 """
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, Type, cast
+from typing import Any, AsyncGenerator, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from starlette.responses import RedirectResponse
 
+from app.models.aliases import AuthenticatedAccount
 from app.routes import account, auth, profile, role, ue, course, status, affectation, node, academic_year
 from app.routes.tags import Tag
 
@@ -90,7 +90,15 @@ async def root() -> RedirectResponse:
     return RedirectResponse(url="/docs")
 
 @app.get("/export")
-async def export():
-    return await ExportService.export()
+async def export_data(academic_year: int, current_accont: AuthenticatedAccount):
+    """
+    Exports the database's content.
+    """
+    await ExportService.export_data(academic_year, current_accont)
 
-
+@app.post("/import")
+async def import_data(academic_year: int, current_accont: AuthenticatedAccount):
+    """
+    Imports data into the database.
+    """
+    await ExportService.import_data(academic_year, current_accont)

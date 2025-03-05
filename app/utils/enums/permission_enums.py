@@ -151,6 +151,8 @@ class AvailableServices(AbstractEnumLoader):
                                     "Service that manages courses.")
     ACADEMIC_YEAR_SERVICE = Service("Academic Year Service",
                                     "Service that manages academic years.")
+    EXPORT_SERVICE        = Service("Export Service",
+                                    "Service that manages the exportation of the databases entires.")
 
 class AvailablePermissions(AbstractEnumLoader):
     """

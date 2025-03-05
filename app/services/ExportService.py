@@ -1,5 +1,6 @@
-
-
+"""
+Service to manage imports and exports of the database's content.
+"""
 from typing import Any, Type
 
 from pydantic import BaseModel
@@ -36,25 +37,36 @@ from app.models.tortoise.role import RoleInDB
 from app.models.tortoise.service import ServiceInDB
 from app.models.tortoise.status import StatusInDB
 from app.models.tortoise.ue import UEInDB
+from app.services.PermissionService import check_permissions
+from app.utils.enums.permission_enums import AvailableOperations, AvailableServices
 
 
-async def export():
+async def export_data(academic_year: int, current_account: AccountInDB):
+    """
+    This method exports almost all the database's content and dumps it into a JSON file.
+    """
+
+    await check_permissions(AvailableServices.EXPORT_SERVICE.value,
+                            AvailableOperations.GET_MULTIPLE.value,
+                            current_account,
+                            academic_year)
+
     truc: dict[str, tuple[Type[SerializableModel], Type[BaseModel]]] = {
-        "academic_year": (AcademicYearTableInDB, PydanticAcademicYearTableExportModel),
+        "academic_year":    (AcademicYearTableInDB, PydanticAcademicYearTableExportModel),
         "account_metadata": (AccountMetadataInDB, PydanticAccountMetaExportModel),
-        "account": (AccountInDB, PydanticAccountExportModel),
-        "affectation": (AffectationInDB, PydanticAffectationExport),
-        "coefficient": (CoefficientInDB, PydanticCoefficientExportModel),
-        "course_type": (CourseTypeInDB, PydanticCourseTypeExportModel),
-        "course": (CourseInDB, PydanticCourseExportModel),
-        "node": (NodeInDB, PydanticNodeExportModel),
-        "operation": (OperationInDB, PydanticOperationExportModel),
-        "permission": (PermissionInDB, PydanticPermissionExportModel),
-        "profile": (ProfileInDB, PydanticProfileExportModel),
-        # "role": (RoleInDB, PydanticRoleExportModel),
-        "service": (ServiceInDB, PydanticServiceExportModel),
-        "status": (StatusInDB, PydanticStatusExportModel),
-        # "ue": (UEInDB, PydanticUEExportModel)
+        "account":          (AccountInDB, PydanticAccountExportModel),
+        "affectation":      (AffectationInDB, PydanticAffectationExport),
+        "coefficient":      (CoefficientInDB, PydanticCoefficientExportModel),
+        "course_type":      (CourseTypeInDB, PydanticCourseTypeExportModel),
+        "course":           (CourseInDB, PydanticCourseExportModel),
+        "node":             (NodeInDB, PydanticNodeExportModel),
+        "operation":        (OperationInDB, PydanticOperationExportModel),
+        "permission":       (PermissionInDB, PydanticPermissionExportModel),
+        "profile":          (ProfileInDB, PydanticProfileExportModel),
+        "role":             (RoleInDB, PydanticRoleExportModel),
+        "service":          (ServiceInDB, PydanticServiceExportModel),
+        "status":           (StatusInDB, PydanticStatusExportModel),
+        "ue":               (UEInDB, PydanticUEExportModel)
     }
 
     result: dict[str, Any] = {}
@@ -64,3 +76,14 @@ async def export():
         result[name] = await tortoise_model.export(pydantic_model)
 
     return result
+
+async def import_data(academic_year: int, current_account: AccountInDB):
+    """
+    This method imports the database's content from a JSON file.
+    """
+    await check_permissions(AvailableServices.EXPORT_SERVICE.value,
+                            AvailableOperations.CREATE.value,
+                            current_account,
+                            academic_year)
+
+    return None

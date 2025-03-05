@@ -3,6 +3,7 @@ Simple pydantic models for the Coefficient model.
 """
 from pydantic import BaseModel
 
+from app.models.pydantic.CourseTypeModel import PydanticCourseTypeModel
 from app.models.pydantic.abstract.AcademicYearModel import AcademicYearPydanticModel
 
 
@@ -13,6 +14,19 @@ class PydanticCoefficientModelFromJSON(BaseModel):
     multiplier: float
     course_type_id: int
     status_id: int
+
+    class Config:
+        """
+        Pydantic configuration.
+        """
+        from_attributes : bool = True
+
+class PydanticCoefficientModelResponse(BaseModel):
+    """
+    This class is used to response to a Pydantic model.
+    """
+    multiplier: float
+    course_type: PydanticCourseTypeModel
 
     class Config:
         """
@@ -33,4 +47,3 @@ class PydanticCoefficientExportModel(AcademicYearPydanticModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
-
