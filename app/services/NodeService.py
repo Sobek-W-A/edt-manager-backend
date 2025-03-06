@@ -218,6 +218,12 @@ async def create_node(academic_year: int,
                             current_account,
                             academic_year)
 
+    if node_to_add.parent_id is None:
+        node: NodeInDB | None = await get_root(academic_year)
+        if node is not None:
+            raise HTTPException(status_code=400,
+                                detail=CommonErrorMessages.ROOT_NODE_ALREADY_EXIST.value)
+
     if (node_to_add.parent_id is not None
         and not await NodeInDB.exists(id=node_to_add.parent_id, academic_year=academic_year)):
         raise HTTPException(status_code=404,
