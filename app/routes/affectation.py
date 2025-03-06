@@ -85,3 +85,10 @@ async def unassign_course_from_profile_with_profile_and_course(academic_year: in
     This method unassigns a course from a teacher.
     """
     await AffectationService.unassign_course_from_profile_with_profile_and_course(academic_year, profile_id, course_id, current_account)
+
+@affectationRouter.get("/{profile_id}")
+async def get_total_hours(academic_year: int, profile_id: int):
+    """
+    this method return the total hours assigned to this teacher
+    """
+    return await AffectationService.get_total_hours(academic_year, profile_id)
