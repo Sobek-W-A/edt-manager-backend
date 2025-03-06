@@ -60,6 +60,7 @@ class PydanticProfileModelFromJSON(BaseModel):
     firstname: str
     lastname: str
     mail: str
+    quota: int
     academic_year: int
     account_id: Optional[int] = None
     status_id: int
