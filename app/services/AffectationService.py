@@ -6,9 +6,10 @@ Used to assign/unassign classes to teachers and retrieve these informations.
 from datetime import datetime
 from fastapi import HTTPException
 from app.models.aliases import AuthenticatedAccount
-from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify
+from app.models.pydantic.AffectationModel import PydanticAffectation, PydanticAffectationInCreate, PydanticAffectationInModify, PydanticAffectationTotalHoursResponse
 from app.models.pydantic.CourseModel import PydanticCourseModel
 from app.models.pydantic.ProfileModel import PydanticProfileResponse
+from app.models.pydantic.tools.validator import Hours
 from app.models.tortoise.account import AccountInDB
 from app.models.tortoise.affectation import AffectationInDB
 from app.models.tortoise.coefficient import CoefficientInDB
@@ -26,10 +27,10 @@ async def get_teacher_affectations(academic_year: int,
     This method returns all classes assigned to a teacher.
     """
 
-    # await check_permissions(AvailableServices.AFFECTATION_SERVICE,
-    #                         AvailableOperations.GET_MULTIPLE,
-    #                         current_account,
-    #                         academic_year)
+    await check_permissions(AvailableServices.AFFECTATION_SERVICE,
+                            AvailableOperations.GET_MULTIPLE,
+                            current_account,
+                            academic_year)
 
     profile : ProfileInDB | None = await ProfileInDB.get_or_none(id=profile_id)
     if profile is None:
@@ -285,13 +286,15 @@ async def unassign_course(affectation: AffectationInDB) -> None:
     """
     await affectation.delete()
 
-async def get_total_hours(academic_year: int, profile_id: int):
-    teacher = await ProfileInDB.get(id=profile_id)
-    current_account=None
-    affectations = await get_teacher_affectations(academic_year, profile_id, current_account)
-    coeffs = {coeff.course_type_id: coeff.multiplier for coeff in await CoefficientInDB.all()}
-    return {
-        affectation.id: affectation.hours * coeffs.get(affectation.course.course_type.id, 1.) for affectation in affectations
+async def get_total_hours(academic_year: int, profile_id: int, current_account: AuthenticatedAccount) -> PydanticAffectationTotalHoursResponse:
+    affectations: list[PydanticAffectation] = await get_teacher_affectations(academic_year, profile_id, current_account)
+    coeffs: dict[int, float] = {coeff.course_type_id: coeff.multiplier for coeff in await CoefficientInDB.all()} # type: ignore
+    hours: dict[int, Hours] = {
+        affectation.id: affectation.hours * coeffs.get(affectation.course.course_type.id, 1.) for affectation in affectations # type: ignore
     }
+
+    return PydanticAffectationTotalHoursResponse(hours=hours, total=sum(hours.values()))
+
+
 
 

@@ -9,7 +9,7 @@ from app.models.aliases import AuthenticatedAccount
 
 from app.models.pydantic.AffectationModel import (PydanticAffectation,
                                                   PydanticAffectationInCreate,
-                                                  PydanticAffectationInModify)
+                                                  PydanticAffectationInModify, PydanticAffectationTotalHoursResponse)
 from app.routes.tags import Tag
 from app.services import AffectationService
 
@@ -86,9 +86,9 @@ async def unassign_course_from_profile_with_profile_and_course(academic_year: in
     """
     await AffectationService.unassign_course_from_profile_with_profile_and_course(academic_year, profile_id, course_id, current_account)
 
-@affectationRouter.get("/{profile_id}")
-async def get_total_hours(academic_year: int, profile_id: int):
+@affectationRouter.get("/{profile_id}", status_code=200, response_model=PydanticAffectationTotalHoursResponse)
+async def get_total_hours(academic_year: int, profile_id: int, current_account: AuthenticatedAccount):
     """
     this method return the total hours assigned to this teacher
     """
-    return await AffectationService.get_total_hours(academic_year, profile_id)
+    return await AffectationService.get_total_hours(academic_year, profile_id, current_account)

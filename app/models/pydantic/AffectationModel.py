@@ -77,3 +77,10 @@ class PydanticAffectationInModify(BaseModel):
         Pydantic configuration.
         """
         from_attributes : bool = True
+
+class PydanticAffectationTotalHoursResponse(BaseModel):
+    """
+    Pydantic model corresponding to total hours route response.
+    """
+    hours: dict[int, Hours]
+    total: Hours
