@@ -82,5 +82,5 @@ class PydanticAffectationTotalHoursResponse(BaseModel):
     """
     Pydantic model corresponding to total hours route response.
     """
-    hours: dict[int, Hours]
-    total: Hours
+    hours: dict[int, float]
+    total: float

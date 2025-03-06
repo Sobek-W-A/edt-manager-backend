@@ -289,7 +289,7 @@ async def unassign_course(affectation: AffectationInDB) -> None:
 async def get_total_hours(academic_year: int, profile_id: int, current_account: AuthenticatedAccount) -> PydanticAffectationTotalHoursResponse:
     affectations: list[PydanticAffectation] = await get_teacher_affectations(academic_year, profile_id, current_account)
     coeffs: dict[int, float] = {coeff.course_type_id: coeff.multiplier for coeff in await CoefficientInDB.all()} # type: ignore
-    hours: dict[int, Hours] = {
+    hours: dict[int, float] = {
         affectation.id: affectation.hours * coeffs.get(affectation.course.course_type.id, 1.) for affectation in affectations # type: ignore
     }
 
