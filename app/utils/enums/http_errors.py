@@ -62,3 +62,5 @@ class CommonErrorMessages(enum.StrEnum):
     AFFECTATION_GROUP_INVALID            = "Invalid group number. Must be positive and less than the group count of the course."
     # Academic_year Errors
     ACADEMIC_YEAR_NOT_FOUND = "Academic year was not found"
+    # Node Errors
+    ROOT_NODE_ALREADY_EXIST = "Root node already exists"
